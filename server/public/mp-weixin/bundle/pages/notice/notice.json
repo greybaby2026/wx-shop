@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "消息列表",
+  "usingComponents": {
+    "mescroll-uni": "/components/mescroll-uni/mescroll-uni",
+    "loading-view": "/components/loading-view/loading-view"
+  }
+}

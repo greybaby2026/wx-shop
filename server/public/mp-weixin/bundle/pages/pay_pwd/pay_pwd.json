@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "交易密码",
+  "usingComponents": {
+    "u-field": "/components/uview-ui/components/u-field/u-field",
+    "u-button": "/components/uview-ui/components/u-button/u-button"
+  }
+}

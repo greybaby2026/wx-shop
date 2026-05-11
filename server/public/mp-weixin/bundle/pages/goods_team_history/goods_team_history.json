@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "拼团记录",
+  "usingComponents": {
+    "u-tabs": "/components/uview-ui/components/u-tabs/u-tabs",
+    "mescroll-contain": "/components/mescroll-contain/mescroll-contain",
+    "count-down": "/components/count-down/count-down",
+    "goods-card": "/components/goods-card/goods-card",
+    "u-tag": "/components/uview-ui/components/u-tag/u-tag",
+    "price": "/components/price/price"
+  }
+}

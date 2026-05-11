@@ -1,0 +1,145 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/page/page",
+    "pages/category/category",
+    "pages/shop_cart/shop_cart",
+    "pages/user/user",
+    "pages/login/login",
+    "pages/register/register",
+    "pages/forget_pwd/forget_pwd",
+    "pages/bind_mobile/bind_mobile",
+    "pages/goods_search/goods_search",
+    "pages/goods_detail/goods_detail",
+    "pages/goods_order/goods_order",
+    "pages/payment/payment",
+    "pages/payment_result/payment_result",
+    "pages/order_detail/order_detail",
+    "pages/address/address",
+    "pages/address_edit/address_edit",
+    "pages/webview/webview",
+    "components/uview-ui/components/u-avatar-cropper/u-avatar-cropper"
+  ],
+  "subPackages": [
+    {
+      "root": "bundle",
+      "pages": [
+        "pages/express_detail/express_detail",
+        "pages/user_order/user_order",
+        "pages/category/category",
+        "pages/luck_draw_good/luck_draw_good",
+        "pages/goods_seckill/goods_seckill",
+        "pages/goods_presell/goods_presell",
+        "pages/toAlipay/toAlipay",
+        "pages/user_set/user_set",
+        "pages/seckill_detail/seckill_detail",
+        "pages/presell_detail/presell_detail",
+        "pages/user_profile/user_profile",
+        "pages/user_vip/user_vip",
+        "pages/goods_comment/goods_comment",
+        "pages/goods_comment_he/goods_comment_he",
+        "pages/post_comment/post_comment",
+        "pages/after_sale/after_sale",
+        "pages/after_sale_detail/after_sale_detail",
+        "pages/post_after_sale/post_after_sale",
+        "pages/input_express_info/input_express_info",
+        "pages/coupon/coupon",
+        "pages/coupon_get/coupon_get",
+        "pages/user_wallet/user_wallet",
+        "pages/user_recharge/user_recharge",
+        "pages/balance_transfer/balance_transfer",
+        "pages/user_bill/user_bill",
+        "pages/transfer_record/transfer_record",
+        "pages/user_recharge_record/user_recharge_record",
+        "pages/message_center/message_center",
+        "pages/notice/notice",
+        "pages/server_explan/server_explan",
+        "pages/pay_pwd/pay_pwd",
+        "pages/store_list/store_list",
+        "pages/order_logistics/order_logistics",
+        "pages/exchange_logistics/exchange_logistics",
+        "pages/goods_collects/goods_collects",
+        "pages/store_notice/store_notice",
+        "pages/store_notice_detail/store_notice_detail",
+        "pages/user_spread/user_spread",
+        "pages/invite_poster/invite_poster",
+        "pages/user_spread_order/user_spread_order",
+        "pages/user_fans/user_fans",
+        "pages/monthly_bill/monthly_bill",
+        "pages/monthly_bill_detail/monthly_bill_detail",
+        "pages/commission_details/commission_details",
+        "pages/user_withdraw/user_withdraw",
+        "pages/withdraw_success/withdraw_success",
+        "pages/withdraw_record/withdraw_record",
+        "pages/service/service",
+        "pages/artificial_service/artificial_service",
+        "pages/user_sign/user_sign",
+        "pages/sign_rule/sign_rule",
+        "pages/sign_detail/sign_detail",
+        "pages/verification_detail/verification_detail",
+        "pages/verification_list/verification_list",
+        "pages/goods_bargain/goods_bargain",
+        "pages/bargain_progress/bargain_progress",
+        "pages/bargain_code/bargain_code",
+        "pages/goods_team/goods_team",
+        "pages/goods_team_detail/goods_team_detail",
+        "pages/goods_team_history/goods_team_history",
+        "pages/h5_pay_query/h5_pay_query",
+        "pages/live_broadcast/live_broadcast",
+        "pages/luck_draw/luck_draw",
+        "pages/luck_draw_code/luck_draw_code",
+        "pages/win_prize_code/win_prize_code",
+        "pages/business_suspended/business_suspended",
+        "pages/license/license",
+        "pages/article_lists/article_lists",
+        "pages/integral_mall/integral_mall",
+        "pages/integral_goods_details/integral_goods_details",
+        "pages/integral_settlement/integral_settlement",
+        "pages/exchange_order/exchange_order",
+        "pages/exchange_order_details/exchange_order_details",
+        "pages/cancel/cancel",
+        "pages/cancel_result/cancel_result"
+      ]
+    }
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "custom": true,
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/category/category",
+        "text": "分类"
+      },
+      {
+        "pagePath": "pages/shop_cart/shop_cart",
+        "text": "购物车"
+      },
+      {
+        "pagePath": "pages/user/user",
+        "text": "个人中心"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
+  },
+  "requiredPrivateInfos": [
+    "getLocation",
+    "chooseAddress"
+  ],
+  "usingComponents": {
+    "mescroll-body": "/components/mescroll-uni/mescroll-body",
+    "router-link": "/js_sdk/hhyang-uni-simple-router/link"
+  }
+}

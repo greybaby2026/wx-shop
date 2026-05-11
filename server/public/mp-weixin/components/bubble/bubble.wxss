@@ -1,0 +1,1 @@
+.bubble-tips-container{position:absolute;z-index:900}.bubble-tips-container .bubble-content{padding:4rpx 20rpx 4rpx 10rpx;background-color:rgba(0,0,0,.6);color:#fff;border-radius:120rpx}.bubble-tips-container .bubble-content .bubble-img{width:50rpx;height:50rpx;border-radius:50%;margin-right:10rpx}

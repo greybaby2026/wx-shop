@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "忘记密码",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "u-sticky": "/components/uview-ui/components/u-sticky/u-sticky",
+    "u-navbar": "/components/uview-ui/components/u-navbar/u-navbar",
+    "u-field": "/components/uview-ui/components/u-field/u-field",
+    "u-verification-code": "/components/uview-ui/components/u-verification-code/u-verification-code",
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon"
+  }
+}

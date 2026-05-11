@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "售后列表",
+  "usingComponents": {
+    "u-tabs": "/components/uview-ui/components/u-tabs/u-tabs",
+    "mescroll-uni": "/components/mescroll-uni/mescroll-uni",
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "price": "/components/price/price",
+    "u-modal": "/components/uview-ui/components/u-modal/u-modal"
+  }
+}

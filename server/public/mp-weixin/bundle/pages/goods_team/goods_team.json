@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "拼团活动",
+  "usingComponents": {
+    "mescroll-uni": "/components/mescroll-uni/mescroll-uni",
+    "goods-card": "/components/goods-card/goods-card",
+    "goods-team-icon": "/components/goods-team-icon/goods-team-icon",
+    "price": "/components/price/price"
+  }
+}

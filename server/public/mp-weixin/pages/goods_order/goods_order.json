@@ -1,0 +1,16 @@
+{
+  "navigationBarTitleText": "订单结算",
+  "usingComponents": {
+    "u-tabs": "/components/uview-ui/components/u-tabs/u-tabs",
+    "address-card": "/components/address-card/address-card",
+    "u-input": "/components/uview-ui/components/u-input/u-input",
+    "goods-card": "/components/goods-card/goods-card",
+    "price": "/components/price/price",
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon",
+    "u-popup": "/components/uview-ui/components/u-popup/u-popup",
+    "coupon-card": "/components/coupon-card/coupon-card",
+    "u-empty": "/components/uview-ui/components/u-empty/u-empty",
+    "page-status": "/components/page-status/page-status",
+    "u-modal": "/components/uview-ui/components/u-modal/u-modal"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "地址编辑",
+  "usingComponents": {
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon",
+    "u-switch": "/components/uview-ui/components/u-switch/u-switch",
+    "u-picker": "/components/uview-ui/components/u-picker/u-picker"
+  }
+}

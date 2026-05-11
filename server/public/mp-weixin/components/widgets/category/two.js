@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["components/widgets/category/two"],{"013b":function(t,n,e){"use strict";(function(t){var c=e("47a9");Object.defineProperty(n,"__esModule",{value:!0}),n.default=void 0;var o=c(e("1f7b")),u=c(e("8a0a")),a={mixins:[o.default,u.default],components:{goods:function(){e.e("components/widgets/category/goods").then(function(){return resolve(e("9616"))}.bind(null,e)).catch(e.oe)}},props:{},data:function(){return{}},methods:{changeActive:function(t){this.parent.selectIndex=t},handleClick:function(n){t.navigateTo({url:"/bundle/pages/category/category?id="+n})}},computed:{},created:function(){}};n.default=a}).call(this,e("df3c")["default"])},"08a2":function(t,n,e){"use strict";var c=e("6cc8"),o=e.n(c);o.a},"1f22":function(t,n,e){"use strict";e.r(n);var c=e("6d13"),o=e("31e5");for(var u in o)["default"].indexOf(u)<0&&function(t){e.d(n,t,(function(){return o[t]}))}(u);e("08a2");var a=e("828b"),i=Object(a["a"])(o["default"],c["b"],c["c"],!1,null,"c05dc724",null,!1,c["a"],void 0);n["default"]=i.exports},"31e5":function(t,n,e){"use strict";e.r(n);var c=e("013b"),o=e.n(c);for(var u in c)["default"].indexOf(u)<0&&function(t){e.d(n,t,(function(){return c[t]}))}(u);n["default"]=o.a},"6cc8":function(t,n,e){},"6d13":function(t,n,e){"use strict";e.d(n,"b",(function(){return o})),e.d(n,"c",(function(){return u})),e.d(n,"a",(function(){return c}));var c={uImage:function(){return e.e("components/uview-ui/components/u-image/u-image").then(e.bind(null,"cabf"))}},o=function(){var t=this.$createElement,n=(this._self._c,this.lists.length);this.$mp.data=Object.assign({},{$root:{g0:n}})},u=[]}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'components/widgets/category/two-create-component',
+    {
+        'components/widgets/category/two-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('df3c')['createComponent'](__webpack_require__("1f22"))
+        })
+    },
+    [['components/widgets/category/two-create-component']]
+]);

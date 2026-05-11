@@ -1,0 +1,1 @@
+.notice-container{padding:0 20rpx;margin-top:8rpx}.notice-container .notice-item{background-color:#fff;padding:0rpx 20rpx 30rpx;border-radius:10rpx}.notice-container .notice-item .item-header{padding:19rpx 0;border-bottom:1px solid #e5e5e5}.notice-container .notice-item .item-header .header-title{font-weight:700}.notice-container .notice-item .item-main .content{margin-top:15rpx}

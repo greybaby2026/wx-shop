@@ -1,0 +1,308 @@
+{
+    "pages": [
+        //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+        {
+            "path": "pages/index/index",
+            "style": {
+                "navigationBarTitleText": "首页"
+            },
+            "meta": {
+                "auth": true
+            }
+        },
+        {
+            "path": "pages/goods_manage/goods_manage",
+            "name": "goods_manage",
+            "meta": {
+                "auth": false,
+                "keepScroll": true
+            },
+            "style": {
+                "navigationBarTitleText": "商品管理"
+            }
+        },
+        {
+            "path": "pages/order_manage/order_manage",
+            "style": {
+                "navigationBarTitleText": "订单管理"
+            },
+            "meta": {
+                "auth": false
+            }
+        },
+        {
+            "path": "pages/user/user",
+            "style": {
+                "navigationBarTitleText": "我的",
+                "navigationStyle": "custom"
+            },
+            "meta": {
+                "auth": false
+            }
+        },
+        {
+            "path": "pages/login/login",
+            "style": {
+                "navigationBarTitleText": "登录"
+            },
+            "meta": {
+                "auth": false
+            }
+        },
+        {
+            "path": "pages/goods_detail/goods_detail",
+            "style": {
+                "navigationBarTitleText": "商品详情"
+            },
+            "meta": {
+                "auth": false
+            }
+        },
+        {
+            "path": "pages/order_detail/order_detail",
+            "style": {
+                "navigationBarTitleText": "订单详情"
+            },
+            "meta": {
+                "auth": true
+            }
+        },
+        {
+            "path": "pages/address_edit/address_edit",
+            "style": {
+                "navigationBarTitleText": "地址编辑"
+            },
+            "meta": {
+                "auth": true
+            }
+        },
+        {
+            "path": "pages/verification_order/verification_order",
+            "style": {
+                "navigationBarTitleText": "核销订单"
+            },
+            "meta": {
+                "auth": true
+            }
+        },
+        {
+            "path": "pages/verification_detail/verification_detail",
+            "style": {
+                "navigationBarTitleText": "核销订单"
+            },
+            "meta": {
+                "auth": true
+            }
+        },
+        {
+            "path": "pages/finance/finance",
+            "style": {
+                "navigationBarTitleText": "财务概况"
+            },
+            "meta": {
+                "auth": true
+            }
+        },
+        {
+            "path": "pages/webview/webview",
+            "meta": {
+                "auth": false
+            }
+        },
+        {
+            "path": "components/uview-ui/components/u-avatar-cropper/u-avatar-cropper",
+            "style": {
+                "navigationBarTitleText": "头像裁剪"
+            }
+        }
+    ],
+    "subPackages": [
+        {
+            "root": "bundle",
+            "pages": [
+                {
+                    "path": "pages/orderTraces/orderTraces",
+                    "style": {
+                        "navigationBarTitleText": "物流进度"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/user_profile/user_profile",
+                    "style": {
+                        "navigationBarTitleText": "个人设置"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/delivery_address_add/delivery_address_add",
+                    "style": {
+                        "navigationBarTitleText": "地址管理"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/delivery_address_edit/delivery_address_edit",
+                    "style": {
+                        "navigationBarTitleText": "地址管理"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/delivery_address/delivery_address",
+                    "style": {
+                        "navigationBarTitleText": "地址管理"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/user_wallet/user_wallet",
+                    "style": {
+                        "navigationBarTitleText": "商家钱包"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/user_withdraw/user_withdraw",
+                    "style": {
+                        "navigationBarTitleText": "提现"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/bank_list/bank_list",
+                    "style": {
+                        "navigationBarTitleText": "银行卡列表"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/bank_add/bank_add",
+                    "style": {
+                        "navigationBarTitleText": "银行卡添加"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/shop_setting/shop_setting",
+                    "style": {
+                        "navigationBarTitleText": "商家设置"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/shop_setting_edit/shop_setting_edit",
+                    "style": {
+                        "navigationBarTitleText": "商家设置"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/run_time/run_time",
+                    "style": {
+                        "navigationBarTitleText": "编辑营业时间"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/spec_edit/spec_edit",
+                    "style": {
+                        "navigationBarTitleText": "商品编辑"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/deliver_goods/deliver_goods",
+                    "style": {
+                        "navigationBarTitleText": "填写物流"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/shop_data/shop_data",
+                    "style": {
+                        "navigationBarTitleText": "数据统计"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                }
+            ]
+        }
+    ],
+    "tabBar": {
+        "color": "#999",
+        "selectedColor": "#3868F9",
+        "borderStyle": "black",
+        "list": [
+            {
+                "pagePath": "pages/index/index",
+                "iconPath": "/static/images/tabbar/icon_home.png",
+                "selectedIconPath": "/static/images/tabbar/icon_home_s.png",
+                "text": "首页"
+            },
+            {
+                "pagePath": "pages/goods_manage/goods_manage",
+                "iconPath": "/static/images/tabbar/icon_goods.png",
+                "selectedIconPath": "/static/images/tabbar/icon_goods_s.png",
+                "text": "商品"
+            },
+            {
+                "pagePath": "pages/order_manage/order_manage",
+                "iconPath": "/static/images/tabbar/icon_order.png",
+                "selectedIconPath": "/static/images/tabbar/icon_order_s.png",
+                "text": "订单"
+            },
+            {
+                "pagePath": "pages/user/user",
+                "iconPath": "/static/images/tabbar/icon_user.png",
+                "selectedIconPath": "/static/images/tabbar/icon_user_s.png",
+                "text": "我的"
+            }
+        ]
+    },
+    "globalStyle": {
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "",
+        "navigationBarBackgroundColor": "#FFFFFF",
+        "backgroundColor": "#F8F8F8",
+        "h5": {
+            "navigationStyle": "custom"
+        }
+    },
+    "easycom": {
+        "autoscan": true,
+        "custom": {
+            "^u-(.*)": "@/components/uview-ui/components/u-$1/u-$1.vue",
+            "^w-(.*)": "@/components/widgets/$1/$1.vue"
+        }
+    }
+}

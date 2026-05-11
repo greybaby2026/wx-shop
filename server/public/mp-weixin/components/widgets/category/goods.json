@@ -1,0 +1,10 @@
+{
+  "component": true,
+  "usingComponents": {
+    "sort-icon": "/components/sort-icon/sort-icon",
+    "mescroll-uni": "/components/mescroll-uni/mescroll-uni",
+    "w-banner": "/components/widgets/banner/banner",
+    "goods-card": "/components/goods-card/goods-card",
+    "thirdly-tabs": "/components/widgets/category/thirdly-tabs"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "navigationBarTitleText": "",
+  "usingComponents": {
+    "w-banner": "/components/widgets/banner/banner",
+    "sort-icon": "/components/sort-icon/sort-icon",
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon",
+    "mescroll-uni": "/components/mescroll-uni/mescroll-uni",
+    "goods-card": "/components/goods-card/goods-card",
+    "u-popup": "/components/uview-ui/components/u-popup/u-popup",
+    "u-input": "/components/uview-ui/components/u-input/u-input"
+  }
+}

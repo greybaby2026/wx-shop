@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "收货地址",
+  "usingComponents": {
+    "u-modal": "/components/uview-ui/components/u-modal/u-modal"
+  }
+}

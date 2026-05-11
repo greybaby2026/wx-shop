@@ -1,0 +1,1 @@
+<widget-root vue-id="3d2e9642-1" styles="{{styles}}" bind:__l="__l" vue-slots="{{['default']}}"><view class="container" style="{{'border-radius:'+($root.m0+'rpx '+$root.m1+'rpx '+$root.m2+'rpx '+$root.m3+'rpx')+';'}}"><u-parse vue-id="{{('3d2e9642-2')+','+('3d2e9642-1')}}" html="{{content.data}}" show-with-animation="{{true}}" bind:__l="__l"></u-parse></view></widget-root>

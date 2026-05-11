@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "资质信息",
+  "usingComponents": {
+    "u-image": "/components/uview-ui/components/u-image/u-image"
+  }
+}

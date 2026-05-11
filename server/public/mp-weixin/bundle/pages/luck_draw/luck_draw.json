@@ -1,0 +1,14 @@
+{
+  "navigationBarTitleText": "积分抽奖",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "u-sticky": "/components/uview-ui/components/u-sticky/u-sticky",
+    "u-navbar": "/components/uview-ui/components/u-navbar/u-navbar",
+    "u-notice-bar": "/components/uview-ui/components/u-notice-bar/u-notice-bar",
+    "u-popup": "/components/uview-ui/components/u-popup/u-popup",
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon",
+    "page-status": "/components/page-status/page-status",
+    "u-empty": "/components/uview-ui/components/u-empty/u-empty",
+    "my-turntable": "/bundle/components/my-turntable/my-turntable"
+  }
+}

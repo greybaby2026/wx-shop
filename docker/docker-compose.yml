@@ -1,0 +1,68 @@
+version: '3'
+
+networks:
+  likeshop:
+    driver: bridge
+
+services:
+
+  nginx:
+    container_name: likeshop-nginx
+    image: nginx:1.23.1
+    restart: always
+    depends_on:
+      - "php"
+    volumes:
+      - ../server:/likeshop/server
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+      - ./log/nginx/logs:/logs
+    networks:
+      - likeshop
+    ports:
+      - "80:80"
+
+
+
+
+  php:
+    container_name: likeshop-php
+    image: likeshop/php:8.0.30.1-fpm
+    restart: always
+    working_dir: /likeshop/server
+    volumes:
+      - ../server:/likeshop/server
+      - ./config/supervisor/supervisord.ini:/etc/supervisor/supervisord.ini
+      - ./config/crontab/crontab.init:/etc/cron.d/crontab.ini
+    networks:
+      - likeshop
+    ports:
+      - "9000:9000"
+
+
+  mysql:
+    container_name: likeshop-mysql
+    #image: mysql:5.7.29 #X86架构
+    image: amd64/mysql:5.7.29
+    #image: amd64/mysql:5.7.29 #arm架构M1、M2x芯片专用
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./data/mysql5.7.29/lib:/var/lib/mysql
+      - ./config/mysql/mysqld.cnf:/etc/mysql/my.cnf
+    networks:
+      - likeshop
+    ports:
+      - "3306:3306"
+
+
+  redis:
+    container_name: likeshop-redis
+    image: redis:7.0.4
+    restart: always
+    volumes:
+      - ./data/redis:/data
+    networks:
+      - likeshop
+    ports:
+      - "6379:6379"

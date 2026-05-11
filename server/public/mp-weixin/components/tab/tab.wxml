@@ -1,0 +1,1 @@
+<view class="{{[(active)?'active':'',(!active)?'inactive':'',(true)?'tab':'']}}" style="{{(shouldShow?'':'display: none;')}}"><block wx:if="{{shouldRender}}"><slot></slot></block></view>

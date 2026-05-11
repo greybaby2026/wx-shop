@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "分销订单",
+  "usingComponents": {
+    "tabs": "/components/tabs/tabs",
+    "tab": "/components/tab/tab",
+    "spread-order": "/bundle/components/spread-order/spread-order"
+  }
+}

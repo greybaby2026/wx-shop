@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "usingComponents": {
+    "img-list": "/components/widgets/category/img-list",
+    "left-aside": "/components/widgets/category/left-aside",
+    "goods": "/components/widgets/category/goods"
+  }
+}

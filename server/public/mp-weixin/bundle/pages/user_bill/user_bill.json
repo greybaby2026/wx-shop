@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "账户明细",
+  "usingComponents": {
+    "u-tabs": "/components/uview-ui/components/u-tabs/u-tabs",
+    "mescroll-uni": "/components/mescroll-uni/mescroll-uni"
+  }
+}

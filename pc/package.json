@@ -1,0 +1,30 @@
+{
+    "name": "pc",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "dotenv -e .env.development nuxt",
+        "build": "dotenv -e .env.production nuxt build",
+        "start": "dotenv -e .env.production nuxt start",
+        "generate": "dotenv -e .env.production nuxt generate"
+    },
+    "dependencies": {
+        "@nuxtjs/axios": "^5.13.6",
+        "@nuxtjs/style-resources": "^1.2.1",
+        "cookieparser": "^0.1.0",
+        "core-js": "^3.15.1",
+        "dotenv": "^16.5.0",
+        "element-ui": "^2.15.2",
+        "js-cookie": "^3.0.1",
+        "nuxt": "^2.15.7",
+        "qrcodejs2": "0.0.2",
+        "swiper": "^5.2.0",
+        "vue-awesome-swiper": "^4.1.1",
+        "vue-qr": "4.0.9"
+    },
+    "devDependencies": {
+        "dotenv-cli": "^8.0.0",
+        "sass": "~1.32.8",
+        "sass-loader": "10"
+    }
+}

@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["components/widgets/category/one"],{"5dc5":function(n,t,e){"use strict";e.r(t);var o=e("8a6e"),c=e("b2c3");for(var u in c)["default"].indexOf(u)<0&&function(n){e.d(t,n,(function(){return c[n]}))}(u);e("a3c7");var a=e("828b"),i=Object(a["a"])(c["default"],o["b"],o["c"],!1,null,"10d9a646",null,!1,o["a"],void 0);t["default"]=i.exports},6899:function(n,t,e){"use strict";(function(n){var o=e("47a9");Object.defineProperty(t,"__esModule",{value:!0}),t.default=void 0;var c=o(e("1f7b")),u=(e("879f"),o(e("8a0a"))),a={mixins:[c.default,u.default],components:{leftAside:function(){e.e("components/widgets/category/left-aside").then(function(){return resolve(e("7646"))}.bind(null,e)).catch(e.oe)},goods:function(){e.e("components/widgets/category/goods").then(function(){return resolve(e("9616"))}.bind(null,e)).catch(e.oe)}},props:{},data:function(){return{}},methods:{handleClick:function(t){n.navigateTo({url:"/bundle/pages/category/category?id="+t})}},computed:{},created:function(){}};t.default=a}).call(this,e("df3c")["default"])},"6bb8":function(n,t,e){},"8a6e":function(n,t,e){"use strict";e.d(t,"b",(function(){return c})),e.d(t,"c",(function(){return u})),e.d(t,"a",(function(){return o}));var o={uIcon:function(){return e.e("components/uview-ui/components/u-icon/u-icon").then(e.bind(null,"adc7"))}},c=function(){var n=this.$createElement,t=(this._self._c,this.lists.length);this.$mp.data=Object.assign({},{$root:{g0:t}})},u=[]},a3c7:function(n,t,e){"use strict";var o=e("6bb8"),c=e.n(o);c.a},b2c3:function(n,t,e){"use strict";e.r(t);var o=e("6899"),c=e.n(o);for(var u in o)["default"].indexOf(u)<0&&function(n){e.d(t,n,(function(){return o[n]}))}(u);t["default"]=c.a}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'components/widgets/category/one-create-component',
+    {
+        'components/widgets/category/one-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('df3c')['createComponent'](__webpack_require__("5dc5"))
+        })
+    },
+    [['components/widgets/category/one-create-component']]
+]);

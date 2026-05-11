@@ -1,0 +1,1 @@
+<widget-root vue-id="7b364882-1" styles="{{styles}}" class="data-v-69ca91a7" bind:__l="__l" vue-slots="{{['default']}}"><view class="separate data-v-69ca91a7"><view class="line data-v-69ca91a7" style="{{'border-color:'+(styles.line_color)+';'+('border-style:'+(content.separate)+';')}}"></view></view></widget-root>

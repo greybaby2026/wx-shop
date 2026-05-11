@@ -1,0 +1,1 @@
+.uploader-container .uplader-upload{position:relative;width:160rpx;height:160rpx;padding-top:30rpx;text-align:center;margin:11rpx;border:2px dashed #e5e5e5;background-color:#fff}.uploader-container .uplader-upload > view{color:#bbb}

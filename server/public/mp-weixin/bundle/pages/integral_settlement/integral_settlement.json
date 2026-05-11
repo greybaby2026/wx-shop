@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "积分订单结算",
+  "usingComponents": {
+    "address-card": "/components/address-card/address-card",
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "price": "/components/price/price",
+    "u-field": "/components/uview-ui/components/u-field/u-field",
+    "page-status": "/components/page-status/page-status",
+    "u-empty": "/components/uview-ui/components/u-empty/u-empty"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "navigationBarTitleText": "我的",
+  "navigationStyle": "custom",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "w-userinfo": "/components/widgets/userinfo/userinfo",
+    "w-userorder": "/components/widgets/userorder/userorder",
+    "w-userserve": "/components/widgets/userserve/userserve",
+    "w-goodsrecom": "/components/widgets/goodsrecom/goodsrecom",
+    "tabbar": "/components/tabbar/tabbar"
+  }
+}

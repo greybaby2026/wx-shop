@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "在线客服",
+  "usingComponents": {
+    "u-loading": "/components/uview-ui/components/u-loading/u-loading",
+    "price": "/components/price/price",
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon",
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "emoji": "/bundle/components/emoji/emoji"
+  }
+}

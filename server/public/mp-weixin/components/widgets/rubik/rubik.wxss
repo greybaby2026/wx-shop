@@ -1,0 +1,3 @@
+.data-v-507a04bc:export{red_theme:#ff2c3c;orange_theme:#f7971e;pink_theme:#fa444d;gold_theme:#e0a356;blue_theme:#2f80ed;green_theme:#2ec840}.rubik .rubik-item2.data-v-507a04bc{display:flex}.rubik .rubik-item2 .item-image.data-v-507a04bc{flex:1 1 auto;width:50%}.rubik .rubik-item3.data-v-507a04bc{display:flex}.rubik .rubik-item3 .item-image.data-v-507a04bc{flex:1 1 auto;width:33.3%}.rubik .rubik-item4.data-v-507a04bc,
+.rubik .rubik-item6.data-v-507a04bc{position:relative;width:100%;height:375rpx}.rubik .rubik-item4 .item-image.data-v-507a04bc,
+.rubik .rubik-item6 .item-image.data-v-507a04bc{position:absolute}.rubik .rubik-item5.data-v-507a04bc{display:flex;flex-wrap:wrap}.rubik .rubik-item5 .item-image.data-v-507a04bc{flex:1 1 auto;width:50%;height:188rpx}

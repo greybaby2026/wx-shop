@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "注销账号",
+  "usingComponents": {
+    "u-popup": "/components/uview-ui/components/u-popup/u-popup",
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon",
+    "u-checkbox": "/components/uview-ui/components/u-checkbox/u-checkbox",
+    "u-loading": "/components/uview-ui/components/u-loading/u-loading"
+  }
+}

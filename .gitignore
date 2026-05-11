@@ -1,0 +1,12 @@
+/server/runtime/
+/server/public/uploads/
+/server/vendor/
+/uniapp/node_modules/
+/uniapp/unpackage/
+/uniapp/dist/
+/web/node_modules/
+/web/dist/
+*.log
+.env
+.node_modules
+/新建文件夹2/

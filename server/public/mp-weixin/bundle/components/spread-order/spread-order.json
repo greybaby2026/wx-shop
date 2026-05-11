@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "usingComponents": {
+    "mescroll-uni": "/components/mescroll-uni/mescroll-uni",
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "price": "/components/price/price"
+  }
+}

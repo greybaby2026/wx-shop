@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "提现",
+  "usingComponents": {
+    "u-tabs": "/components/uview-ui/components/u-tabs/u-tabs",
+    "u-field": "/components/uview-ui/components/u-field/u-field",
+    "uploader": "/components/uploader/uploader"
+  }
+}

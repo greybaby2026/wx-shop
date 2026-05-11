@@ -1,0 +1,26 @@
+{
+  "navigationBarTitleText": "微页面",
+  "usingComponents": {
+    "lazy-component": "/components/lazy-component/lazy-component",
+    "w-search": "/components/widgets/search/search",
+    "w-navigation": "/components/widgets/navigation/navigation",
+    "w-banner": "/components/widgets/banner/banner",
+    "w-title": "/components/widgets/title/title",
+    "w-rubik": "/components/widgets/rubik/rubik",
+    "w-notice": "/components/widgets/notice/notice",
+    "w-blank": "/components/widgets/blank/blank",
+    "w-separate": "/components/widgets/separate/separate",
+    "w-goodsgroup": "/components/widgets/goodsgroup/goodsgroup",
+    "w-tabs": "/components/widgets/tabs/tabs",
+    "w-presell": "/components/widgets/presell/presell",
+    "w-hotarea": "/components/widgets/hotarea/hotarea",
+    "w-coupon": "/components/widgets/coupon/coupon",
+    "w-seckill": "/components/widgets/seckill/seckill",
+    "w-spellgroup": "/components/widgets/spellgroup/spellgroup",
+    "w-video": "/components/widgets/video/video",
+    "w-graphic": "/components/widgets/graphic/graphic",
+    "w-editor": "/components/widgets/editor/editor",
+    "w-mnplive": "/components/widgets/mnplive/mnplive",
+    "tabbar": "/components/tabbar/tabbar"
+  }
+}

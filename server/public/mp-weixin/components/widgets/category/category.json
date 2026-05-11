@@ -1,0 +1,15 @@
+{
+  "component": true,
+  "usingComponents": {
+    "one": "/components/widgets/category/one",
+    "two": "/components/widgets/category/two",
+    "three": "/components/widgets/category/three",
+    "four": "/components/widgets/category/four",
+    "five": "/components/widgets/category/five",
+    "six": "/components/widgets/category/six",
+    "seven": "/components/widgets/category/seven",
+    "eight": "/components/widgets/category/eight",
+    "night": "/components/widgets/category/night",
+    "ten": "/components/widgets/category/ten"
+  }
+}

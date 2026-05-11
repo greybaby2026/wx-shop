@@ -1,0 +1,13 @@
+{
+  "navigationBarTitleText": "搜索",
+  "usingComponents": {
+    "u-sticky": "/components/uview-ui/components/u-sticky/u-sticky",
+    "u-search": "/components/uview-ui/components/u-search/u-search",
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon",
+    "u-loading": "/components/uview-ui/components/u-loading/u-loading",
+    "sort-icon": "/components/sort-icon/sort-icon",
+    "goods-card": "/components/goods-card/goods-card",
+    "u-popup": "/components/uview-ui/components/u-popup/u-popup",
+    "u-input": "/components/uview-ui/components/u-input/u-input"
+  }
+}

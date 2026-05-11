@@ -1,0 +1,79 @@
+
+graph TD
+    Start[开始] --> EarnReward[1. 用户获得佣金奖励]
+    
+    EarnReward --> UserApply[2. 用户申请提现]
+    
+    UserApply --> UserInfo[用户填写信息]
+    UserInfo --> RealName[真实姓名]
+    UserInfo --> WithdrawAmount[提现金额]
+    UserInfo --> CheckBalance[校验可提现余额]
+    
+    CheckBalance --> CreateRecord[创建提现记录,状态=待提现]
+    CreateRecord --> DeductBalance[扣除用户可提现余额]
+    DeductBalance --> LogAccount[记录账户流水]
+    
+    DeductBalance --> AdminCheck[3. 管理员审核]
+    AdminCheck --> AdminPass{审核通过?}
+    
+    AdminPass -- 否 --> Reject[拒绝申请]
+    Reject --> ReturnBalance[退回扣除的余额]
+    Reject --> UpdateStatusFail[状态=提现失败]
+    
+    AdminPass -- 是 --> CheckTransferMode{判断转账方式}
+    
+    CheckTransferMode -- V2企业付款 --> V2Logic[企业付款到零钱]
+    CheckTransferMode -- V3商家转账 --> V3Logic[商家转账到零钱]
+    
+    V2Logic --> CallWechatV2[调用微信V2接口企业付款]
+    CallWechatV2 --> CheckV2Result{微信返回结果}
+    
+    CheckV2Result -- result_code=SUCCESS --> V2Success[直接到账,无需确认]
+    V2Success --> UpdateV2Success[状态=提现成功]
+    
+    CheckV2Result -- result_code=FAIL --> V2Fail[转账失败]
+    V2Fail --> ReturnV2Balance[退回用户余额]
+    V2Fail --> UpdateV2Fail[状态=提现失败]
+    
+    V3Logic --> CallWechatV3[调用微信V3接口商家转账]
+    CallWechatV3 --> CheckV3Submit{微信受理?}
+    
+    CheckV3Submit -- 否 --> V3SubmitFail[受理失败,退回余额]
+    V3SubmitFail --> UpdateV3StatusFail[状态=提现失败]
+    
+    CheckV3Submit -- 是 --> UpdateV3Ing[状态=提现中]
+    UpdateV3Ing --> SavePayDesc[保存微信返回批次号]
+    SavePayDesc --> NotifyUser[推送消息通知用户]
+    
+    SavePayDesc --> UserConfirm[4. 用户确认收款]
+    UserConfirm --> CheckWechatStatus{先查询微信实际状态}
+    
+    CheckWechatStatus -- 未到账 --> BlockConfirm[阻止确认,提示用户等待]
+    CheckWechatStatus -- 已到账 --> V3Success[确认收款]
+    
+    V3Success --> UpdateV3StatusSuccess[状态=提现成功]
+    V3Success --> UpdatePaymentInfo[保存微信明细单号/支付时间]
+    V3Success --> LogSuccess[记录成功日志]
+    
+    UpdateV2Success --> End
+    UpdateV2Fail --> End
+    UpdateV3StatusFail --> End
+    UpdateV3StatusSuccess --> End
+    UpdateStatusFail --> End
+    BlockConfirm --> UserWait[用户等待后再次尝试]
+    UserWait --> UserConfirm
+    
+    End[结束]
+    
+    %% 样式设置
+    classDef user fill:#e1f5ff,stroke:#2196f3,stroke-width:2px;
+    classDef admin fill:#fff3e0,stroke:#ff9800,stroke-width:2px;
+    classDef system fill:#e8f5e9,stroke:#4caf50,stroke-width:2px;
+    classDef wechat fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px;
+    classDef end fill:#ffebee,stroke:#f44336,stroke-width:2px;
+    
+    class EarnReward,UserApply,UserInfo,RealName,WithdrawAmount,UserConfirm,UserWait user;
+    class AdminCheck,AdminPass,Reject admin;
+    class CheckBalance,CreateRecord,DeductBalance,LogAccount,ReturnBalance,UpdateStatusFail,CheckTransferMode,V2Logic,V3Logic,UpdateV2Ing,SavePayDesc,NotifyUser,CheckWechatStatus,BlockConfirm,V3Success,UpdateV3StatusSuccess,UpdatePaymentInfo,LogSuccess system;
+    class CallWechatV2,CheckV2Result,V2Success,UpdateV2Success,V2Fail,ReturnV2Balance,UpdateV2Fail,CallWechatV3,CheckV3Submit,V3SubmitFail,UpdateV3StatusFail wechat;
+    class End end;

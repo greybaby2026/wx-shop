@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "核销详情",
+  "usingComponents": {
+    "goods-card": "/components/goods-card/goods-card",
+    "u-modal": "/components/uview-ui/components/u-modal/u-modal",
+    "page-status": "/components/page-status/page-status",
+    "u-empty": "/components/uview-ui/components/u-empty/u-empty"
+  }
+}

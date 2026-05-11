@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "消息中心",
+  "usingComponents": {
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "loading-view": "/components/loading-view/loading-view"
+  }
+}

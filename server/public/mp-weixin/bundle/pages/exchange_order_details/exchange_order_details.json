@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "兑换订单详情",
+  "usingComponents": {
+    "address-card": "/components/address-card/address-card",
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "price": "/components/price/price",
+    "page-status": "/components/page-status/page-status",
+    "u-empty": "/components/uview-ui/components/u-empty/u-empty"
+  }
+}

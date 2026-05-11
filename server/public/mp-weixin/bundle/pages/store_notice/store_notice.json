@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "商城公告",
+  "usingComponents": {
+    "mescroll-uni": "/components/mescroll-uni/mescroll-uni",
+    "section-card": "/components/section-card/section-card"
+  }
+}

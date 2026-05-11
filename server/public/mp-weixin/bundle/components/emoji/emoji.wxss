@@ -1,0 +1,1 @@
+.emoji-lists{display:flex;flex-wrap:wrap;padding:20rpx}.emoji-lists .emoji-item{width:12.5%;text-align:center;padding:10rpx 0;-webkit-transform:scale(1.2);transform:scale(1.2)}

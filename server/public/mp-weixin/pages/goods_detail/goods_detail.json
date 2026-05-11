@@ -1,0 +1,22 @@
+{
+  "navigationBarTitleText": "商品详情",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "navbar": "/components/navbar/navbar",
+    "bubble": "/components/bubble/bubble",
+    "goods-swiper": "/components/goods-swiper/goods-swiper",
+    "price": "/components/price/price",
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon",
+    "u-popup": "/components/uview-ui/components/u-popup/u-popup",
+    "coupon-card": "/components/coupon-card/coupon-card",
+    "u-empty": "/components/uview-ui/components/u-empty/u-empty",
+    "goods-spec": "/components/goods-spec/goods-spec",
+    "w-reviews": "/components/widgets/reviews/reviews",
+    "w-goodsrecom": "/components/widgets/goodsrecom/goodsrecom",
+    "u-parse": "/components/uview-ui/components/u-parse/u-parse",
+    "u-badge": "/components/uview-ui/components/u-badge/u-badge",
+    "share-popup": "/components/share-popup/share-popup",
+    "page-status": "/components/page-status/page-status",
+    "u-back-top": "/components/uview-ui/components/u-back-top/u-back-top"
+  }
+}

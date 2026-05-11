@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "月度账单明细",
+  "usingComponents": {
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "price": "/components/price/price"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "会员中心",
+  "usingComponents": {
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "loading-view": "/components/loading-view/loading-view"
+  }
+}

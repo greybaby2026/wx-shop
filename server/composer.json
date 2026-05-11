@@ -1,0 +1,74 @@
+{
+    "name": "topthink/think",
+    "description": "the new thinkphp framework",
+    "type": "project",
+    "keywords": [
+        "framework",
+        "thinkphp",
+        "ORM"
+    ],
+    "homepage": "http://thinkphp.cn/",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "liu21st",
+            "email": "liu21st@gmail.com"
+        },
+        {
+            "name": "yunwuxin",
+            "email": "448901948@qq.com"
+        }        
+    ],
+    "require": {
+        "php": ">=8.0",
+        "topthink/framework": "^6.0.0",
+        "topthink/think-orm": "^2.0",
+        "topthink/think-multi-app": "^1.0",
+        "phpoffice/phpspreadsheet": "^1.18",
+        "topthink/think-view": "^1.0",
+        "ext-json": "*",
+        "qiniu/php-sdk": "^7.4",
+        "overtrue/wechat": "^5.0",
+        "alibabacloud/client": "^1.5",
+        "aliyuncs/oss-sdk-php": "^2.4",
+        "alipaysdk/easysdk": "^2.2",
+        "rmccue/requests": "^1.8",
+        "dragonmantank/cron-expression": "^3.1",
+        "tencentcloud/tencentcloud-sdk-php": "^3.0",
+        "yly-openapi/yly-openapi-sdk": "v1.0.2",
+        "bacon/bacon-qr-code": "^2.0",
+        "qcloud/cos-sdk-v5": "^2.4",
+        "topthink/think-swoole": "3.1.3",
+        "ext-curl": "*",
+        "ext-openssl": "*",
+        "ext-mbstring": "*",
+        "ext-bcmath": "*",
+        "ext-sodium": "*",
+        "yansongda/pay": "^3.7",
+        "hyperf/pimple": "~2.2.0",
+        "fukuball/jieba-php": "^0.34.0"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^4.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "app\\": "app"
+        },
+        "psr-0": {
+            "": "extend/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "easywechat-composer/easywechat-composer": false
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php think service:discover",
+            "@php think vendor:publish"
+        ]
+    }
+}

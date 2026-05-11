@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "提现详情",
+  "usingComponents": {
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon",
+    "price": "/components/price/price",
+    "u-image": "/components/uview-ui/components/u-image/u-image"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "u-row-notice": "/components/uview-ui/components/u-row-notice/u-row-notice",
+    "u-column-notice": "/components/uview-ui/components/u-column-notice/u-column-notice"
+  }
+}

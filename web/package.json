@@ -1,0 +1,99 @@
+{
+    "name": "likeshopb2cplus",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "serve": "vue-cli-service serve",
+        "build": "vue-cli-service build",
+        "lint": "vue-cli-service lint --fix",
+        "prettier": "prettier --write src",
+        "fix-memory-limit": "cross-env LIMIT=3072 increase-memory-limit"
+    },
+    "dependencies": {
+        "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
+        "@babel/plugin-proposal-optional-chaining": "^7.21.0",
+        "caniuse-lite": "^1.0.30001412",
+        "core-js": "^3.6.5",
+        "cross-env": "^5.0.5",
+        "echarts": "^5.1.2",
+        "element-ui": "^2.4.5",
+        "increase-memory-limit": "^1.0.3",
+        "nprogress": "^0.2.0",
+        "umy-ui": "^1.1.6",
+        "vue": "^2.6.11",
+        "vue-class-component": "^7.2.3",
+        "vue-drag-resize": "^1.5.4",
+        "vue-echarts": "^6.0.0-rc.6",
+        "vue-property-decorator": "^9.1.2",
+        "vue-qr": "^4.0.9",
+        "vue-router": "^3.2.0",
+        "vuedraggable": "^2.24.3",
+        "vuex": "^3.4.0",
+        "vuex-class": "^0.3.2",
+        "vuex-persist": "^3.1.3",
+        "wangeditor": "^4.7.5"
+    },
+    "typings": "src/shims-type.d.ts",
+    "devDependencies": {
+        "@types/nprogress": "^0.2.0",
+        "@typescript-eslint/eslint-plugin": "^4.18.0",
+        "@typescript-eslint/parser": "^4.18.0",
+        "@vue/cli-plugin-babel": "^4.4.6",
+        "@vue/cli-plugin-eslint": "^4.4.6",
+        "@vue/cli-plugin-router": "~4.5.0",
+        "@vue/cli-plugin-typescript": "~4.5.0",
+        "@vue/cli-plugin-vuex": "~4.5.0",
+        "@vue/cli-service": "~4.5.0",
+        "@vue/composition-api": "^1.0.0-rc.13",
+        "@vue/eslint-config-prettier": "^7.0.0",
+        "@vue/eslint-config-standard": "^5.1.2",
+        "@vue/eslint-config-typescript": "^7.0.0",
+        "axios": "^0.21.1",
+        "eslint": "^7.32.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-plugin-import": "^2.20.2",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-prettier": "^3.4.1",
+        "eslint-plugin-promise": "^4.2.1",
+        "eslint-plugin-standard": "^4.0.0",
+        "eslint-plugin-vue": "^7.2.0",
+        "lint-staged": "^9.5.0",
+        "prettier": "^2.5.1",
+        "sass": "1.26.5",
+        "sass-loader": "^8.0.2",
+        "typescript": "~4.1.5",
+        "vue-cli-plugin-axios": "0.0.4",
+        "vue-cli-plugin-element": "~1.0.1",
+        "vue-template-compiler": "2.6.14",
+        "webpack": "4.46.0"
+    },
+    "eslintConfig": {
+        "root": true,
+        "env": {
+            "node": true
+        },
+        "extends": [
+            "plugin:vue/essential",
+            "@vue/standard",
+            "@vue/typescript/recommended"
+        ],
+        "parserOptions": {
+            "ecmaVersion": 2020
+        },
+        "rules": {}
+    },
+    "browserslist": [
+        "> 1%",
+        "last 2 versions",
+        "not dead"
+    ],
+    "gitHooks": {
+        "pre-commit": "lint-staged"
+    },
+    "lint-staged": {
+        "*.{js,jsx,vue,ts,tsx}": [
+            "vue-cli-service lint",
+            "git add"
+        ]
+    }
+}

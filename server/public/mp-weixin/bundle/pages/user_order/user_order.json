@@ -1,0 +1,12 @@
+{
+  "navigationBarTitleText": "订单列表",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "navbar": "/components/navbar/navbar",
+    "u-tabs": "/components/uview-ui/components/u-tabs/u-tabs",
+    "mescroll-uni": "/components/mescroll-uni/mescroll-uni",
+    "goods-card": "/components/goods-card/goods-card",
+    "price": "/components/price/price",
+    "u-count-down": "/components/uview-ui/components/u-count-down/u-count-down"
+  }
+}

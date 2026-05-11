@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商家转账到零钱流程交互图 - 将军世家</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+        #mermaid-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .legend {
+            max-width: 1200px;
+            margin: 20px auto;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            border: 2px solid;
+        }
+        .user { background: #e1f5ff; border-color: #2196f3; }
+        .admin { background: #fff3e0; border-color: #ff9800; }
+        .system { background: #e8f5e9; border-color: #4caf50; }
+        .wechat { background: #f3e5f5; border-color: #9c27b0; }
+        .export-hint {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>商家转账到零钱流程交互图</h1>
+        <p>将军世家小程序 - 申请商家转账提额专用</p>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color user"></div> 用户操作</div>
+        <div class="legend-item"><div class="legend-color admin"></div> 管理员审核</div>
+        <div class="legend-item"><div class="legend-color system"></div> 系统处理</div>
+        <div class="legend-item"><div class="legend-color wechat"></div> 微信接口</div>
+    </div>
+
+    <div id="mermaid-container">
+        <pre class="mermaid">
+graph TD
+    Start((开始)) --> EarnReward
+    EarnReward[用户获得佣金奖励] --> UserApply
+    UserApply[用户申请提现] --> UserInfo
+    UserInfo[填写真实姓名和提现金额] --> CheckBalance
+    CheckBalance[校验可提现余额] --> CreateRecord
+    CreateRecord[创建提现记录] --> DeductBalance
+    DeductBalance[扣除用户可提现余额] --> LogAccount
+    LogAccount[记录账户流水] --> AdminCheck
+    AdminCheck[管理员审核] --> AdminPass{审核通过}
+
+    AdminPass -->|否| Reject
+    Reject[拒绝申请] --> ReturnBalance
+    ReturnBalance[退回扣除的余额] --> UpdateStatusFail
+    UpdateStatusFail[状态=提现失败] --> End
+
+    AdminPass -->|是| CheckTransferMode{判断转账方式}
+
+    CheckTransferMode -->|V2企业付款| V2Logic
+    V2Logic[企业付款到零钱] --> CallWechatV2
+    CallWechatV2[调用微信V2接口] --> CheckV2Result{微信返回结果}
+
+    CheckV2Result -->|成功| V2Success
+    V2Success[直接到账,无需确认] --> UpdateV2Success
+    UpdateV2Success[状态=提现成功] --> End
+
+    CheckV2Result -->|失败| V2Fail
+    V2Fail[转账失败] --> ReturnV2Balance
+    ReturnV2Balance[退回用户余额] --> UpdateV2Fail
+    UpdateV2Fail[状态=提现失败] --> End
+
+    CheckTransferMode -->|V3商家转账| V3Logic
+    V3Logic[商家转账到零钱] --> CallWechatV3
+    CallWechatV3[调用微信V3接口] --> CheckV3Submit{微信受理}
+
+    CheckV3Submit -->|否| V3SubmitFail
+    V3SubmitFail[受理失败,退回余额] --> UpdateV3StatusFail
+    UpdateV3StatusFail[状态=提现失败] --> End
+
+    CheckV3Submit -->|是| UpdateV3Ing
+    UpdateV3Ing[状态=提现中] --> SavePayDesc
+    SavePayDesc[保存微信批次号] --> NotifyUser
+    NotifyUser[推送消息通知用户] --> UserConfirm
+    UserConfirm[用户确认收款] --> CheckWechatStatus{查询微信实际状态}
+
+    CheckWechatStatus -->|未到账| BlockConfirm
+    BlockConfirm[阻止确认,提示等待] --> UserWait
+    UserWait[用户等待后再次尝试] --> UserConfirm
+
+    CheckWechatStatus -->|已到账| V3Success
+    V3Success[确认收款] --> UpdateV3StatusSuccess
+    UpdateV3StatusSuccess[状态=提现成功] --> UpdatePaymentInfo
+    UpdatePaymentInfo[保存微信明细单号] --> LogSuccess
+    LogSuccess[记录成功日志] --> End
+
+    End((结束))
+
+    class EarnReward,UserApply,UserInfo,UserConfirm,UserWait user
+    class AdminCheck,AdminPass,Reject admin
+    class CheckBalance,CreateRecord,DeductBalance,LogAccount,ReturnBalance,UpdateStatusFail,CheckTransferMode,V2Logic,V3Logic,UpdateV3Ing,SavePayDesc,NotifyUser,CheckWechatStatus,BlockConfirm,V3Success,UpdateV3StatusSuccess,UpdatePaymentInfo,LogSuccess system
+    class CallWechatV2,CheckV2Result,V2Success,UpdateV2Success,V2Fail,ReturnV2Balance,UpdateV2Fail,CallWechatV3,CheckV3Submit,V3SubmitFail,UpdateV3StatusFail wechat
+
+    classDef user fill:#e1f5ff,stroke:#2196f3,stroke-width:2px
+    classDef admin fill:#fff3e0,stroke:#ff9800,stroke-width:2px
+    classDef system fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
+    classDef wechat fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+        </pre>
+    </div>
+
+    <div class="export-hint">
+        <p>提示：可以在浏览器使用截图工具直接截取整个流程图</p>
+        <p>或者使用浏览器的打印功能（Ctrl+P）导出为PDF</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html>

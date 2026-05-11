@@ -1,0 +1,1 @@
+<view class="lazy-component"><view class="lazy-contain"><block wx:if="{{isInit}}"><view><slot></slot></view></block><block wx:else><view><slot name="skeleton"></slot></view></block></view></view>

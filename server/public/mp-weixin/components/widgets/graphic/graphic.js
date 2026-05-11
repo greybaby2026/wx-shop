@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["components/widgets/graphic/graphic"],{"41eb":function(t,e,n){"use strict";n.d(e,"b",(function(){return o})),n.d(e,"c",(function(){return u})),n.d(e,"a",(function(){return r}));var r={widgetRoot:function(){return n.e("components/widget-root/widget-root").then(n.bind(null,"1b52"))},uImage:function(){return n.e("components/uview-ui/components/u-image/u-image").then(n.bind(null,"cabf"))}},o=function(){var t=this,e=t.$createElement,n=(t._self._c,t.$px2rpx(t.styles.border_radius_top)),r=t.$px2rpx(t.styles.border_radius_top),o=t.$px2rpx(t.styles.border_radius_bottom),u=t.$px2rpx(t.styles.border_radius_bottom),a=t.__map(t.content.data,(function(e,n){var r=t.__get_orig(e),o=t.$getImageUri(e.url);return{$orig:r,m4:o}}));t.$mp.data=Object.assign({},{$root:{m0:n,m1:r,m2:o,m3:u,l0:a}})},u=[]},"5f2d":function(t,e,n){"use strict";var r=n("980f"),o=n.n(r);o.a},"784b":function(t,e,n){"use strict";n.r(e);var r=n("d0fd"),o=n.n(r);for(var u in r)["default"].indexOf(u)<0&&function(t){n.d(e,t,(function(){return r[t]}))}(u);e["default"]=o.a},"980f":function(t,e,n){},a379:function(t,e,n){"use strict";n.r(e);var r=n("41eb"),o=n("784b");for(var u in o)["default"].indexOf(u)<0&&function(t){n.d(e,t,(function(){return o[t]}))}(u);n("5f2d");var a=n("828b"),i=Object(a["a"])(o["default"],r["b"],r["c"],!1,null,"6a0aa16a",null,!1,r["a"],void 0);e["default"]=i.exports},d0fd:function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0;var r=n("2947"),o={props:{content:{type:[Object,Array]},styles:{type:[Object,Array]}},data:function(){return{}},methods:{handleClick:function(t){(0,r.navigateTo)(t)}},computed:{}};e.default=o}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'components/widgets/graphic/graphic-create-component',
+    {
+        'components/widgets/graphic/graphic-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('df3c')['createComponent'](__webpack_require__("a379"))
+        })
+    },
+    [['components/widgets/graphic/graphic-create-component']]
+]);

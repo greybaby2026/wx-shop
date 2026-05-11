@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "usingComponents": {
+    "widget-root": "/components/widget-root/widget-root",
+    "u-tag": "/components/uview-ui/components/u-tag/u-tag",
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon"
+  }
+}

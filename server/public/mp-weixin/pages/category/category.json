@@ -1,0 +1,12 @@
+{
+  "navigationBarTitleText": "分类",
+  "disableScroll": true,
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "u-sticky": "/components/uview-ui/components/u-sticky/u-sticky",
+    "u-navbar": "/components/uview-ui/components/u-navbar/u-navbar",
+    "w-search": "/components/widgets/search/search",
+    "w-category": "/components/widgets/category/category",
+    "tabbar": "/components/tabbar/tabbar"
+  }
+}

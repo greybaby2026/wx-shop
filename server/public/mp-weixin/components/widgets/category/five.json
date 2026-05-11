@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "usingComponents": {
+    "w-banner": "/components/widgets/banner/banner",
+    "left-aside": "/components/widgets/category/left-aside",
+    "c-list": "/components/widgets/category/list"
+  }
+}

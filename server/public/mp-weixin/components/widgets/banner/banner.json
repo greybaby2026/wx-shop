@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "usingComponents": {
+    "widget-root": "/components/widget-root/widget-root",
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "indicator": "/components/indicator/indicator"
+  }
+}

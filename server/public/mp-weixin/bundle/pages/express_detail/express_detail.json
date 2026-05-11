@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "寄件详情",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "u-sticky": "/components/uview-ui/components/u-sticky/u-sticky",
+    "u-navbar": "/components/uview-ui/components/u-navbar/u-navbar",
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon",
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "price": "/components/price/price"
+  }
+}

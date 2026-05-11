@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["components/widgets/category/right"],{"0f03":function(n,t,e){"use strict";e.r(t);var o=e("433a"),i=e.n(o);for(var s in o)["default"].indexOf(s)<0&&function(n){e.d(t,n,(function(){return o[n]}))}(s);t["default"]=i.a},1879:function(n,t,e){},"22a4":function(n,t,e){"use strict";e.r(t);var o=e("b820"),i=e("0f03");for(var s in i)["default"].indexOf(s)<0&&function(n){e.d(t,n,(function(){return i[n]}))}(s);e("55b3");var r=e("828b"),u=Object(r["a"])(i["default"],o["b"],o["c"],!1,null,"4bda3111",null,!1,o["a"],void 0);t["default"]=u.exports},"433a":function(n,t,e){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default=void 0;var o={inject:["self"],props:{},data:function(){return{}},methods:{},computed:{lists:function(){return this.self.lists},selectIndex:function(){return console.log(this.self.selectIndex),this.self.selectIndex}}};t.default=o},"55b3":function(n,t,e){"use strict";var o=e("1879"),i=e.n(o);i.a},b820:function(n,t,e){"use strict";e.d(t,"b",(function(){return i})),e.d(t,"c",(function(){return s})),e.d(t,"a",(function(){return o}));var o={uIcon:function(){return e.e("components/uview-ui/components/u-icon/u-icon").then(e.bind(null,"adc7"))}},i=function(){var n=this,t=n.$createElement;n._self._c;n.$initSSP();var e=n.__map(n.lists,(function(t,e){var o=n.__get_orig(t),i=n.selectIndex==e&&t.sons?n.__map(t.sons,(function(t,e){var o=n.__get_orig(t),i={path:"/pages/goods_search/goods_search",query:{id:t.id,name:t.name}};return{$orig:o,a0:i}})):null;return"augmented"===n.$scope.data.scopedSlotsCompiler&&n.$setSSP("default",{lists:n.sitem.$orig.sons,na:n.sitem.$orig.name}),{$orig:o,l0:i}}));n.$mp.data=Object.assign({},{$root:{l1:e}}),n.$callSSP()},s=[]}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'components/widgets/category/right-create-component',
+    {
+        'components/widgets/category/right-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('df3c')['createComponent'](__webpack_require__("22a4"))
+        })
+    },
+    [['components/widgets/category/right-create-component']]
+]);

@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "usingComponents": {
+    "price": "/components/price/price",
+    "u-checkbox": "/components/uview-ui/components/u-checkbox/u-checkbox",
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon"
+  }
+}

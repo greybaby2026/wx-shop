@@ -1,0 +1,15 @@
+{
+  "navigationBarTitleText": "订单支付",
+  "usingComponents": {
+    "price": "/components/price/price",
+    "u-count-down": "/components/uview-ui/components/u-count-down/u-count-down",
+    "u-radio-group": "/components/uview-ui/components/u-radio-group/u-radio-group",
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "u-radio": "/components/uview-ui/components/u-radio/u-radio",
+    "u-loading": "/components/uview-ui/components/u-loading/u-loading",
+    "page-status": "/components/page-status/page-status",
+    "u-empty": "/components/uview-ui/components/u-empty/u-empty",
+    "u-popup": "/components/uview-ui/components/u-popup/u-popup",
+    "u-skeleton": "/components/uview-ui/components/u-skeleton/u-skeleton"
+  }
+}

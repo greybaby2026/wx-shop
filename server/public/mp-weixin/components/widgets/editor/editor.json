@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "widget-root": "/components/widget-root/widget-root",
+    "u-parse": "/components/uview-ui/components/u-parse/u-parse"
+  }
+}

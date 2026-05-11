@@ -1,0 +1,1 @@
+<widget-root vue-id="436234b8-1" styles="{{styles}}" class="data-v-2b415bc6" bind:__l="__l" vue-slots="{{['default']}}"><view class="blank _div data-v-2b415bc6" style="{{'height:'+(styles.height+'px')+';'+('background-color:'+(styles.bg_color)+';')}}"></view></widget-root>

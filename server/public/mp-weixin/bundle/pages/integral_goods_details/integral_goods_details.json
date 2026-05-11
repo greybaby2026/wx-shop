@@ -1,0 +1,16 @@
+{
+  "navigationBarTitleText": "积分兑换详情",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "navbar": "/components/navbar/navbar",
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "price": "/components/price/price",
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon",
+    "u-parse": "/components/uview-ui/components/u-parse/u-parse",
+    "u-popup": "/components/uview-ui/components/u-popup/u-popup",
+    "u-number-box": "/components/uview-ui/components/u-number-box/u-number-box",
+    "page-status": "/components/page-status/page-status",
+    "u-empty": "/components/uview-ui/components/u-empty/u-empty",
+    "u-back-top": "/components/uview-ui/components/u-back-top/u-back-top"
+  }
+}

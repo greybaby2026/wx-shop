@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "兑换订单",
+  "usingComponents": {
+    "u-tabs": "/components/uview-ui/components/u-tabs/u-tabs",
+    "mescroll-contain": "/components/mescroll-contain/mescroll-contain",
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "price": "/components/price/price"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "usingComponents": {
+    "tabs": "/components/widgets/category/tabs",
+    "c-list": "/components/widgets/category/list",
+    "goods": "/components/widgets/category/goods"
+  }
+}

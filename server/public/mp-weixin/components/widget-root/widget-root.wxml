@@ -1,0 +1,1 @@
+<view class="widget-root" style="{{'padding:'+($root.m0+'rpx '+$root.m1+'rpx '+$root.m2+'rpx')+';'+('background-color:'+(styles.root_bg_color)+';')+('border-radius:'+(styles.radius+'rpx')+';')}}"><slot></slot></view>

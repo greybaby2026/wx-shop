@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "佣金明细",
+  "usingComponents": {
+    "record-cell": "/bundle/components/record-cell/record-cell"
+  }
+}

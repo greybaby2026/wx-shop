@@ -1,0 +1,1 @@
+<view class="flex flex-col row-center muted md" style="height:90vh;"><u-image vue-id="818b537e-1" src="/static/images/shop_stop.png" width="300" height="300" bind:__l="__l"></u-image><text class="p-t-48">商城已暂停营业</text></view>

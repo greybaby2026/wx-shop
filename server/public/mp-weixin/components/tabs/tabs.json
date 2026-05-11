@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "u-sticky": "/components/uview-ui/components/u-sticky/u-sticky",
+    "u-badge": "/components/uview-ui/components/u-badge/u-badge"
+  }
+}

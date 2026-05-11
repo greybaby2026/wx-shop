@@ -1,0 +1,1 @@
+.item{padding:18rpx 30rpx;position:relative}.red_theme .amount{color:#ff2c3c}.orange_theme .amount{color:#f7971e}.pink_theme .amount{color:#fa444d}.gold_theme .amount{color:#e0a356}.blue_theme .amount{color:#2f80ed}.green_theme .amount{color:#2ec840}

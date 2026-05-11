@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["components/price/price"],{"2ca9":function(t,e,n){"use strict";n.d(e,"b",(function(){return r})),n.d(e,"c",(function(){return i})),n.d(e,"a",(function(){}));var r=function(){var t=this.$createElement;this._self._c},i=[]},"5a21":function(t,e,n){"use strict";n.r(e);var r=n("2ca9"),i=n("637f");for(var u in i)["default"].indexOf(u)<0&&function(t){n.d(e,t,(function(){return i[t]}))}(u);n("db54");var a=n("828b"),c=Object(a["a"])(i["default"],r["b"],r["c"],!1,null,"da3bcbe0",null,!1,r["a"],void 0);e["default"]=c.exports},"637f":function(t,e,n){"use strict";n.r(e);var r=n("6b2f"),i=n.n(r);for(var u in r)["default"].indexOf(u)<0&&function(t){n.d(e,t,(function(){return r[t]}))}(u);e["default"]=i.a},"6b2f":function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0}),e.default=void 0;var r=n("2947"),i={name:"Price",props:{content:{type:String|Number,required:!0},prec:{type:Number,default:2},autoPrec:{type:Boolean,default:!0},color:{type:String,default:"inherit"},mainSize:{type:String,default:"inherit"},minorSize:{type:String,default:"inherit"},lineThrough:{type:Boolean,default:!1},fontWeight:{type:String|Number,default:"normal"},prefix:{type:String,default:"￥"},suffix:{type:String,default:""}},computed:{integer:function(){return(0,r.formatPrice)({price:this.content,take:"int"})},decimals:function(){var t=(0,r.formatPrice)({price:this.content,take:"dec",prec:this.prec});return t=t%10==0?t.substr(0,t.length-1):t,this.autoPrec?1*t?"."+t:"":this.prec?"."+t:""}}};e.default=i},b1fd:function(t,e,n){},db54:function(t,e,n){"use strict";var r=n("b1fd"),i=n.n(r);i.a}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'components/price/price-create-component',
+    {
+        'components/price/price-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('df3c')['createComponent'](__webpack_require__("5a21"))
+        })
+    },
+    [['components/price/price-create-component']]
+]);

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "公告详情",
+  "usingComponents": {
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon",
+    "u-parse": "/components/uview-ui/components/u-parse/u-parse"
+  }
+}

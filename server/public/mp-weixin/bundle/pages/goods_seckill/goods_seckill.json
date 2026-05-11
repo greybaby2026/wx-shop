@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "限时秒杀",
+  "usingComponents": {
+    "u-divider": "/components/uview-ui/components/u-divider/u-divider",
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "price": "/components/price/price"
+  }
+}

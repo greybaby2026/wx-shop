@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["components/widgets/goodsgroup/goodsgroup"],{9988:function(t,o,n){"use strict";n.r(o);var e=n("ed58"),r=n("d036");for(var u in r)["default"].indexOf(u)<0&&function(t){n.d(o,t,(function(){return r[t]}))}(u);var c=n("828b"),d=Object(c["a"])(r["default"],e["b"],e["c"],!1,null,"24ef731a",null,!1,e["a"],void 0);o["default"]=d.exports},d036:function(t,o,n){"use strict";n.r(o);var e=n("e3f1"),r=n.n(e);for(var u in e)["default"].indexOf(u)<0&&function(t){n.d(o,t,(function(){return e[t]}))}(u);o["default"]=r.a},e3f1:function(t,o,n){"use strict";Object.defineProperty(o,"__esModule",{value:!0}),o.default=void 0;var e={components:{goods:function(){n.e("components/widgets/goodsgroup/goods").then(function(){return resolve(n("fab4"))}.bind(null,n)).catch(n.oe)}},props:{content:{type:[Object,Array]},styles:{type:[Object,Array]}},data:function(){return{}},methods:{navigate:function(t){this.$Router.push({path:"/pages/goods_detail/goods_detail",query:{id:t.id}})}},computed:{goods:function(){var t=this.content.data;return t.length?t:[]},btnStyle:function(){var t=this.styles,o=t.btn_bg_color,n=t.btn_color,e=t.btn_border_radius,r=t.btn_border_color,u=this.content.btn_bg_type,c={"background-color":o,color:n,"border-radius":"".concat(this.$px2rpx(e),"rpx"),"border-color":r};return 2==u&&delete c["background-color"],c}}};o.default=e},ed58:function(t,o,n){"use strict";n.d(o,"b",(function(){return r})),n.d(o,"c",(function(){return u})),n.d(o,"a",(function(){return e}));var e={widgetRoot:function(){return n.e("components/widget-root/widget-root").then(n.bind(null,"1b52"))}},r=function(){var t=this.$createElement;this._self._c},u=[]}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'components/widgets/goodsgroup/goodsgroup-create-component',
+    {
+        'components/widgets/goodsgroup/goodsgroup-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('df3c')['createComponent'](__webpack_require__("9988"))
+        })
+    },
+    [['components/widgets/goodsgroup/goodsgroup-create-component']]
+]);

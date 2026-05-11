@@ -1,0 +1,1 @@
+.label{margin:24rpx 0;width:180rpx;text-align:center}.input{width:80%}.btn{height:84rpx;margin:50rpx 24rpx 0 24rpx}.red_theme .btn{background-color:#ff2c3c}.orange_theme .btn{background-color:#f7971e}.pink_theme .btn{background-color:#fa444d}.gold_theme .btn{background-color:#e0a356}.blue_theme .btn{background-color:#2f80ed}.green_theme .btn{background-color:#2ec840}

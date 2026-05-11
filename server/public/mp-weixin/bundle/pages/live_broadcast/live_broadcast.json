@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "直播间",
+  "usingComponents": {
+    "u-image": "/components/uview-ui/components/u-image/u-image"
+  }
+}

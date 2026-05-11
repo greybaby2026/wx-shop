@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "邀请海报",
+  "usingComponents": {
+    "loading-view": "/components/loading-view/loading-view",
+    "invite-poster": "/bundle/components/invite-poster/invite-poster"
+  }
+}

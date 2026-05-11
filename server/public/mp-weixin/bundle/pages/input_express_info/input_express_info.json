@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "填写快递单号",
+  "usingComponents": {
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "price": "/components/price/price"
+  }
+}

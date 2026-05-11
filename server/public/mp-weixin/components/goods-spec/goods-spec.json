@@ -1,0 +1,10 @@
+{
+  "component": true,
+  "usingComponents": {
+    "u-popup": "/components/uview-ui/components/u-popup/u-popup",
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "price": "/components/price/price",
+    "u-number-box": "/components/uview-ui/components/u-number-box/u-number-box",
+    "u-modal": "/components/uview-ui/components/u-modal/u-modal"
+  }
+}

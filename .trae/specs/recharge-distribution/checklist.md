@@ -1,0 +1,22 @@
+# 大团长充值分销功能 - 验证清单
+
+- [x] Checkpoint 1: ls_recharge_commission 数据库表已创建，字段完整（id, sn, recharge_order_id, recharge_order_sn, user_id, from_user_id, level, ratio, recharge_amount, earnings, status, settle_time, create_time）
+- [x] Checkpoint 2: RechargeCommission 模型可正常 CRUD
+- [x] Checkpoint 3: AccountLogEnum::BW_INC_RECHARGE_COMMISSION = 405 已定义，在 BW_INC 数组中，描述正确
+- [x] Checkpoint 4: 充值分销配置项可正常读取和修改（open, first_ratio, second_ratio, max_commission）
+- [x] Checkpoint 5: 有上级用户充值后，上级 user_earnings 即时增加正确金额
+- [x] Checkpoint 6: 有二级上级用户充值后，二级上级 user_earnings 即时增加正确金额
+- [x] Checkpoint 7: 无上级用户充值后，不产生任何佣金记录
+- [x] Checkpoint 8: 充值分销开关关闭时，充值不产生佣金
+- [x] Checkpoint 9: 佣金超过上限时按上限发放
+- [x] Checkpoint 10: 佣金计算精度正确（使用 bcmath）
+- [x] Checkpoint 11: 充值佣金发放有 AccountLog 流水记录（BW_INC_RECHARGE_COMMISSION）
+- [x] Checkpoint 12: 充值佣金记录在 ls_recharge_commission 表中完整
+- [x] Checkpoint 13: 余额支付订单不创建 DistributionOrderGoods 记录
+- [x] Checkpoint 14: 微信支付订单正常创建 DistributionOrderGoods 记录
+- [x] Checkpoint 15: 支付宝支付订单正常创建 DistributionOrderGoods 记录
+- [x] Checkpoint 16: 后台可读取和修改充值分销配置
+- [x] Checkpoint 17: 后台可查看充值佣金列表（分页、筛选）
+- [x] Checkpoint 18: 充值佣金发放使用数据库事务，保证原子性
+- [x] Checkpoint 19: 佣金比例为0时不发放佣金
+- [x] Checkpoint 20: 单笔佣金上限为0时不限制

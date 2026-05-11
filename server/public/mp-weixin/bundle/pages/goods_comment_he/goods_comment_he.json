@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "全部评价",
+  "usingComponents": {
+    "mescroll-contain": "/components/mescroll-contain/mescroll-contain",
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "u-rate": "/components/uview-ui/components/u-rate/u-rate",
+    "u-empty": "/components/uview-ui/components/u-empty/u-empty"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "核销订单",
+  "usingComponents": {
+    "u-tabs": "/components/uview-ui/components/u-tabs/u-tabs",
+    "mescroll-contain": "/components/mescroll-contain/mescroll-contain",
+    "goods-card": "/components/goods-card/goods-card",
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon",
+    "u-modal": "/components/uview-ui/components/u-modal/u-modal",
+    "u-input": "/components/uview-ui/components/u-input/u-input"
+  }
+}

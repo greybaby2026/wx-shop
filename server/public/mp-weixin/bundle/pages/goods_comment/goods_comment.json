@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "评价列表",
+  "usingComponents": {
+    "u-tabs": "/components/uview-ui/components/u-tabs/u-tabs",
+    "mescroll-uni": "/components/mescroll-uni/mescroll-uni",
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "price": "/components/price/price",
+    "u-rate": "/components/uview-ui/components/u-rate/u-rate"
+  }
+}

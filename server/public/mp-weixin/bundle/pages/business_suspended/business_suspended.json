@@ -1,0 +1,6 @@
+{
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "u-image": "/components/uview-ui/components/u-image/u-image"
+  }
+}

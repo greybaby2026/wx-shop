@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "j-video": "/components/j-video/j-video",
+    "u-image": "/components/uview-ui/components/u-image/u-image"
+  }
+}

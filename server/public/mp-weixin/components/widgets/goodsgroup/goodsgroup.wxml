@@ -1,0 +1,1 @@
+<widget-root vue-id="7fe419c2-1" styles="{{styles}}" class="data-v-24ef731a" bind:__l="__l" vue-slots="{{['default']}}"><goods vue-id="{{('7fe419c2-2')+','+('7fe419c2-1')}}" content="{{content}}" styles="{{styles}}" class="data-v-24ef731a" bind:__l="__l"></goods></widget-root>

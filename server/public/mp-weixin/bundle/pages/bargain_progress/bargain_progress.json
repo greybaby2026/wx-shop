@@ -1,0 +1,17 @@
+{
+  "navigationBarTitleText": "砍价进度",
+  "navigationStyle": "custom",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "navbar": "/components/navbar/navbar",
+    "u-image": "/components/uview-ui/components/u-image/u-image",
+    "price": "/components/price/price",
+    "u-count-down": "/components/uview-ui/components/u-count-down/u-count-down",
+    "goods-spec": "/components/goods-spec/goods-spec",
+    "u-popup": "/components/uview-ui/components/u-popup/u-popup",
+    "u-icon": "/components/uview-ui/components/u-icon/u-icon",
+    "share-popup": "/components/share-popup/share-popup",
+    "page-status": "/components/page-status/page-status",
+    "u-empty": "/components/uview-ui/components/u-empty/u-empty"
+  }
+}
