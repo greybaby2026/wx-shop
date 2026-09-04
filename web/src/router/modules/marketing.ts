@@ -516,7 +516,7 @@ const routes = [
                 component: () => import('@/views/marketing/register/index.vue')
             }
         ]
-    }
+    },
 
     // 门店结算中心
     {
@@ -545,4 +545,6 @@ const routes = [
         ]
     }
 ]
+
+export default routes
 
