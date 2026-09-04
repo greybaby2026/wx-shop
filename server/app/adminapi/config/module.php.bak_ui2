@@ -115,14 +115,6 @@ return [
                     'page_path' => '/register_award/index',
                     'image'     => '/resource/image/adminapi/default/register_award.png',
                     'is_open' => true
-                ],
-                [
-                    'name'      => '门店结算',
-                    'introduce' => '跨店核销 门店货款结算',
-                    'tips'      => '',
-                    'page_path' => '/store_settlement/lists',
-                    'image'     => '/resource/image/adminapi/default/store.png',
-                    'is_open' => true
                 ]
             ],
         ],
@@ -175,6 +167,14 @@ return [
                     'introduce' => '门店自提点 核销订单',
                     'tips'      => '',
                     'page_path' => '/selffetch/selffetch_order',
+                    'image'     => '/resource/image/adminapi/default/store.png',
+                    'is_open' => true
+                ],
+                [
+                    'name'      => '门店结算',
+                    'introduce' => '跨店核销 门店货款结算',
+                    'tips'      => '',
+                    'page_path' => '/store_settlement/lists',
                     'image'     => '/resource/image/adminapi/default/store.png',
                     'is_open' => true
                 ],
