@@ -44,6 +44,12 @@ return [
         // 微信小程序 发货信息同步
         'wechat_mini_express_send_sync' => WechatMiniExpressSendSync::class,
         
-        'presell'                       => Presell::class
+        'presell'                       => Presell::class,
+
+        'ai-test' => 'app\common\command\AiTest',
+        'ai-debug' => 'app\common\command\AiDebug',
+        'wecom-test' => 'app\common\command\WecomTest',
+        'wecom-debug' => 'app\common\command\WecomDebug',
+        'kefu:daily-report' => 'app\common\command\DailyReport',
     ],
 ];

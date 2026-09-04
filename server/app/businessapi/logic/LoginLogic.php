@@ -45,11 +45,19 @@ class LoginLogic
         //返回登录信息
         $avatar = $admin->avatar ? $admin->avatar : Config::get('project.default_image.admin_avatar');
         $avatar = FileService::getFileUrl($avatar);
+        // 门店信息(0=平台账号)
+        $store = ['id' => 0, 'name' => '平台'];
+        $adminStoreId = intval(\app\common\model\Admin::where('id', $admin->id)->value('store_id') ?: 0);
+        if ($adminStoreId > 0) {
+            $shop = \app\common\model\SelffetchShop::findOrEmpty($adminStoreId);
+            $store = ['id' => $adminStoreId, 'name' => $shop->isEmpty() ? '' : $shop->name];
+        }
         return [
             'name' => $adminInfo['name'],
             'avatar' => $avatar,
             'role_name' => $adminInfo['role_name'],
             'token' => $adminInfo['token'],
+            'store' => $store,
         ];
 
     }

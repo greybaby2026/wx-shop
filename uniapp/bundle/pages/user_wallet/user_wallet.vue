@@ -24,6 +24,12 @@
                             {{walletData.user_earnings}}
                         </view>
                     </view>
+                    <view>
+                        <text class="xs m-b-10">活动余额(元)</text>
+                        <view class="xxl flex row-center">
+                            {{walletData.activity_money}}
+                        </view>
+                    </view>
                 </view>
             </view>
 

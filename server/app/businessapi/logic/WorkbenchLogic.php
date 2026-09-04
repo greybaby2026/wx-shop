@@ -37,15 +37,15 @@ use app\common\service\ConfigService;
 class WorkbenchLogic
 {
 
-    public function index()
+    public function index($storeId = 0)
     {
 
         // 今日数据
-        $today = self::today();
+        $today = self::today($storeId);
         // 待办事项
-        $pending = self::pending();
+        $pending = self::pending($storeId);
         // 近5日营业额
-        $business5 = self::business7();
+        $business5 = self::business7($storeId);
         // 近5日访客数
         $visitor5 = self::visitor7();
 
@@ -66,10 +66,21 @@ class WorkbenchLogic
      * @author Tab
      * @date 2021/9/10 17:57
      */
-    public static function pending()
+    public static function pending($storeId = 0)
     {
+        if ($storeId > 0) {
+            // 门店账号:待办改为本店待核销订单数
+            $waitShipped = Order::where([
+                ['delivery_type', '=', 2],
+                ['selffetch_shop_id', '=', $storeId],
+                ['pay_status', '=', YesNoEnum::YES],
+                ['verification_status', '=', 0],
+                ['order_status', 'in', [OrderEnum::STATUS_WAIT_DELIVERY, OrderEnum::STATUS_WAIT_RECEIVE]],
+            ])->count();
+        } else {
         // 待发货订单数
         $waitShipped = Order::where('order_status', OrderEnum::STATUS_WAIT_DELIVERY)->count();
+        }
         // 待审核售后申请
         $waitAudit = AfterSale::where('sub_status', AfterSaleEnum::SUB_STATUS_WAIT_SELLER_AGREE)->count();
         // 待审核评价
@@ -91,14 +102,20 @@ class WorkbenchLogic
      * @author Tab
      * @date 2021/9/10 17:41
      */
-    public static function today()
+    public static function today($storeId = 0)
     {
+        // 门店账号:仅统计本店自提订单
+        $orderWhere = [['pay_status', '=', YesNoEnum::YES]];
+        if ($storeId > 0) {
+            $orderWhere[] = ['delivery_type', '=', 2];
+            $orderWhere[] = ['selffetch_shop_id', '=', $storeId];
+        }
         // 营业额
-        $todayOrderAmount = Order::where('pay_status', YesNoEnum::YES)
+        $todayOrderAmount = Order::where($orderWhere)
             ->whereDay('create_time')
             ->sum('order_amount');
         // 成交订单数
-        $todayOrderNum = Order::where('pay_status', YesNoEnum::YES)
+        $todayOrderNum = Order::where($orderWhere)
             ->whereDay('create_time')
             ->count();
         // 访客数
@@ -122,7 +139,7 @@ class WorkbenchLogic
      * @author Tab
      * @date 2021/9/10 18:06
      */
-    public static function business7()
+    public static function business7($storeId = 0)
     {
         $today = new \DateTime();
         $todayStr = $today->format('Y-m-d') . ' 23:59:59';
@@ -135,7 +152,14 @@ class WorkbenchLogic
         ];
         $lists = Order::field($field)
             ->whereTime('create_time', 'between', [$todayDec15Str,$todayStr])
-            ->where('pay_status', YesNoEnum::YES)
+            ->where('pay_status', YesNoEnum::YES);
+        if ($storeId > 0) {
+            $lists = $lists->where([
+                ['delivery_type', '=', 2],
+                ['selffetch_shop_id', '=', $storeId],
+            ]);
+        }
+        $lists = $lists
             ->group('date')
             ->select()
             ->toArray();

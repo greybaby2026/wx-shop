@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>将军世家 · 分销会员完全指南</title>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#1a1a2e;--accent:#c9a96e;--accent-light:#e8d5b0;--bg:#faf8f5;--card:#fff;--text:#2d2d2d;--text-light:#666;--border:#eee;--success:#27ae60;--danger:#e74c3c;--info:#3498db;--warning:#f39c12}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.8;font-size:15px;-webkit-font-smoothing:antialiased}
+.container{max-width:780px;margin:0 auto;padding:20px 16px 60px}
+.hero{text-align:center;padding:40px 20px 30px;background:linear-gradient(135deg,var(--primary) 0%,#16213e 100%);border-radius:16px;color:#fff;margin-bottom:28px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;right:-30%;width:300px;height:300px;background:radial-gradient(circle,rgba(201,169,110,0.15) 0%,transparent 70%);border-radius:50%}
+.hero h1{font-size:24px;font-weight:700;margin-bottom:8px;position:relative}
+.hero p{font-size:14px;opacity:0.85;position:relative}
+.hero .tag{display:inline-block;background:var(--accent);color:var(--primary);padding:4px 14px;border-radius:20px;font-size:12px;font-weight:600;margin-top:12px;position:relative}
+.section{margin-bottom:28px}
+.section-title{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;color:var(--primary);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--accent)}
+.section-title .num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:var(--accent);color:var(--primary);border-radius:50%;font-size:14px;font-weight:700;flex-shrink:0}
+.sub-title{font-size:15px;font-weight:600;color:var(--primary);margin:18px 0 10px;padding-left:10px;border-left:3px solid var(--accent)}
+p{margin-bottom:10px}
+.highlight{background:linear-gradient(120deg,rgba(201,169,110,0.15) 0%,rgba(201,169,110,0.05) 100%);padding:2px 6px;border-radius:4px;font-weight:600}
+.card{background:var(--card);border-radius:12px;padding:18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04);border:1px solid var(--border)}
+.card-accent{border-left:4px solid var(--accent)}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+th{background:var(--primary);color:#fff;padding:10px 12px;text-align:left;font-weight:600;font-size:13px}
+th:first-child{border-radius:8px 0 0 0}
+th:last-child{border-radius:0 8px 0 0}
+td{padding:10px 12px;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even){background:#fafafa}
+.flow-box{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:12px 0;padding:14px;background:#f8f6f2;border-radius:10px}
+.flow-step{background:var(--card);padding:6px 12px;border-radius:6px;font-size:13px;font-weight:500;border:1px solid var(--border);white-space:nowrap}
+.flow-arrow{color:var(--accent);font-weight:700;font-size:16px}
+.tree-box{background:#f8f6f2;border-radius:10px;padding:18px 20px;margin:12px 0;font-size:14px;line-height:2.2}
+.tree-box .level-0{color:var(--accent);font-weight:700}
+.tree-box .level-1{color:var(--primary);font-weight:600;padding-left:20px}
+.tree-box .level-2{color:var(--text-light);padding-left:40px}
+.tree-box .level-3{color:var(--text-light);padding-left:60px}
+.tree-box .arrow{color:var(--accent);margin-right:6px;font-family:monospace}
+.formula-box{background:var(--primary);color:#fff;padding:14px 18px;border-radius:10px;margin:10px 0;font-size:15px;font-weight:600;text-align:center;letter-spacing:0.5px}
+.example-box{background:linear-gradient(135deg,#fdf6ec 0%,#fef9f0 100%);border:1px solid #f0dcc0;border-radius:10px;padding:14px 18px;margin:12px 0}
+.example-box .label{color:var(--accent);font-weight:700;font-size:13px;margin-bottom:4px;display:flex;align-items:center;gap:4px}
+.result{font-size:20px;font-weight:700;color:var(--accent);margin:4px 0}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.compare-card{background:var(--card);border-radius:10px;padding:16px;border:1px solid var(--border);text-align:center}
+.compare-card h4{font-size:15px;margin-bottom:10px;color:var(--primary);display:flex;align-items:center;justify-content:center;gap:6px}
+.compare-card .detail{text-align:left;font-size:13px;color:var(--text-light);line-height:1.9}
+.compare-card .detail span{display:flex;align-items:center;gap:6px}
+.compare-card .detail span i{color:var(--accent);font-size:15px;flex-shrink:0}
+.method-grid{display:grid;grid-template-columns:1fr;gap:10px;margin:12px 0}
+@media(min-width:480px){.method-grid{grid-template-columns:1fr 1fr 1fr}}
+.method-card{background:var(--card);border-radius:10px;padding:16px;border:1px solid var(--border);text-align:center;transition:transform 0.2s}
+.method-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.method-card .icon{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--primary),#2a2a4e);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:8px}
+.method-card h4{font-size:14px;color:var(--primary);margin-bottom:6px}
+.method-card ol{text-align:left;font-size:12px;color:var(--text-light);padding-left:16px;line-height:1.9}
+.balance-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.balance-card{background:var(--card);border-radius:10px;padding:18px;border:1px solid var(--border);text-align:center}
+.balance-card h4{font-size:15px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:6px}
+.balance-card .desc{font-size:13px;color:var(--text-light);margin-bottom:10px}
+.balance-card .tags{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.tag-yes{background:#e8f8ef;color:var(--success);padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600}
+.tag-no{background:#fde8e8;color:var(--danger);padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600}
+.tip-box{background:linear-gradient(135deg,#eef5ff 0%,#f0f7ff 100%);border-left:4px solid var(--info);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13px;color:#2c5282}
+.tip-box strong{color:var(--info)}
+.warn-box{background:linear-gradient(135deg,#fff8e1 0%,#fffde7 100%);border-left:4px solid var(--warning);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13px;color:#7b6a1a}
+.status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.status-card{background:var(--card);border-radius:8px;padding:12px 8px;border:1px solid var(--border);text-align:center}
+.status-card .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-bottom:4px}
+.status-card .dot.yellow{background:var(--warning)}
+.status-card .dot.green{background:var(--success)}
+.status-card .dot.red{background:var(--danger)}
+.status-card .name{font-size:13px;font-weight:600;margin-bottom:2px}
+.status-card .desc{font-size:11px;color:var(--text-light)}
+.faq-item{background:var(--card);border-radius:10px;margin-bottom:8px;border:1px solid var(--border);overflow:hidden}
+.faq-q{padding:14px 16px;font-weight:600;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 0.15s}
+.faq-q:hover{background:#fafafa}
+.faq-q::before{content:'Q';display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:var(--accent);color:var(--primary);border-radius:50%;font-size:12px;font-weight:700;flex-shrink:0}
+.faq-a{padding:0 16px 14px 46px;font-size:13px;color:var(--text-light);line-height:1.8;display:none}
+.faq-item.open .faq-a{display:block}
+.steps-box{display:flex;align-items:center;justify-content:center;gap:8px;margin:20px 0;flex-wrap:wrap}
+.step-item{background:var(--primary);color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;font-weight:600;text-align:center}
+.step-item .num{display:block;font-size:20px;color:var(--accent);margin-bottom:2px}
+.step-arrow{color:var(--accent);font-size:20px;font-weight:700}
+.no-commission-list{list-style:none;padding:0}
+.no-commission-list li{padding:8px 12px;margin-bottom:6px;background:#fafafa;border-radius:8px;font-size:13px;display:flex;align-items:center;gap:8px}
+.no-commission-list li i{color:var(--danger);font-size:15px;flex-shrink:0}
+.withdraw-list{list-style:none;padding:0}
+.withdraw-list li{padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;display:flex;align-items:flex-start;gap:8px}
+.withdraw-list li:last-child{border-bottom:none}
+.withdraw-list li::before{content:'•';color:var(--accent);font-weight:700;flex-shrink:0}
+.level-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;font-size:13px;font-weight:600}
+.level-badge.gold{background:linear-gradient(135deg,#c9a96e,#e8d5b0);color:var(--primary)}
+.level-badge.silver{background:linear-gradient(135deg,#8e9aaf,#c4c8d4);color:#fff}
+.level-badge.bronze{background:linear-gradient(135deg,#6c757d,#adb5bd);color:#fff}
+.footer{text-align:center;padding:30px 0 10px;color:var(--text-light);font-size:12px}
+@media(max-width:480px){.hero h1{font-size:20px}.compare-grid,.balance-grid{grid-template-columns:1fr}.status-grid{grid-template-columns:1fr}.formula-box{font-size:13px}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="hero">
+<h1><i class="ri-shield-star-line" style="color:var(--accent)"></i> 将军世家 · 分销会员指南</h1>
+<p>用最通俗的语言，一步步告诉你怎么参与、怎么赚钱、怎么提现</p>
+<div class="tag">全员分销 · 无需申请 · 即刻开始</div>
+</div>
+
+<!-- 一、什么是分销 -->
+<div class="section">
+<div class="section-title"><span class="num">1</span>什么是分销？</div>
+<div class="card card-accent">
+<p style="font-size:17px;font-weight:700;text-align:center;margin:0">分销 = 推荐别人买东西，你拿佣金 <i class="ri-money-cny-circle-line" style="color:var(--accent)"></i></p>
+<p style="text-align:center;color:var(--text-light);margin-top:8px">把将军世家的商品推荐给朋友，朋友下单购买，你就能获得一笔佣金奖励。就这么简单。</p>
+</div>
+</div>
+
+<!-- 二、谁可以成为分销会员 -->
+<div class="section">
+<div class="section-title"><span class="num">2</span>谁可以成为分销会员？</div>
+<div class="card" style="text-align:center;padding:24px">
+<p style="font-size:20px;font-weight:700;color:var(--accent);margin-bottom:8px">所有人！</p>
+<p>将军世家采用"全员分销"模式，只要你注册了小程序账号，就<span class="highlight">自动成为分销会员</span>，无需申请、无需审核。</p>
+</div>
+</div>
+
+<!-- 三、分销等级体系 -->
+<div class="section">
+<div class="section-title"><span class="num">3</span>分销等级体系</div>
+
+<div class="sub-title">3.1 等级一览</div>
+<table>
+<tr><th>等级</th><th>名称</th><th>一级佣金</th><th>二级佣金</th></tr>
+<tr><td>1级</td><td><span class="level-badge gold"><i class="ri-vip-crown-2-fill"></i> 大将军王</span></td><td>20%</td><td>5%</td></tr>
+<tr><td>2级</td><td><span class="level-badge silver"><i class="ri-medal-fill"></i> 大将军</span></td><td>20%</td><td>5%</td></tr>
+<tr><td>3级</td><td><span class="level-badge bronze"><i class="ri-shield-fill"></i> 将军</span></td><td>20%</td><td>5%</td></tr>
+</table>
+
+<div class="sub-title">3.2 等级是怎么定的？</div>
+<p>等级完全由你在分销团队中的<span class="highlight">位置</span>决定，不需要消费、不需要申请，系统自动判定：</p>
+<table>
+<tr><th>你的位置</th><th>等级</th><th>通俗理解</th></tr>
+<tr><td>没有上级</td><td><span class="level-badge gold"><i class="ri-vip-crown-2-fill"></i> 大将军王</span></td><td>团队创始人，你是源头</td></tr>
+<tr><td>有一级上级</td><td><span class="level-badge silver"><i class="ri-medal-fill"></i> 大将军</span></td><td>被大将军王直接邀请</td></tr>
+<tr><td>有二级上级</td><td><span class="level-badge bronze"><i class="ri-shield-fill"></i> 将军</span></td><td>被大将军邀请</td></tr>
+</table>
+
+<p style="margin-top:12px;font-weight:600">举个例子：</p>
+<div class="tree-box">
+<div class="level-0"><i class="ri-vip-crown-2-fill" style="color:var(--accent)"></i> 大将军王（张总） <span style="color:var(--text-light);font-size:12px">← 没有上级</span></div>
+<div class="level-1"><span class="arrow">└──</span><i class="ri-medal-fill" style="color:#8e9aaf"></i> 大将军（小王） <span style="color:var(--text-light);font-size:12px">← 被张总邀请</span></div>
+<div class="level-2"><span class="arrow">└──</span><i class="ri-shield-fill" style="color:#6c757d"></i> 将军（小李） <span style="color:var(--text-light);font-size:12px">← 被小王邀请</span></div>
+<div class="level-3"><span class="arrow">└──</span><i class="ri-shield-fill" style="color:#6c757d"></i> 将军（小赵） <span style="color:var(--text-light);font-size:12px">← 被小李邀请</span></div>
+</div>
+<div class="tip-box"><strong>简单记：</strong>你上面有几层上级，就决定你是什么等级。越靠近源头，等级越高。</div>
+
+<div class="sub-title">3.3 什么叫"一级佣金"和"二级佣金"？</div>
+<div class="tree-box">
+<div class="level-0"><i class="ri-user-star-fill" style="color:var(--accent)"></i> 你（分销员A）</div>
+<div class="level-1"><span class="arrow">└──</span>小王（B）→ <strong>你的一级下级</strong></div>
+<div class="level-2"><span class="arrow">└──</span>小李（C）→ <strong>你的二级下级</strong></div>
+</div>
+<ul style="padding-left:20px;margin:8px 0">
+<li><strong>一级佣金</strong>：小王买东西 → 你获得订单金额 <span class="highlight">20%</span> 的佣金</li>
+<li><strong>二级佣金</strong>：小李买东西 → 你获得订单金额 <span class="highlight">5%</span> 的佣金</li>
+</ul>
+
+<div class="sub-title">3.4 等级会变吗？</div>
+<p><strong>会自动变。</strong>当你绑定了邀请人（填写邀请码或通过分享链接注册），系统会自动根据你在分销树中的位置更新你的等级。</p>
+</div>
+
+<!-- 四、怎么推荐别人 -->
+<div class="section">
+<div class="section-title"><span class="num">4</span>怎么推荐别人？3种方式</div>
+<div class="method-grid">
+<div class="method-card">
+<div class="icon"><i class="ri-share-forward-line"></i></div>
+<h4>分享商品</h4>
+<ol>
+<li>打开商品详情页</li>
+<li>点击"分享"按钮</li>
+<li>发给微信好友/朋友圈</li>
+<li>朋友下单你拿佣金</li>
+</ol>
+</div>
+<div class="method-card">
+<div class="icon"><i class="ri-qr-code-line"></i></div>
+<h4>分享小程序码</h4>
+<ol>
+<li>进入"分销中心"</li>
+<li>保存你的专属二维码</li>
+<li>发给朋友/朋友圈</li>
+<li>朋友扫码自动绑定</li>
+</ol>
+</div>
+<div class="method-card">
+<div class="icon"><i class="ri-key-2-line"></i></div>
+<h4>邀请码绑定</h4>
+<ol>
+<li>查看你的专属邀请码</li>
+<li>把邀请码告诉朋友</li>
+<li>朋友在分销中心输入</li>
+<li>绑定成功成为下级</li>
+</ol>
+</div>
+</div>
+</div>
+
+<!-- 五、怎么赚钱 -->
+<div class="section">
+<div class="section-title"><span class="num">5</span>怎么赚钱？两种佣金</div>
+<p>推荐别人在将军世家消费，你能获得佣金。佣金分两种：<span class="highlight">购物佣金</span>和<span class="highlight">充值佣金</span>。</p>
+
+<div class="sub-title">5.1 购物佣金</div>
+<p>朋友通过你的推荐<strong>购买商品</strong>，你获得购物佣金。</p>
+<div class="formula-box">购物佣金 =（商品实付金额 - 运费）× 佣金比例</div>
+<div class="example-box">
+<div class="label"><i class="ri-lightbulb-line"></i> 举个例子</div>
+<p>小王买了一件衬衫，实付300元，运费0元，一级佣金比例20%</p>
+<p class="result">你的佣金 = (300 - 0) × 20% = 60元</p>
+</div>
+<p><strong>结算时间：</strong>订单完成后立即结算（结算天数0天）</p>
+<div class="flow-box">
+<span class="flow-step">朋友下单付款</span><span class="flow-arrow">→</span>
+<span class="flow-step">佣金"待返佣"</span><span class="flow-arrow">→</span>
+<span class="flow-step">朋友确认收货</span><span class="flow-arrow">→</span>
+<span class="flow-step">订单完成</span><span class="flow-arrow">→</span>
+<span class="flow-step" style="background:var(--accent);color:var(--primary);font-weight:700">佣金到账</span>
+</div>
+<p style="margin-top:10px;font-weight:600">佣金状态：</p>
+<div class="status-grid">
+<div class="status-card"><div class="dot yellow"></div><div class="name">待返佣</div><div class="desc">等待结算</div></div>
+<div class="status-card"><div class="dot green"></div><div class="name">已结算</div><div class="desc">已到账可提现</div></div>
+<div class="status-card"><div class="dot red"></div><div class="name">已失效</div><div class="desc">退款不发放</div></div>
+</div>
+
+<div class="sub-title">5.2 充值佣金</div>
+<p>朋友通过你的推荐<strong>充值余额</strong>，你获得充值佣金。</p>
+<div class="example-box">
+<div class="label"><i class="ri-lightbulb-line"></i> 举个例子</div>
+<p>小王充值了500元，一级佣金比例20%</p>
+<p class="result">你的佣金 = 500 × 20% = 100元</p>
+</div>
+<p><strong>结算时间：实时到账！</strong>朋友充值成功后，佣金立即进入你的可提现余额，不需要等待。</p>
+
+<div class="sub-title">5.3 两种佣金对比</div>
+<div class="compare-grid">
+<div class="compare-card">
+<h4><i class="ri-shopping-bag-3-line" style="color:var(--accent)"></i> 购物佣金</h4>
+<div class="detail">
+<span><i class="ri-pushpin-line"></i> 朋友购买商品</span>
+<span><i class="ri-bar-chart-2-line"></i> 一级20% / 二级5%</span>
+<span><i class="ri-time-line"></i> 订单完成后结算</span>
+<span><i class="ri-check-line" style="color:var(--success)"></i> 可提现</span>
+</div>
+</div>
+<div class="compare-card">
+<h4><i class="ri-wallet-3-line" style="color:var(--accent)"></i> 充值佣金</h4>
+<div class="detail">
+<span><i class="ri-pushpin-line"></i> 朋友充值余额</span>
+<span><i class="ri-bar-chart-2-line"></i> 一级20% / 二级5%</span>
+<span><i class="ri-flashlight-line"></i> 实时到账</span>
+<span><i class="ri-check-line" style="color:var(--success)"></i> 可提现</span>
+</div>
+</div>
+</div>
+
+<div class="sub-title">5.4 全部商品参与分销</div>
+<p>将军世家<strong>所有商品</strong>均参与分销，你推荐任意商品，朋友下单后都能获得佣金。</p>
+
+<div class="sub-title">5.5 什么情况不产生佣金？</div>
+<ul class="no-commission-list">
+<li><i class="ri-error-warning-line"></i> 余额支付 — 用账户余额付款的订单不产生分销佣金</li>
+<li><i class="ri-error-warning-line"></i> 非分销商品 — 未参与分销的商品不产生佣金</li>
+<li><i class="ri-error-warning-line"></i> 上级被冻结 — 你的上级被冻结分销资格后不会获得佣金</li>
+<li><i class="ri-error-warning-line"></i> 订单退款 — 订单发生退款时佣金会失效</li>
+</ul>
+</div>
+
+<!-- 六、账户余额说明 -->
+<div class="section">
+<div class="section-title"><span class="num">6</span>你的账户余额说明</div>
+<p>你的账户里有两种余额，用途不同：</p>
+<div class="balance-grid">
+<div class="balance-card" style="border-top:3px solid var(--info)">
+<h4><i class="ri-bank-card-line" style="color:var(--info)"></i> 钱包余额</h4>
+<div class="desc">你自己充值的钱、提现到钱包的钱</div>
+<div class="tags"><span class="tag-no">不能提现</span><span class="tag-yes">可以购物</span></div>
+</div>
+<div class="balance-card" style="border-top:3px solid var(--accent)">
+<h4><i class="ri-money-cny-circle-line" style="color:var(--accent)"></i> 可提现余额</h4>
+<div class="desc">你赚的佣金（购物佣金+充值佣金）</div>
+<div class="tags"><span class="tag-yes">可以提现</span><span class="tag-no">不能购物</span></div>
+</div>
+</div>
+<div class="warn-box"><strong>简单记：自己充的钱只能花，赚的佣金只能提。</strong><br>如果你想用佣金购物，可以先提现到"钱包余额"，再用钱包余额付款。</div>
+</div>
+
+<!-- 七、怎么提现 -->
+<div class="section">
+<div class="section-title"><span class="num">7</span>怎么提现？</div>
+<p>只有<strong>"可提现余额"</strong>里的钱可以提现，也就是你赚的佣金。</p>
+
+<div class="sub-title">7.1 提现规则</div>
+<div class="card" style="padding:14px 18px">
+<div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
+<div style="text-align:center;flex:1;min-width:120px">
+<div style="font-size:24px;font-weight:700;color:var(--accent)">200元</div>
+<div style="font-size:12px;color:var(--text-light)">单次最低提现</div>
+</div>
+<div style="text-align:center;flex:1;min-width:120px">
+<div style="font-size:24px;font-weight:700;color:var(--accent)">2000元</div>
+<div style="font-size:12px;color:var(--text-light)">每日提现上限</div>
+</div>
+</div>
+<p style="text-align:center;font-size:12px;color:var(--text-light);margin-top:8px;margin-bottom:0">可分多次提现，每天累计不超过2000元即可</p>
+</div>
+
+<div class="sub-title">7.2 提现方式</div>
+<table>
+<tr><th>方式</th><th>说明</th><th>手续费</th></tr>
+<tr><td><i class="ri-bank-card-line" style="color:var(--info)"></i> 钱包余额</td><td>转入小程序账户余额，可用于购物</td><td>无</td></tr>
+<tr><td><i class="ri-wechat-pay-line" style="color:#07c160"></i> 微信零钱</td><td>直接转到微信钱包</td><td>按配置收取</td></tr>
+<tr><td><i class="ri-bank-line" style="color:var(--primary)"></i> 银行卡</td><td>转到绑定的银行卡</td><td>按配置收取</td></tr>
+<tr><td><i class="ri-qr-scan-2-line" style="color:#07c160"></i> 微信收款码</td><td>扫码收款</td><td>按配置收取</td></tr>
+<tr><td><i class="ri-alipay-line" style="color:#1677ff"></i> 支付宝收款码</td><td>扫码收款</td><td>按配置收取</td></tr>
+</table>
+
+<div class="sub-title">7.3 提现流程</div>
+<div class="flow-box">
+<span class="flow-step">申请提现</span><span class="flow-arrow">→</span>
+<span class="flow-step">选择方式</span><span class="flow-arrow">→</span>
+<span class="flow-step">填写金额</span><span class="flow-arrow">→</span>
+<span class="flow-step">后台审核</span><span class="flow-arrow">→</span>
+<span class="flow-step" style="background:var(--accent);color:var(--primary);font-weight:700">到账</span>
+</div>
+
+<div class="sub-title">7.4 注意事项</div>
+<ul class="withdraw-list">
+<li>提现到"钱包余额"无手续费、到账最快，但到账后只能购物不能再提现</li>
+<li>微信零钱提现需审核，审核通过后自动到账</li>
+<li>银行卡/收款码提现需审核，审核通过后需人工转账</li>
+<li>提现申请提交后不可撤回</li>
+<li>如审核不通过，金额会退回到可提现余额</li>
+</ul>
+</div>
+
+<!-- 八、查看分销数据 -->
+<div class="section">
+<div class="section-title"><span class="num">8</span>在哪里查看分销数据？</div>
+<div class="sub-title">8.1 分销中心</div>
+<p>打开小程序 → "我的" → "分销中心"</p>
+<table>
+<tr><th>数据</th><th>说明</th></tr>
+<tr><td><i class="ri-line-chart-line" style="color:var(--accent)"></i> 累计收益</td><td>你获得的所有佣金总额</td></tr>
+<tr><td><i class="ri-money-cny-circle-line" style="color:var(--accent)"></i> 可提现金额</td><td>当前可以提现的佣金金额</td></tr>
+<tr><td><i class="ri-time-line" style="color:var(--warning)"></i> 待结算佣金</td><td>订单已完成但尚未结算的佣金</td></tr>
+<tr><td><i class="ri-team-line" style="color:var(--info)"></i> 粉丝数量</td><td>你的一级和二级下级人数</td></tr>
+<tr><td><i class="ri-key-2-line" style="color:var(--accent)"></i> 邀请码</td><td>你的专属邀请码</td></tr>
+</table>
+
+<div class="sub-title">8.2 分销订单</div>
+<p>在"分销中心" → "分销订单"，可以查看：</p>
+<ul style="padding-left:20px;margin:8px 0">
+<li><strong>全部</strong>：所有分销订单</li>
+<li><strong>待返佣</strong>：等待结算的订单</li>
+<li><strong>已结算</strong>：佣金已到账的订单</li>
+<li><strong>已失效</strong>：因退款等原因佣金未发放的订单</li>
+</ul>
+
+<div class="sub-title">8.3 我的粉丝</div>
+<p>在"分销中心" → "我的粉丝"，可以查看：</p>
+<ul style="padding-left:20px;margin:8px 0">
+<li><strong>一级粉丝</strong>：你直接推荐的人</li>
+<li><strong>二级粉丝</strong>：你的一级粉丝推荐的人</li>
+</ul>
+</div>
+
+<!-- 九、FAQ -->
+<div class="section">
+<div class="section-title"><span class="num">9</span>常见问题</div>
+
+<div class="faq-item" onclick="this.classList.toggle('open')">
+<div class="faq-q">我推荐了朋友，但没收到佣金，为什么？</div>
+<div class="faq-a">可能的原因：<br>1. 朋友下单时用的是余额支付（余额支付不产生分销佣金）<br>2. 朋友买的商品没有参与分销<br>3. 佣金还在"待返佣"状态，等订单完成后才会结算<br>4. 朋友下单时没有通过你的分享链接/二维码进入</div>
+</div>
+
+<div class="faq-item" onclick="this.classList.toggle('open')">
+<div class="faq-q">朋友之前通过我分享进入过小程序，后来自己下单，我还能拿到佣金吗？</div>
+<div class="faq-a"><strong>能。</strong>只要朋友首次通过你的分享进入小程序，就会自动绑定为你的一级下级。之后TA无论何时下单，你都能获得佣金。</div>
+</div>
+
+<div class="faq-item" onclick="this.classList.toggle('open')">
+<div class="faq-q">我可以推荐多少人？</div>
+<div class="faq-a"><strong>没有上限。</strong>你可以推荐任意数量的人，每个人下单你都能获得佣金。</div>
+</div>
+
+<div class="faq-item" onclick="this.classList.toggle('open')">
+<div class="faq-q">佣金比例会变吗？</div>
+<div class="faq-a">佣金比例由后台统一管理，可能会根据运营策略调整。你当前的佣金比例取决于你的分销等级。</div>
+</div>
+
+<div class="faq-item" onclick="this.classList.toggle('open')">
+<div class="faq-q">我的上级是谁？可以换吗？</div>
+<div class="faq-a">你首次绑定邀请人后，上下级关系即确定。一般情况下不可自行更换，如有特殊情况请联系客服。</div>
+</div>
+
+<div class="faq-item" onclick="this.classList.toggle('open')">
+<div class="faq-q">如果订单退款了，佣金会退回吗？</div>
+<div class="faq-a"><strong>会。</strong>如果订单发生退款，对应的佣金会被标记为"已失效"，不会发放。如果佣金已经结算到账，系统会从你的可提现余额中扣除对应金额。</div>
+</div>
+
+<div class="faq-item" onclick="this.classList.toggle('open')">
+<div class="faq-q">我的等级是怎么定的？能自己选吗？</div>
+<div class="faq-a"><strong>不能自己选。</strong>等级完全由你在分销团队中的位置决定：没有上级就是大将军王，有一级上级就是大将军，有二级上级就是将军。当你绑定邀请人后，等级会自动更新。</div>
+</div>
+
+<div class="faq-item" onclick="this.classList.toggle('open')">
+<div class="faq-q">分销员会被冻结吗？</div>
+<div class="faq-a">后台管理员有权冻结分销员资格。被冻结后：你不会再获得任何新的佣金；之前已产生的待返佣订单仍会正常结算。如有疑问请联系客服。</div>
+</div>
+</div>
+
+<!-- 十、快速上手 -->
+<div class="section">
+<div class="section-title"><span class="num">10</span>快速上手3步走</div>
+<div class="steps-box">
+<div class="step-item"><span class="num">1</span>注册小程序<br>自动成为分销会员</div>
+<span class="step-arrow">→</span>
+<div class="step-item"><span class="num">2</span>分享给朋友<br>朋友下单</div>
+<span class="step-arrow">→</span>
+<div class="step-item"><span class="num">3</span>佣金到账<br>申请提现</div>
+</div>
+<p style="text-align:center;font-size:16px;font-weight:700;color:var(--accent);margin-top:16px">就这么简单，开始你的分销之旅吧！<i class="ri-rocket-2-line"></i></p>
+</div>
+
+<div class="footer">将军世家 · 品质男装 · 分销会员指南</div>
+
+</div>
+</body>
+</html>

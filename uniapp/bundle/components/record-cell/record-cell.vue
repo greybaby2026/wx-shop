@@ -31,11 +31,11 @@
             },
             // 金额
             money: {
-                type: String | Number,
+                type: [String, Number],
                 required: true
             },
 			type: {
-				 type: String | Number,
+				 type: [String, Number],
 			}
         },
         

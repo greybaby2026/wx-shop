@@ -122,4 +122,25 @@ class SelffetchShopController extends BaseAdminController
         }
         return $this->success('',$result);
     }
+
+    /**
+     * @notes 生成门店专属小程序码
+     */
+    public function qrCode()
+    {
+        $id = intval($this->request->get('id', 0));
+        $shop = \app\common\model\SelffetchShop::findOrEmpty($id);
+        if ($shop->isEmpty()) {
+            return $this->fail('门店不存在');
+        }
+        $result = \app\common\service\WeChatService::makeMpQrCode([
+            'page'      => 'pages/index/index',
+            'scene'     => 'store_id=' . $id,
+        ], 'base64');
+        if (!$result) {
+            return $this->fail(\app\common\service\WeChatService::getReturnData());
+        }
+        return $this->success('生成成功', ['base64' => \app\common\service\WeChatService::getReturnData()]);
+    }
+
 }

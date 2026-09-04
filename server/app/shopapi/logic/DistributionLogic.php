@@ -141,6 +141,17 @@ class DistributionLogic extends BaseLogic
             // 批量更新
             (new User())->saveAll($updateData);
 
+            // 更新当前用户及下级的分销等级
+            \app\adminapi\logic\distribution\DistributionLevelLogic::updateDistributionLevel($params['user_id']);
+            $subUsers = User::where('first_leader', $params['user_id'])->column('id');
+            foreach ($subUsers as $subUserId) {
+                \app\adminapi\logic\distribution\DistributionLevelLogic::updateDistributionLevel($subUserId);
+            }
+            $subSubUsers = User::where('second_leader', $params['user_id'])->where('first_leader', '<>', $params['user_id'])->column('id');
+            foreach ($subSubUsers as $subSubUserId) {
+                \app\adminapi\logic\distribution\DistributionLevelLogic::updateDistributionLevel($subSubUserId);
+            }
+
             Db::commit();
             return true;
         }catch(\Exception $e) {

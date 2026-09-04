@@ -33,7 +33,7 @@
                             shape="rectangle"
                             :name="goods.name"
                             :image="goods.image"
-                            :contain-style="{ 'border-raius': 0, height: '250rpx' }"
+                            :contain-style="{ 'border-radius': 0, height: '250rpx' }"
                             :image-style="{ width: '210rpx', height: '210rpx' }"
                         >
                             <view @click="goGoodsDetail(goods.id)">

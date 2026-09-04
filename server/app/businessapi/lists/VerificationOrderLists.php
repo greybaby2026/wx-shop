@@ -37,6 +37,10 @@ class VerificationOrderLists extends BaseBusinesseDataLists{
         $where = [];
         $where[] = ['pay_status','=',PayEnum::ISPAID];
         $where[] = ['delivery_type','=',DeliveryEnum::SELF_DELIVERY];
+        // 门店隔离: 门店账号仅可见本店自提单
+        if ($this->storeId > 0) {
+            $where[] = ['selffetch_shop_id','=',$this->storeId];
+        }
         
         if(isset($this->params['type'])){
             $where[] = ['verification_status','=',$this->params['type']];

@@ -19,6 +19,7 @@
 <script>
 import Cache from '@/utils/cache'
 import { apiDecorateConfig } from '@/api/store'
+import { mapGetters } from 'vuex'
 
 export default {
     props: {
@@ -34,10 +35,20 @@ export default {
         }
     },
     computed: {
-        // content() {
-        //     const { screen } = this.$store.getters
-        //     return screen.content || {}
-        // }
+        ...mapGetters(['screen']),
+    },
+    created() {
+        // 优先使用 store 中已有的装修配置，避免重复请求
+        const storeScreen = this.screen && this.screen.content
+        if (storeScreen) {
+            this.content = storeScreen
+            this.processAd()
+        } else {
+            apiDecorateConfig().then((res) => {
+                this.content = res.screen.content
+                this.processAd()
+            })
+        }
     },
     methods: {
         goPage(link) {
@@ -46,19 +57,14 @@ export default {
                 query: link.params
             })
             this.showOpen = false
-        }
-    },
-    created() {
-        apiDecorateConfig().then((res) => {
-            this.content = res.screen.content
+        },
+        processAd() {
             if (!Number(this.content.enable)) {
                 return
             }
-            console.log(Cache.get('OPENIMAGE_ENABLE'))
             if (!Cache.get('OPENIMAGE_ENABLE')) {
                 return
             }
-            console.log(this.content.image)
             switch (this.content.show_config) {
                 case '1':
                     if (Cache.get('OPENIMAGE') !== this.content.image) {
@@ -82,7 +88,7 @@ export default {
                     break
             }
             Cache.set('OPENIMAGE_ENABLE', false)
-        })
+        }
     }
 }
 </script>

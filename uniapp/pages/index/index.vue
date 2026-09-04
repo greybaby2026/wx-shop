@@ -1,5 +1,5 @@
 <template>
-    <view class="index" :style="[pageStyle]" :class="themeName">
+    <view class="index" :style="[pageStyle, themeCssVars]" :class="themeName">
         <!-- #ifndef  H5 -->
         <u-sticky offset-top="0" h5-nav-height="0" bg-color="transparent">
             <u-navbar
@@ -208,7 +208,7 @@ export default {
             this.$set(this.pagesData, item.index, Object.freeze(item.value))
             setTimeout(() => {
                 this.splitSetData()
-            }, 100)
+            }, 30)
         },
         onPageScroll(e) {
             const top = uni.upx2px(100)
@@ -341,9 +341,12 @@ export default {
             })
         })
         // #endif
-        apiUserCentre().then(({ is_register_award }) => {
-            this.isReward = is_register_award
-        })
+        // 只在首次加载时请求用户中心（避免每次返回首页都请求）
+        if (!this.isReward) {
+            apiUserCentre().then(({ is_register_award }) => {
+                this.isReward = is_register_award
+            })
+        }
     },
     watch: {},
     onShareAppMessage() {

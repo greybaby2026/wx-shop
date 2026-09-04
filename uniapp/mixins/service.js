@@ -2,7 +2,7 @@ import { mapGetters, mapState } from 'vuex'
 
 const ServiceMixin = {
     data() {
-        return
+        return {}
     },
     computed: {
         ...mapGetters(['ServiceConfig'])

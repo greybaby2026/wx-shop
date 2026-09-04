@@ -77,6 +77,7 @@ class AccountLogLists extends BaseAdminDataLists implements ListsSearchInterface
             'left_amount' => '剩余金额',
             'change_type_desc' => '变动类型',
             'association_sn' => '来源单号',
+            'remark' => '备注',
             'create_time' => '记录时间',
         ];
     }
@@ -128,7 +129,7 @@ class AccountLogLists extends BaseAdminDataLists implements ListsSearchInterface
     public function lists(): array
     {
         $this->queryWhere();
-        $field = 'u.nickname,u.sn,u.mobile,al.action,al.change_amount,al.left_amount,al.change_type,al.association_sn,al.create_time';
+        $field = 'u.nickname,u.sn,u.mobile,al.action,al.change_amount,al.left_amount,al.change_type,al.association_sn,al.remark,al.create_time';
         $lists = AccountLog::alias('al')
             ->leftJoin('user u', 'u.id = al.user_id')
             ->field($field)

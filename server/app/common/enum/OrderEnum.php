@@ -36,6 +36,7 @@ class OrderEnum
     const VIRTUAL_ORDER = 4; //虚拟订单
     const PRESELL_ORDER = 5; //预售订单
     const DRAW_ORDER = 6; //抽奖订单
+    const ERP_ORDER = 7; //ERP门店订单
 
     //订单状态
     const STATUS_WAIT_PAY       = 0;  //待付款
@@ -61,6 +62,7 @@ class OrderEnum
         self::VIRTUAL_ORDER,
         self::PRESELL_ORDER,
         self::DRAW_ORDER,
+        self::ERP_ORDER,
     ];
 
     //订单赠送积分场景
@@ -86,6 +88,7 @@ class OrderEnum
             self::VIRTUAL_ORDER => '虚拟订单',
             self::PRESELL_ORDER => '预售订单',
             self::DRAW_ORDER => '抽奖订单',
+            self::ERP_ORDER => 'ERP门店订单',
         ];
         if (true === $value) {
             return $data;

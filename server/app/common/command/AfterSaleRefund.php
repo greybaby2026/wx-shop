@@ -221,6 +221,9 @@ class AfterSaleRefund extends Command
         //更新订单状态
         RefundLogic::afterSaleRefundUpdate($item['order_id']);
 
+        // 扣除已赠送积分
+        RefundLogic::deductAwardIntegral($item['order_id'], $item['refund_total_amount']);
+
         $order = Order::findOrEmpty($item['order_id'])->toArray();
 
         // 消息通知

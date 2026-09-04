@@ -24,10 +24,13 @@ use app\common\enum\AfterSaleLogEnum;
 use app\common\enum\DeliveryEnum;
 use app\common\enum\OrderEnum;
 use app\common\enum\PayEnum;
+use app\common\enum\AccountLogEnum;
+use app\common\logic\AccountLogLogic;
 use app\common\model\AfterSale;
 use app\common\model\Order;
 use app\common\model\OrderGoods;
 use app\common\model\Refund;
+use app\common\model\User;
 use app\common\service\after_sale\AfterSaleService;
 use app\common\service\pay\AliPayService;
 use app\common\service\pay\BalancePayService;
@@ -60,6 +63,60 @@ class RefundLogic extends BaseLogic
      */
     public static function refund($refundWay, $order, $afterSaleId, $refundAmount)
     {
+        // 处理余额抵扣退款：按抵扣比例拆分退回余额和微信
+        $deductAmount = $order['deduct_amount'] ?? 0;
+        if ($deductAmount > 0 && $refundAmount > 0 && $order['order_amount'] > 0) {
+            $deductRatio = $deductAmount / $order['order_amount'];
+            $refundToBalance = round($refundAmount * $deductRatio, 2);
+            $refundToPayment = $refundAmount - $refundToBalance;
+
+            // 退回余额抵扣部分到钱包
+            if ($refundToBalance > 0) {
+                \app\common\model\User::update([
+                    'activity_money' => ['inc', $refundToBalance]
+                ], ['id' => $order['user_id']]);
+
+                \app\common\logic\AccountLogLogic::add(
+                    $order['user_id'],
+                    \app\common\enum\AccountLogEnum::BNW_INC_AFTER_SALE,
+                    \app\common\enum\AccountLogEnum::INC,
+                    $refundToBalance,
+                    $order['sn'],
+                    '\u6d3b\u52a8\u4f59\u989d\u9000\u56de'
+                );
+            }
+
+            // 微信部分走原退款流程
+            if ($refundToPayment > 0) {
+                $refundAmount = $refundToPayment;
+            } else {
+                // 全部退回活动余额，不需要微信退款，直接完成售后
+                $afterSale = AfterSale::findOrEmpty($afterSaleId);
+                if (!$afterSale->isEmpty()) {
+                    // 判断全额/部分退款
+                    if ($afterSale['refund_type'] == AfterSaleEnum::REFUND_TYPE_ORDER) {
+                        $orderData = Order::findOrEmpty($afterSale['order_id'])->toArray();
+                        $refundStatus = ($afterSale['refund_total_amount'] == $orderData['order_amount']) ? AfterSaleEnum::FULL_REFUND : AfterSaleEnum::PARTIAL_REFUND;
+                    } else {
+                        $orderGoods = OrderGoods::findOrEmpty($afterSale['order_goods_id'])->toArray();
+                        $refundStatus = ($afterSale['refund_total_amount'] == $orderGoods['total_pay_price']) ? AfterSaleEnum::FULL_REFUND : AfterSaleEnum::PARTIAL_REFUND;
+                    }
+                    $afterSale->status = AfterSaleEnum::STATUS_SUCCESS;
+                    $afterSale->sub_status = AfterSaleEnum::SUB_STATUS_SELLER_REFUND_SUCCESS;
+                    $afterSale->refund_status = $refundStatus ?? AfterSaleEnum::FULL_REFUND;
+                    $afterSale->save();
+
+                    AfterSaleService::createAfterLog($afterSale['id'], '系统已完成退款', 0, AfterSaleLogEnum::ROLE_SYS);
+
+                    // 更新订单状态
+                    self::afterSaleRefundUpdate($afterSale['order_id']);
+
+                    // 扣减赠送积分
+                    self::deductAwardIntegral($afterSale['order_id'], $refundAmount);
+                }
+                return true;
+            }
+        }
         if ($refundAmount < 0) {
             return false;
         }
@@ -89,6 +146,8 @@ class RefundLogic extends BaseLogic
             $afterSale->refund_status = $refundStauts ?? AfterSaleEnum::FULL_REFUND;
             $afterSale->save();
             AfterSaleService::createAfterLog($afterSale['id'], '系统已完成退款', 0, AfterSaleLogEnum::ROLE_SYS);
+
+            self::deductAwardIntegral($afterSale['order_id'], $refundAmount);
 
             return true;
         }
@@ -280,5 +339,53 @@ class RefundLogic extends BaseLogic
                 $order->save();
             }
         }
+    }
+
+    /**
+     * @notes 退款成功后扣除已赠送的积分
+     * @param int $orderId 订单ID
+     * @param float $refundAmount 退款金额
+     * @return void
+     */
+    public static function deductAwardIntegral($orderId, $refundAmount = 0)
+    {
+        $order = Order::findOrEmpty($orderId);
+        if ($order->isEmpty()) {
+            return;
+        }
+        if ($order['is_award_integral'] != 1 || $order['award_integral'] <= 0) {
+            return;
+        }
+
+        $deductIntegral = $order['award_integral'];
+
+        if ($refundAmount > 0 && $refundAmount < $order['order_amount']) {
+            $deductIntegral = (int)floor($order['award_integral'] * ($refundAmount / $order['order_amount']));
+        }
+
+        if ($deductIntegral <= 0) {
+            return;
+        }
+
+        $user = User::findOrEmpty($order['user_id']);
+        if ($user->isEmpty()) {
+            return;
+        }
+
+        $actualDeduct = min($deductIntegral, $user['user_integral']);
+
+        if ($actualDeduct <= 0) {
+            return;
+        }
+
+        User::where('id', $order['user_id'])->dec('user_integral', $actualDeduct)->update();
+        AccountLogLogic::add(
+            $order['user_id'],
+            AccountLogEnum::INTEGRAL_DEC_REFUND,
+            AccountLogEnum::DEC,
+            $actualDeduct,
+            $order['sn'],
+            '退款扣减赠送积分'
+        );
     }
 }

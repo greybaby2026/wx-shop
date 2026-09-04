@@ -58,6 +58,7 @@ export default {
         ...mapActions(['initLocationFunc']),
 
         handleOpen() {
+            // #ifdef MP-WEIXIN
             wx.openPrivacyContract({
                 success: (res) => {
                     console.log(res)
@@ -66,6 +67,7 @@ export default {
                     console.log(err)
                 }
             })
+            // #endif
         },
         handlecancel() {
             this.$toast({

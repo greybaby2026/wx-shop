@@ -439,4 +439,21 @@ class UserController extends BaseShopController
     }
 
 
+
+    /**
+     * @notes 扫码绑定门店(首绑定终身)
+     */
+    public function bindStore()
+    {
+        $storeId = intval($this->request->post('store_id', 0));
+        if ($storeId <= 0) {
+            return $this->fail('门店参数缺失');
+        }
+        $result = UserLogic::bindStore($this->userId, $storeId);
+        if ($result) {
+            return $this->success('绑定成功', [], 1, 1);
+        }
+        return $this->fail(UserLogic::getError());
+    }
+
 }

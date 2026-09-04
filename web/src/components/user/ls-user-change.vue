@@ -21,7 +21,7 @@
             <div class="">
                 <el-form :rules="valueRules" ref="valueRef" :model="form" label-width="120px" size="small">
                     <el-form-item :label="'当前' + typeName">
-                        <div v-if="type == 3">{{ form.value }}</div>
+                        <div v-if="type == 3 || type == 4">{{ form.value }}</div>
                         <div v-else>¥ {{ form.value }}</div>
                     </el-form-item>
                     <el-form-item :label="typeName + '增减'">
@@ -32,7 +32,7 @@
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item :label="'调整' + typeName" prop="num">
-                        <div class="" v-if="type == 3">
+                        <div class="" v-if="type == 3 || type == 4">
                             <el-input
                                 class="ls-input"
                                 v-model="form.num"
@@ -56,7 +56,7 @@
                         </div>
                     </el-form-item>
                     <el-form-item :label="'调整后' + typeName">
-                        <div v-if="type == 3">{{ lastValue }}</div>
+                        <div v-if="type == 3 || type == 4">{{ lastValue }}</div>
                         <div v-else>¥ {{ lastValue }}</div>
                     </el-form-item>
                     <el-form-item label="备注">
@@ -174,6 +174,9 @@ export default class LsUserChange extends Vue {
             this.$set(this.form, 'type', val)
         } else if (val == 3) {
             this.typeName = '积分'
+            this.$set(this.form, 'type', val)
+        } else if (val == 4) {
+            this.typeName = '活动金额'
             this.$set(this.form, 'type', val)
         }
     }

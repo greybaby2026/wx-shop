@@ -1991,8 +1991,23 @@ return [
                 ],
             ],
         ]
+    ],
+    //充值抵扣
+    [
+        'name'  => '充值抵扣',
+        'type'  => 1,
+        'sons'  => [
+            [
+                'name'      => '查看',
+                'type'      => 2,
+                'auth_key'  => 'activitydeduct/activitydeductconfig.view'
+            ],
+            [
+                'name'      => '保存',
+                'type'      => 2,
+                'auth_key'  => 'activitydeduct/activitydeductconfig.save'
+            ],
+        ],
     ]
+
 ];
-
-
-

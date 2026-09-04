@@ -25,6 +25,7 @@ abstract class BaseBusinesseDataLists extends BaseDataLists
 {
     protected array $adminInfo;
     protected int $adminId;
+    protected int $storeId = 0;
 
 
     public function __construct()
@@ -34,6 +35,7 @@ abstract class BaseBusinesseDataLists extends BaseDataLists
 
         $this->adminInfo = $this->request->adminInfo;
         $this->adminId = $this->request->adminId;
+        $this->storeId = intval(\app\common\model\Admin::where('id', $this->adminId)->value('store_id') ?: 0);
 
     }
 

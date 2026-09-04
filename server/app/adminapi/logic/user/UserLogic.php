@@ -167,7 +167,7 @@ class UserLogic extends BaseLogic
     public function detail(int $userId)
     {
         $user = User::with('userLevel')
-                ->field('id,sn,nickname,avatar,real_name,sex,mobile,birthday,code,level,create_time,login_time,total_order_amount,total_order_num,user_money,user_earnings,user_money+user_earnings as total_user_money,user_integral,disable,register_source,inviter_id,first_leader,disable,user_delete,admin_update_leader')
+                ->field('id,sn,nickname,avatar,real_name,sex,mobile,birthday,code,level,create_time,login_time,total_order_amount,total_order_num,user_money,user_earnings,activity_money,user_money+user_earnings as total_user_money,user_integral,disable,register_source,inviter_id,first_leader,disable,user_delete,admin_update_leader')
                 ->find($userId);
 
         $user->userLabelIndex;
@@ -199,7 +199,8 @@ class UserLogic extends BaseLogic
                 'register_source'   => UserTerminalEnum::getTermInalDesc($user['register_source']),
                 'total_user_money'  => $user['total_user_money'],   //钱包金额
                 'user_money'        => $user['user_money'],         //可用金额
-                'user_earnings'     => $user['user_earnings'],      //可提现金额
+                'user_earnings'     => $user['user_earnings'],
+                'activity_money'    => $user['activity_money'],      //可提现金额
                 'user_integral'     => $user['user_integral'],      //积分
                 'disable'           => $user['disable'],            //禁用状态
                 'user_delete'       => $user['user_delete'],
@@ -329,6 +330,17 @@ class UserLogic extends BaseLogic
                         AccountLogLogic::add($user->id, AccountLogEnum::INTEGRAL_DEC_ADMIN,AccountLogEnum::DEC, $params['num'], '', $params['remark'] ?? '');
                     }
 
+                    break;
+                case 4:
+                    if(1 == $params['action']){
+                        $user->activity_money = $user->activity_money + $params['num'];
+                        $user->save();
+                        AccountLogLogic::add($user->id, AccountLogEnum::ACTIVITY_INC_ADMIN, AccountLogEnum::INC, $params['num'], '', $params['remark'] ?? '');
+                    }else{
+                        $user->activity_money = $user->activity_money - $params['num'];
+                        $user->save();
+                        AccountLogLogic::add($user->id, AccountLogEnum::ACTIVITY_DEC_ADMIN, AccountLogEnum::DEC, $params['num'], '', $params['remark'] ?? '');
+                    }
                     break;
             }
 

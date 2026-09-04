@@ -47,7 +47,7 @@ export default {
     props: {
         // 结束时间戳(秒)
         timeEnd: {
-            type: Number | String,
+            type: [Number, String],
             required: true
         },
 
@@ -59,13 +59,13 @@ export default {
 
         // 倒计时字体大小，单位rpx
         fontSize: {
-            type: Number | String,
+            type: [Number, String],
             default: 24
         },
 
         // 分隔符的字体大小，单位rpx
         separatorSize: {
-            type: Number | String,
+            type: [Number, String],
             default: 22
         },
 
@@ -87,7 +87,7 @@ export default {
 
         // 数字高度值(宽度等同此值)，设置边框时看情况是否需要设置此值
         height: {
-            type: String | Number,
+            type: [String, Number],
             default: 40
         }
     },

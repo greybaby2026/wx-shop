@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import store from 'store'
+import store from '@/store'
 
 
 // 账号登录

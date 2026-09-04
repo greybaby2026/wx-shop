@@ -104,7 +104,7 @@ export default {
 
         // 优惠券ID
         couponId: {
-            type: Number | String,
+            type: [Number, String],
             default: ''
         },
 
@@ -116,7 +116,7 @@ export default {
 
         // 金额
         money: {
-            type: String | Number,
+            type: [String, Number],
             default: 0
         },
 
@@ -162,7 +162,7 @@ export default {
 
         // 使用说明
         desc: {
-            type: Object | Boolean,
+            type: [Object, Boolean],
             default: false
         },
         condition_type: {

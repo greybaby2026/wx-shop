@@ -4,23 +4,26 @@ const IS_H5 = true
 // #endif
 
 // #ifndef H5
-const IS_H5 = false
+const IS_H5_NOT_USED = false
 // #endif
 /** E 是否H5端 **/
 
+
 /** S API BaseURL **/
-const baseURLMap = {
-    // 开发环境
-    development: process.env.VUE_APP_BASE_API,
-    // 生产环境
-    production: IS_H5
-        ? location.origin
-        : process.env.VUE_APP_BASE_API
-        ? process.env.VUE_APP_BASE_API
-        : '[baseUrl]'
+/** S API BaseURL **/
+// 止血方案：微信小程序端 process/require 不可用且 process.env 无法注入，导致 baseURL 为空。
+// 这里直接使用生产域名常量，确保接口可用。
+const baseURL = 'https://jiangjunshijia.com'
+
+if (!baseURL) {
+    console.error('[config/app.js] baseURL为空，请检查配置')
 }
 
-const baseURL = baseURLMap[process.env.NODE_ENV]
+/** E API BaseURL **/
+
+if (!baseURL) {
+    console.error('[config/app.js] baseURL为空，请检查 .env.production 或 .env.development 文件中是否配置了 VUE_APP_BASE_API')
+}
 
 /** E API BaseURL **/
 

@@ -43,7 +43,7 @@ class AccountLogLogic extends BaseLogic
      * @author Tab
      * @date 2021/8/4 9:58
      */
-    public static function add($userId, $changeType, $action, $changeAmount, $associationSn = '', $remark = '', $feature = [])
+    public static function add($userId, $changeType, $action, $changeAmount, $associationSn = '', $remark = '', $feature = [], $balanceField = '')
     {
         $user = User::findOrEmpty($userId);
         if($user->isEmpty()) {
@@ -62,7 +62,7 @@ class AccountLogLogic extends BaseLogic
                 break;
             // 不可提现余额
             case AccountLogEnum::BNW:
-                $left_amount = $user->user_money;
+                $left_amount = ($balanceField && isset($user->$balanceField)) ? $user->$balanceField : $user->user_money;
                 break;
             // 成长值
             case AccountLogEnum::GROWTH:
@@ -71,6 +71,10 @@ class AccountLogLogic extends BaseLogic
             // 积分
             case AccountLogEnum::INTEGRAL:
                 $left_amount = $user->user_integral;
+                break;
+            // 活动余额
+            case AccountLogEnum::ACTIVITY:
+                $left_amount = $user->activity_money;
                 break;
         }
 

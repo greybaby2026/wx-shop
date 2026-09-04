@@ -1,6 +1,6 @@
 import { apiConfig } from '@/api/app'
-import { apiUserCentre, apiDistributionCode } from '@/api/user'
-import { CONFIG, USER_INFO, TOKEN, INVITE_CODE } from '@/config/cachekey'
+import { apiUserCentre, apiDistributionCode , apiUserBindStore } from '@/api/user'
+import { CONFIG, USER_INFO, TOKEN, INVITE_CODE , PENDING_STORE_ID } from '@/config/cachekey'
 import wechath5 from '@/utils/wechath5'
 import Cache from '@/utils/cache'
 import { router } from '@/router'
@@ -40,6 +40,13 @@ const mutations = {
                 hide: 1
             }).finally(() => {
                 Cache.remove(INVITE_CODE)
+            })
+        }
+        // 登录完成绑定门店(首绑定终身)
+        const pendingStore = Cache.get(PENDING_STORE_ID)
+        if (pendingStore) {
+            apiUserBindStore({ store_id: pendingStore, hide: 1 }).finally(() => {
+                Cache.remove(PENDING_STORE_ID)
             })
         }
     },

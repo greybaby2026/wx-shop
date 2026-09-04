@@ -431,7 +431,7 @@
             <div
                 class="ls-card m-t-24 flex flex-wrap col-stretch"
                 style="height: auto"
-                v-if="orderData.express_parcel.length"
+                v-if="orderData.express_parcel && orderData.express_parcel.length"
             >
                 <div style="width: 100%">
                     <div class="nr weight-500 m-b-20 title">包裹信息</div>
@@ -625,6 +625,7 @@
                                 <el-popover placement="top" trigger="hover">
                                     <div>优惠券抵扣：-¥{{ scope.row.coupon_discount }}</div>
                                     <div>会员折扣：-¥{{ scope.row.member_discount }}</div>
+                                    <div v-if="orderData.deduct_amount > 0">活动余额抵扣：-¥{{ orderData.deduct_amount }}</div>
                                     <!-- <div>积分抵扣：-¥{{ scope.row.integral_discount }}</div> -->
                                     <i slot="reference" class="el-icon-question pointer"></i>
                                 </el-popover>
@@ -761,10 +762,13 @@ export default class OrderDetail extends Vue {
     getOrderDetail() {
         apiOrderDetail({ id: this.id }).then(res => {
             this.orderData = res
-
             // if (res.delivery_type == 1 && res.order_status > 1 && res.send_type == 1) {
-            this.getOrderDeliveryInfo()
+            if (res.delivery_type == 1) {
+                this.getOrderDeliveryInfo()
+            }
             // }
+        }).catch(() => {
+            this.$message.error('获取订单详情失败')
         })
     }
 
@@ -963,16 +967,17 @@ export default class OrderDetail extends Vue {
         let total = 0
         if (this.orderData.order_type == 0 || this.orderData.order_type == 4) {
             this.orderData.order_goods.forEach((i: any) => {
-                return (total += Number(i.total_amount))
+                total += Number(i.total_amount)
             })
         } else if (
             this.orderData.order_type == 1 ||
             this.orderData.order_type == 2 ||
             this.orderData.order_type == 3 ||
-            this.orderData.order_type == 5
+            this.orderData.order_type == 5 ||
+            this.orderData.order_type == 7
         ) {
             this.orderData.order_goods.forEach((i: any) => {
-                return (total += Number(i.total_price))
+                total += Number(i.total_price || i.goods_price || i.original_price || 0)
             })
         }
         return total.toFixed(2)

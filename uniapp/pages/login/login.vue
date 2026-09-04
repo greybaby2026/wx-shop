@@ -243,7 +243,7 @@ import {
   apiCheckMobile,
 } from "@/api/app";
 import wechath5 from "@/utils/wechath5";
-import { isWeixinClient, currentPage, client, trottle } from "@/utils/tools";
+import { isWeixinClient, currentPage, trottle } from "@/utils/tools";
 import Cache from "@/utils/cache";
 import { BACK_URL, INVITE_CODE } from "@/config/cachekey";
 import { getCode, getUserProfile } from "@/utils/login";

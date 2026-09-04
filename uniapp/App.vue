@@ -1,52 +1,52 @@
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import { apiDistributionCode } from '@/api/user'
+import { apiDistributionCode, apiUserBindStore } from '@/api/user'
 import { strToParams } from '@/utils/tools'
-import { INVITE_CODE } from '@/config/cachekey'
+import { INVITE_CODE, PENDING_STORE_ID } from '@/config/cachekey'
 import Cache from '@/utils/cache'
 export default {
     async onLaunch(options) {
         Cache.set('OPENIMAGE_ENABLE', true)
 
-        console.log(options)
-        // 获取公共配置
-        await this.getConfig().then((res) => {
-            // 当后台配置商城停止后相关商城进行跳转到空页面
-            // #ifdef H5
-            let favicon = document.querySelector('link[rel="icon"]')
-            if (favicon) {
-                favicon.href = res.favicon
-                return
-            }
-            favicon = document.createElement('link')
-            favicon.rel = 'icon'
-            favicon.href = res.favicon
-            document.head.appendChild(favicon)
-            if (!res.h5_status) {
-                setTimeout(() => {
-                    uni.navigateTo({
-                        url: '/bundle/pages/business_suspended/business_suspended'
-                    })
-                }, 0)
-            }
+        // 获取公共配置 + 主题配置（并行，无数据依赖）
+        await Promise.all([
+            this.getConfig().then((res) => {
+                // #ifdef H5
+                let favicon = document.querySelector('link[rel="icon"]')
+                if (favicon) {
+                    favicon.href = res.favicon
+                } else {
+                    favicon = document.createElement('link')
+                    favicon.rel = 'icon'
+                    favicon.href = res.favicon
+                    document.head.appendChild(favicon)
+                }
+                if (!res.h5_status) {
+                    setTimeout(() => {
+                        uni.navigateTo({
+                            url: '/bundle/pages/business_suspended/business_suspended'
+                        })
+                    }, 0)
+                }
+                // #endif
+                // #ifdef MP-WEIXIN
+                if (!res.mnp_status) {
+                    setTimeout(() => {
+                        uni.navigateTo({
+                            url: '/bundle/pages/business_suspended/business_suspended'
+                        })
+                    }, 0)
+                }
+                // #endif
+                return res
+            }),
+            this.getDecorateConfig()
+        ])
+        // 活动抵扣信息（不阻塞启动）
+        this.getDeductInfo()
 
-            // #endif
-            // #ifdef MP-WEIXIN
-            if (!res.mnp_status) {
-                setTimeout(() => {
-                    uni.navigateTo({
-                        url: '/bundle/pages/business_suspended/business_suspended'
-                    })
-                }, 0)
-            }
-            // #endif
-        })
-        // 获取主题配置
-        await this.getDecorateConfig()
-
-        // 获取个人信息
+        // 获取个人信息 + 购物车（并行）
         this.getUser().then((res) => {
-            // 更新购物车信息
             this.$store.dispatch('getCartNum')
             if (this.bindMobile && !res.mobile) {
                 this.logout()
@@ -77,10 +77,12 @@ export default {
         Cache.set('OPENIMAGE_ENABLE', true)
     },
     onUnload() {},
-    onShow: async function (options) {
+    onShow: function (options) {
         uni.hideTabBar()
         this.bindCode(options)
-        await this.getsetshareConfig()
+        // 分享配置和活动抵扣并行请求，不阻塞页面渲染
+        this.getsetshareConfig()
+        this.getDeductInfo()
     },
     onHide: function () {
         console.log('App Hide')
@@ -99,14 +101,23 @@ export default {
             'getDecorateConfig',
             'getUser',
             'getsetserviceConfig',
-            'getsetshareConfig'
+            'getsetshareConfig',
+            'getDeductInfo'
         ]),
         ...mapMutations(['logout']),
         async bindCode(options) {
             if (!options.query) return
+            const sceneParams = strToParams(decodeURIComponent(options.query.scene || ''))
+            const store_id = options.query.store_id || sceneParams.store_id
+            if (store_id) {
+                // 扫门店码绑定(首绑定终身):未登录先暂存,登录后补绑
+                apiUserBindStore({ store_id: store_id, hide: 1 }).catch(() => {
+                    Cache.set(PENDING_STORE_ID, store_id)
+                })
+            }
             let invite_code =
                 options.query.invite_code ||
-                strToParams(decodeURIComponent(options.query.scene)).invite_code
+                sceneParams.invite_code
             console.log(options)
             if (invite_code) {
                 apiDistributionCode({

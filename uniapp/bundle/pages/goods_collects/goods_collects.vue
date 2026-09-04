@@ -25,7 +25,7 @@
               shape="rectangle"
               :name="item.name"
               :image="item.image"
-              :contain-style="{ 'border-raius': 0, height: '200rpx' }"
+              :contain-style="{ 'border-radius': 0, height: '200rpx' }"
               :image-style="{ width: '160rpx', height: '160rpx' }"
             >
               <text class="muted xs skuline">{{ item.spec_value_str }}</text>

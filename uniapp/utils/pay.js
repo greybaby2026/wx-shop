@@ -141,6 +141,7 @@ export const alipay = async (options, params, token) => {
     })
 }
 export const ttpay = async (options) => {
+    // #ifdef MP-TOUTIAO
     return new Promise((resolve, reject) => {
         tt.pay({
             orderInfo: options,
@@ -156,4 +157,8 @@ export const ttpay = async (options) => {
             fail: (res) => reject(res)
         })
     })
+    // #endif
+    // #ifndef MP-TOUTIAO
+    return Promise.reject('非头条小程序环境')
+    // #endif
 }

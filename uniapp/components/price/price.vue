@@ -46,7 +46,7 @@
 		props: {
 			// 价格
 			content: {
-				type: String | Number,
+				type: [String, Number],
 				required: true
 			},
 
@@ -88,7 +88,7 @@
 			
 			// 字重
 			fontWeight: {
-				type: String | Number,
+				type: [String, Number],
 				default: 'normal'
 			},
 

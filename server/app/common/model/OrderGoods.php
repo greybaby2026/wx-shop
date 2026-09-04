@@ -42,8 +42,8 @@ class OrderGoods extends BaseModel
      */
     public function getGoodsImageAttr($value, $data)
     {
-        $goods_image = $data['goods_snap']->item_image ?? '';
-        $goods_image = $goods_image ? : $data['goods_snap']->image;
+        $goods_image = isset($data['goods_snap']) && is_object($data['goods_snap']) ? ($data['goods_snap']->item_image ?? '') : '';
+        $goods_image = $goods_image ?: (isset($data['goods_snap']) && is_object($data['goods_snap']) ? ($data['goods_snap']->image ?? '') : '');
         
         return empty($goods_image) ? '' : FileService::getFileUrl($goods_image);
     }
@@ -58,7 +58,7 @@ class OrderGoods extends BaseModel
      */
     public function getSpecValueStrAttr($value, $data)
     {
-        return $data['goods_snap']->spec_value_str;
+        return isset($data['goods_snap']) && is_object($data['goods_snap']) ? ($data['goods_snap']->spec_value_str ?? '') : '';
     }
 
     /**
@@ -110,7 +110,7 @@ class OrderGoods extends BaseModel
      */
     public function getOriginalPriceAttr($value, $data)
     {
-        return $data['goods_snap']->original_price ?? 0;
+        return isset($data['goods_snap']) && is_object($data['goods_snap']) ? ($data['goods_snap']->original_price ?? ($data['goods_price'] ?? 0)) : ($data['goods_price'] ?? 0);
     }
 
     /**

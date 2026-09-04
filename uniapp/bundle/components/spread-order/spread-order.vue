@@ -76,7 +76,7 @@
 
 		props: {
 			type: {
-				type: Number | String,
+				type: [Number, String],
 				default: DistributionOrderEnum['ALL']
 			}
 		},

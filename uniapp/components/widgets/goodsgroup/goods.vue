@@ -1,10 +1,10 @@
 <template>
-	<view class="goods-group" :class="themeName" :style="{
+	<view class="goods-group" :class="themeName" :style="[{
 	            margin: `-${$px2rpx(styles.margin/2)}rpx`,
 				'background-color': styles.content_bg_color,
 				'border-radius': `${$px2rpx(styles.border_radius_top)}rpx ${$px2rpx(styles.border_radius_top)}rpx ${$px2rpx(styles.border_radius_bottom)}rpx ${$px2rpx(styles.border_radius_bottom)}rpx`,
 				'padding': `${$px2rpx(styles.padding/2)}rpx`
-	        }">
+	        }, themeCssVars]">
 		<view class="goods-lists" :class="{
 	                    larger: content.style==1,
 	                    perline: content.style==2,
@@ -21,6 +21,11 @@
 						<view class="u-image">
 							<u-image :src="item.image" width="100%" height="100%" />
 						</view>
+						<!-- 活动角标（斜丝带样式） -->
+						<view v-if="activityBadge" class="activity-badge" :style="{ '--badge-bg': activityBadge.bgColor }">
+							<image v-if="activityBadge.icon" :src="activityBadge.icon" class="badge-icon" mode="aspectFit" />
+							<text class="badge-text">{{ activityBadge.text }}</text>
+						</view>
 					</view>
 					<view class="goods-info p-10">
 						<view v-if="content.show_title" class="m-b-8 name" :style="{
@@ -33,7 +38,7 @@
 						<view class="flex price-btn flex-wrap">
 							<view class="flex-1 flex col-baseline">
 								<view v-if="content.show_price" class="price weight-bold m-r-10">
-									<price :content="item.sell_price" :color="styles.price_color" :font-weight="500"
+									<price :content="item.sell_price" :color="activityBadge ? activityBadge.bgColor : styles.price_color" :font-weight="500"
 										mainSize="34rpx" minorSize="26rpx" />
 								</view>
 								<view v-if="content.show_scribing_price">
@@ -55,6 +60,7 @@
 </template>
 
 <script type="text/javascript">
+	import { mapGetters } from 'vuex'
 	export default {
 		components: {},
 		props: {
@@ -79,12 +85,22 @@
 			}
 		},
 		computed: {
-
+			...mapGetters(['deductInfo']),
 			goods() {
 				const {
 					data
 				} = this.content
 				return data.length ? data : []
+			},
+			activityBadge() {
+				const info = this.deductInfo
+				if (!info || !info.active) return null
+				const theme = info.theme_config || {}
+				return {
+					text: theme.badge_text || info.activity_name || '',
+					icon: theme.badge_icon || '',
+					bgColor: theme.primary_color || '#FF2C3C'
+				}
 			},
 			btnStyle() {
 				const {
@@ -95,7 +111,7 @@
 				} =
 				this.styles
 				const style = {
-					"background-color": btn_bg_color,
+					"background-color": this.activityBadge ? this.activityBadge.bgColor : btn_bg_color,
 					color: btn_color,
 					'border-radius': `${this.$px2rpx(btn_border_radius)}rpx`,
 					'border-color': btn_border_color,
@@ -199,6 +215,36 @@
 							bottom: 0;
 							left: 0;
 							width: 100%;
+						}
+
+						.activity-badge {
+							position: absolute;
+							top: 16rpx;
+							left: -28rpx;
+							z-index: 2;
+							display: flex;
+							align-items: center;
+							justify-content: center;
+							padding: 4rpx 32rpx;
+							background-color: var(--badge-bg, #FF2C3C);
+							color: #ffffff;
+							font-size: 18rpx;
+							font-weight: 600;
+							line-height: 1.3;
+							transform: rotate(-45deg);
+							transform-origin: center center;
+							box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.2);
+
+							.badge-icon {
+								width: 20rpx;
+								height: 20rpx;
+								margin-right: 4rpx;
+							}
+
+							.badge-text {
+								white-space: nowrap;
+								text-align: center;
+							}
 						}
 					}
 

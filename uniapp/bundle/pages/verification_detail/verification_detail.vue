@@ -18,7 +18,7 @@
                         shape="rectangle"
                         :name="goodsItem.goods_name"
                         :image="goodsItem.goods_image"
-                        :contain-style="{ 'border-raius': 0, height: '230rpx' }"
+                        :contain-style="{ 'border-radius': 0, height: '230rpx' }"
                         :image-style="{ width: '180rpx', height: '180rpx' }"
                     >
                         <view class="m-t-10 order-main__spec">

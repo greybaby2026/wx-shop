@@ -1,5 +1,5 @@
 <template>
-  <view class="goods-detail" :class="themeName">
+  <view class="goods-detail" :class="themeName" :style="themeCssVars">
     <!-- #ifndef H5 -->
     <navbar title="商品详情" :background="{ background: `rgba(256,256,256,${percent})` }"
       :titleColor="`rgba(0,0,0,${percent})`" :immersive="true"></navbar>
@@ -589,7 +589,7 @@ export default {
     },
     handleBuyLuck({ spec, number }) {
       this.$Router.push({
-        path: "/pages/goods_order/goods_order",
+        path: "/bundle/pages/goods_order/goods_order",
         query: {
           from: OrderTypeEnum["LUCK"],
           // address_id: this.addressId,
@@ -611,7 +611,7 @@ export default {
     handleBuy({ spec, number }) {
       const form = this.goodsInfo.type == 1 ? "GOODS" : "VIRTUAL";
       this.$Router.push({
-        path: "/pages/goods_order/goods_order",
+        path: "/bundle/pages/goods_order/goods_order",
         query: {
           from: OrderTypeEnum[form],
           address_id: this.addressId,
@@ -684,7 +684,7 @@ export default {
         await this.initGoodsDetail();
       });
       this.$Router.push({
-        path: "/pages/address/address",
+        path: "/bundle/pages/address/address",
         query: {
           type: 1,
         },

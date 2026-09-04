@@ -31,6 +31,11 @@ class OrderLists extends BaseBusinesseDataLists implements ListsExtendInterface{
     public function searchWhere()
     {
         $where = [];
+        // 门店隔离: 门店账号仅可见本店自提订单
+        if ($this->storeId > 0) {
+            $where[] = ['o.delivery_type','=',2];
+            $where[] = ['o.selffetch_shop_id','=',$this->storeId];
+        }
         if(isset($this->params['type']) && '' != $this->params['type']) {
             $where[] = ['order_status','=',$this->params['type']];
         }

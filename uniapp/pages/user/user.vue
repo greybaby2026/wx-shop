@@ -1,5 +1,5 @@
 <template>
-	<view class="user" :style="[pageStyle]" :class="themeName">
+	<view class="user" :style="[pageStyle, themeCssVars]" :class="themeName">
 		<view v-for="(item, index) in pagesData" :key="index">
 			<template v-if="item.name=='userinfo'">
 				<w-userinfo v-show="item.show" :content="item.content" :styles="item.styles" :percent="percent" :title="styles.title" />

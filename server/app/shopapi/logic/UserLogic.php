@@ -443,14 +443,17 @@ class UserLogic extends BaseLogic
         
         $userMoney = is_null($user->user_money) ? 0 : $user->user_money;
         $userEarnings = is_null($user->user_earnings) ? 0 : $user->user_earnings;
+        $activityMoney = is_null($user->activity_money) ? 0 : $user->activity_money;
         $totalOrderAmount = is_null($user->total_order_amount) ? 0 : $user->total_order_amount;
         return [
             'user_money'            => $userMoney,
             'user_earnings'         => $userEarnings,
-            'total_amount'          => round($userMoney + $userEarnings, 2),
+            'activity_money'        => $activityMoney,
+            'total_amount'          => round($userMoney + $userEarnings + $activityMoney, 2),
             'recharge_open'         => $rechargeOpen,
             'recharge_min_amount'   => $rechargeMinAmount,
             'total_order_amount'    => $totalOrderAmount,
+            'recharge_to_activity'  => \app\shopapi\logic\activity\DeductService::rechargeToActivity(),
         ];
     }
 
@@ -657,6 +660,38 @@ class UserLogic extends BaseLogic
             'id'                => $userId,
             'is_register_award' => 1,
         ]);
+    }
+
+
+
+    /**
+     * @notes 扫码绑定门店(首绑定终身)
+     */
+    public static function bindStore($userId, $storeId)
+    {
+        try {
+            $user = User::findOrEmpty($userId);
+            if ($user->isEmpty()) {
+                throw new \Exception('用户不存在');
+            }
+            // 首绑定终身:已绑定不换绑
+            if ($user->bind_store_id > 0) {
+                return true;
+            }
+            $store = \app\common\model\SelffetchShop::where(['id' => $storeId, 'status' => 1])->findOrEmpty();
+            if ($store->isEmpty()) {
+                throw new \Exception('门店不存在或已停用');
+            }
+            User::update([
+                'id' => $userId,
+                'bind_store_id' => $storeId,
+                'bind_store_time' => time(),
+            ]);
+            return true;
+        } catch (\Exception $e) {
+            self::setError($e->getMessage());
+            return false;
+        }
     }
 
 }

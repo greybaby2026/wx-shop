@@ -147,6 +147,14 @@ return [
                     'is_open' => true
                 ],
                 [
+                    'name'      => '充值抵扣',
+                    'introduce' => '充值余额自动抵扣订单金额',
+                    'tips'      => '',
+                    'page_path' => '/activity_deduct/config',
+                    'image'     => '/resource/image/adminapi/default/recharge.png',
+                    'is_open' => true
+                ],
+                [
                     'name'      => '商城公告',
                     'introduce' => '商城公告',
                     'tips'      => '',

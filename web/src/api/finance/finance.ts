@@ -48,3 +48,5 @@ export const apiIntegralChangeType = () => request.get('/account_log/getIntegral
 // // 获取搜索框变动类型数据
 // export const apiChangeTypeList = () => request.get('/account_log/getChangeType')
 /** E 积分明细 **/
+
+export const apiActChangeType = () => request.get('/account_log/getActChangeType')

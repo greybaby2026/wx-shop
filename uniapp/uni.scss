@@ -28,9 +28,68 @@ $themes: (
   green_theme: (
 	default_color:#2ec840,
 	minor_color: #3de650
+  ),
+  deduct_default: (
+	default_color: #1a3a5c,
+	minor_color: #c9a96e
+  ),
+  deduct_fathers_day: (
+	default_color: #1a3a5c,
+	minor_color: #c9a96e
+  ),
+  deduct_618: (
+	default_color: #e74c3c,
+	minor_color: #f39c12
+  ),
+  deduct_mid_autumn: (
+	default_color: #2c3e50,
+	minor_color: #f1c40f
+  ),
+  deduct_teachers_day: (
+	default_color: #6c5ce7,
+	minor_color: #a29bfe
+  ),
+  deduct_national_day: (
+	default_color: #c0392b,
+	minor_color: #f1c40f
+  ),
+  deduct_double_11: (
+	default_color: #2c3e50,
+	minor_color: #e74c3c
+  ),
+  deduct_double_12: (
+	default_color: #34495e,
+	minor_color: #e67e22
+  ),
+  deduct_new_year: (
+	default_color: #8e44ad,
+	minor_color: #f39c12
+  ),
+  deduct_spring_festival: (
+	default_color: #c0392b,
+	minor_color: #f1c40f
+  ),
+  deduct_love: (
+	default_color: #e84393,
+	minor_color: #fd79a8
+  ),
+  deduct_mothers_day: (
+	default_color: #e17055,
+	minor_color: #fab1a0
   )
 );
-//遍历主题map
+
+// 为每个主题生成 CSS 变量声明（CSS变量可通过DOM继承穿透微信小程序组件样式隔离）
+@each $theme-name, $theme-map in $themes {
+  .#{$theme-name} {
+    --theme-primary: #{map-get($theme-map, default_color)};
+    --theme-primary-rgb: #{red(map-get($theme-map, default_color))}, #{green(map-get($theme-map, default_color))}, #{blue(map-get($theme-map, default_color))};
+    --theme-minor: #{map-get($theme-map, minor_color)};
+    --theme-minor-rgb: #{red(map-get($theme-map, minor_color))}, #{green(map-get($theme-map, minor_color))}, #{blue(map-get($theme-map, minor_color))};
+  }
+}
+
+//遍历主题map（保留用于非颜色场景）
 @mixin theme_each {
   @each $theme-name, $theme-map in $themes {
     $theme-color: $theme-map !global;
@@ -50,46 +109,39 @@ $themes: (
 @function get_color($key) {
 	@return map-get($theme-color, $key);
 }
-//获取背景颜色
+
+//获取背景颜色（使用CSS变量，支持运行时热切换）
 @mixin background_color($alpha: 1) {
-  @include theme_each {
-    background-color: rgba(get_color('default_color'),$alpha);;
+  @if $alpha == 1 {
+    background-color: var(--theme-primary);
+  } @else {
+    background-color: rgba(var(--theme-primary-rgb), $alpha);
   }
 }
 
-//获取渐变背景颜色
+//获取渐变背景颜色（使用CSS变量，支持运行时热切换）
 @mixin background_linear($deg: 90deg, $min: 0%, $max: 100%) {
-  @include theme_each {
-    background-image: linear-gradient($deg, get_color('minor_color') $min, get_color('default_color') $max);
-  }
+  background-image: linear-gradient($deg, var(--theme-minor) $min, var(--theme-primary) $max);
 }
 
-//获取渐变背景图片和颜色
+//获取渐变背景图片和颜色（使用CSS变量，支持运行时热切换）
 @mixin background_image($deg: 90deg, $min: 0%, $max: 100%, $url: '') {
-  @include theme_each {
-    background-image: url($url),linear-gradient($deg, get_color('minor_color') $min, get_color('default_color') $max);
-  }
+  background-image: url($url), linear-gradient($deg, var(--theme-minor) $min, var(--theme-primary) $max);
 }
 
-// 设置阴影
+// 设置阴影（使用CSS变量，支持运行时热切换）
 @mixin box_shadow($x, $y, $blur, $spread: 0, $box: inset) {
-  @include theme_each {
-    box-shadow: $x $y $blur $spread get_color('default_color') $box;
-  }
+  box-shadow: $x $y $blur $spread var(--theme-primary) $box;
 }
 
-//获取字体颜色
+//获取字体颜色（使用CSS变量，支持运行时热切换）
 @mixin font_color() {
-  @include theme_each {
-    color: get_color('default_color');
-  }
+  color: var(--theme-primary);
 }
 
-//获取边框颜色
+//获取边框颜色（使用CSS变量，支持运行时热切换）
 @mixin border_color() {
-  @include theme_each {
-    border-color: get_color('default_color');
-  }
+  border-color: var(--theme-primary);
 }
 
  

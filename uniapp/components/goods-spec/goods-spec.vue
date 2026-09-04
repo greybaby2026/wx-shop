@@ -303,9 +303,6 @@ export default {
         },
         addGoodsMax() {
             let maxGoodsNums = 1
-            // this.defaultInfo.limit_type === 1
-            //   ? this.goodsOptionsSpec.stock
-            //   : this.defaultInfo.limit_value;
             if (this.defaultInfo.limit_type === 1) {
                 maxGoodsNums = this.goodsOptionsSpec.stock
             } else if (this.defaultInfo.limit_type == 2 || this.defaultInfo.limit_type == 3) {
@@ -316,8 +313,7 @@ export default {
                 }
             }
             return maxGoodsNums
-        },
-        ...mapGetters['isLogin']
+        }
     },
 
     methods: {

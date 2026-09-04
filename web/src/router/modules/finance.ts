@@ -56,6 +56,18 @@ const routes = [
                 component: () => import('@/views/finance/integral_list.vue')
             },
             {
+                path: '/finance/act_log',
+                name: 'act_log',
+                meta: {
+                    title: '活动余额记录',
+                    parentPath: '/finance',
+                    icon: 'icon_caiwu_yue',
+                    permission: ['view'],
+                    keepAlive: true
+                },
+                component: () => import('@/views/finance/act_log.vue')
+            },
+            {
                 path: '/finance/commission_log',
                 name: 'commission_log',
                 meta: {

@@ -20,7 +20,7 @@
 			
 			// 拼团人数
 			count: {
-				type: Number | String,
+				type: [Number, String],
 				required: true,
 			}
 		},

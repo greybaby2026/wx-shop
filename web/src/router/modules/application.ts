@@ -1088,6 +1088,22 @@ const routes = [
             }
         ]
     }
+,
+    {
+        path: '/activity_deduct',
+        name: 'activity_deduct',
+        meta: { hidden: true, title: '充值抵扣', moduleName: 'activity_deduct' },
+        redirect: '/activity_deduct/config',
+        component: Main,
+        children: [
+            {
+                path: '/activity_deduct/config',
+                name: 'activity_deduct_config',
+                meta: { title: '充值抵扣', parentPath: '/application', moduleName: 'activity_deduct', icon: 'icon_activity', permission: ['view'] },
+                component: () => import('@/views/application/activity_deduct/index.vue')
+            }
+        ]
+    }
 ]
 
 export default routes

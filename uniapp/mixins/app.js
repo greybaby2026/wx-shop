@@ -7,9 +7,16 @@ export default {
       "isLogin",
       "themeName",
       "themeColor",
+      "themeMinorColor",
       "userInfo",
       "appConfig",
     ]),
+    themeCssVars() {
+      return {
+        '--theme-primary': this.themeColor,
+        '--theme-minor': this.themeMinorColor,
+      }
+    }
   },
   onShow() {
     if (this.isLogin) {

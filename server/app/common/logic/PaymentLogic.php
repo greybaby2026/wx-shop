@@ -37,6 +37,7 @@ use app\common\service\pay\WeChatPayService;
 use app\common\service\RegionService;
 use app\common\service\WeChatService;
 use think\Exception;
+use think\facade\Db;
 
 
 /**
@@ -77,9 +78,65 @@ class PaymentLogic extends BaseLogic
             return ['pay_way'=>PayEnum::BALANCE_PAY];
         }
 
+        // 处理余额抵扣（订单有deduct_amount时先扣余额，剩余走微信）
+        // 使用事务保护：deduct和pay在同一事务中，pay失败时回滚activity_money
+        $deductAmount = $order['deduct_amount'] ?? 0;
+        $payAmount = $order['order_amount'];
+        if ($deductAmount > 0) {
+            $payAmount = $order['order_amount'] - $deductAmount;
+            if ($payAmount < 0) $payAmount = 0;
+        }
+
+        // 余额支付时，deduct和pay都在事务中
+        if ($deductAmount > 0 && $payWay == PayEnum::BALANCE_PAY) {
+            Db::startTrans();
+            try {
+                $deductService = new \app\common\service\pay\BalancePayService();
+                $deductResult = $deductService->deduct($order, $deductAmount);
+                if (!$deductResult) {
+                    Db::rollback();
+                    self::setError('余额抵扣失败');
+                    return false;
+                }
+                $payService = new BalancePayService();
+                $result = $payService->pay($from, $order);
+                if (false === $result) {
+                    Db::rollback();
+                    self::setError($payService->realPay()->getMessage());
+                    return false;
+                }
+                Db::commit();
+                PayNotifyLogic::handle($from, $order['sn']);
+                return $result;
+            } catch (\Exception $e) {
+                Db::rollback();
+                self::setError($e->getMessage());
+                return false;
+            }
+        }
+
+        // 非余额支付（微信/支付宝等），先扣抵扣部分，失败则回滚
+        if ($deductAmount > 0) {
+            Db::startTrans();
+            try {
+                $deductService = new \app\common\service\pay\BalancePayService();
+                $deductResult = $deductService->deduct($order, $deductAmount);
+                if (!$deductResult) {
+                    Db::rollback();
+                    self::setError('余额抵扣失败');
+                    return false;
+                }
+                Db::commit();
+            } catch (\Exception $e) {
+                Db::rollback();
+                self::setError($e->getMessage());
+                return false;
+            }
+        }
+
         switch ($payWay) {
             case PayEnum::BALANCE_PAY:
-                //余额支付
+                //余额支付（已在上面的事务中处理）
                 $payService = (new BalancePayService());
                 $result = $payService->pay($from, $order);
                 if (false !== $result) {
@@ -88,10 +145,18 @@ class PaymentLogic extends BaseLogic
                 break;
             case PayEnum::WECHAT_PAY:
                 $payService = (new WeChatPayService($terminal, $order['user_id'] ?? null));
+                // 如有余额抵扣，微信只收剩余金额
+                if ($deductAmount > 0 && isset($payAmount)) {
+                    $order['order_amount'] = $payAmount;
+                }
                 $result = $payService->pay($from, $order);
                 break;
             case PayEnum::ALI_PAY:
                 $payService = (new AliPayService($terminal));
+                // 如有余额抵扣，支付宝只收剩余金额
+                if ($deductAmount > 0 && isset($payAmount)) {
+                    $order['order_amount'] = $payAmount;
+                }
                 $result = $payService->pay($from, $order);
                 break;
             case PayEnum::BYTE_PAY:
@@ -116,8 +181,13 @@ class PaymentLogic extends BaseLogic
                 return false;
         }
 
-        //支付成功, 执行支付回调
+        //支付失败时，回滚已扣的activity_money
         if (! $result) {
+            if ($deductAmount > 0) {
+                \app\common\model\User::update([
+                    'activity_money' => ['inc', $deductAmount]
+                ], ['id' => $order['user_id']]);
+            }
             self::setError($payService->realPay()->getMessage());
         }
         
@@ -252,6 +322,7 @@ class PaymentLogic extends BaseLogic
             return [
                 'lists' => array_values($pay_way),
                 'order_amount' => $order['order_amount'],
+                'deduct_amount' => $order['deduct_amount'] ?? 0,
                 'cancel_time' => $cancelTime,
             ];
         } catch (\Exception $e) {

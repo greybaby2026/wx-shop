@@ -232,4 +232,9 @@ export const apiuserDeletecheck = (params) => request.post('userDelete/check', p
 export const apiupdateRegisterAward = (params) => request.post('user/updateRegisterAward', params)
 export function withdrawReceive(params) {
     return request.post('withdraw/receive', params)
+
+
+//扫码绑定门店(首绑定终身)
+export const apiUserBindStore = (params) => request.post('user/bindStore', params)
+
 }

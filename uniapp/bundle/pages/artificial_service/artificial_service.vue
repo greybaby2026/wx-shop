@@ -151,6 +151,8 @@ export default {
     },
 
     methods: {
+        ...mapActions(['getsetserviceConfig']),
+
         getServiceConfigDataFun() {
             apiServiceConfig()
                 .then((res) => {
@@ -218,8 +220,7 @@ export default {
     },
 
     computed: {
-        ...mapGetters(['isLogin', 'ServiceConfig', 'appConfig']),
-        ...mapActions(['getsetserviceConfig'])
+        ...mapGetters(['isLogin', 'ServiceConfig', 'appConfig'])
     },
 
     async onLoad() {

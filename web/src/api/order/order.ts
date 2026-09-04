@@ -78,3 +78,8 @@ export const apiOrderImport = (params: any) => request.post('/order.DeliveryBatc
 export const apiDeliveryBatch = (params?: any) => request.get('/order.DeliveryBatch/index', { params })
 export const apiDeliveryBatchdown = (params?: any) => request.get('/order.DeliveryBatch/down', { params })
 export const apiDeliveryBatchfail = (params?: any) => request.get('/order.DeliveryBatch/down2', { params })
+
+// ERP订单列表
+export const apiErpOrderList = (params: any) => request.get('/order.erp_order/lists', { params })
+// ERP订单详情
+export const apiErpOrderDetail = (params: any) => request.get('/order.erp_order/detail', { params })

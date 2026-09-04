@@ -10,3 +10,12 @@
 .env
 .node_modules
 /新建文件夹2/
+
+# Keystore
+*.keystore
+
+# 补丁备份与部署包不入库
+*.bak
+*.bak_ms1
+*.bak_ms2
+uniapp*.tar.gz

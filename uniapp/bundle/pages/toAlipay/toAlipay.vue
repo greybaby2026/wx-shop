@@ -19,7 +19,15 @@ export default {
         this.from = option.from
         this.id = option.id
         this.pay_way = option.pay_way
-        this.token = option.key
+        // #ifdef H5
+        // 从hash中读取token（#token=xxx格式），避免Token暴露在URL query中
+        const hash = window.location.hash
+        const tokenMatch = hash.match(/[#&]token=([^&]*)/)
+        this.token = tokenMatch ? tokenMatch[1] : (option.key || '')
+        // #endif
+        // #ifndef H5
+        this.token = option.key || ''
+        // #endif
     },
     onShow() {
         //#ifdef H5

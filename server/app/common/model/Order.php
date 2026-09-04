@@ -203,7 +203,7 @@ class Order extends BaseModel
      */
     public function getBtnAttr($value, $data)
     {
-        return OrderBtnLogic::getOrderBtn($this);
+        try { return OrderBtnLogic::getOrderBtn($this); } catch (\Throwable $e) { return []; }
     }
 
     /**
@@ -216,14 +216,15 @@ class Order extends BaseModel
      */
     public function getDeliveryAddressAttr($value, $data)
     {
-        return RegionService::getAddress(
-            [
-                $data['address']->province ?? '',
-                $data['address']->city ?? '',
-                $data['address']->district ?? ''
-            ],
-            $data['address']->address ?? '',
-        );
+        $addr = $data['address'] ?? null;
+        if (empty($addr)) return '';
+        try {
+            $province = is_object($addr) ? ($addr->province ?? '') : ($addr['province'] ?? '');
+            $city = is_object($addr) ? ($addr->city ?? '') : ($addr['city'] ?? '');
+            $district = is_object($addr) ? ($addr->district ?? '') : ($addr['district'] ?? '');
+            $detail = is_object($addr) ? ($addr->address ?? '') : ($addr['address'] ?? '');
+            return RegionService::getAddress([$province, $city, $district], $detail);
+        } catch (\Throwable $e) { return ''; }
     }
 
     /**
@@ -336,7 +337,7 @@ class Order extends BaseModel
      */
     public function getAdminOrderBtnAttr($value, $data)
     {
-        return \app\adminapi\logic\order\OrderBtnLogic::getOrderBtn($this);
+        try { return \app\adminapi\logic\order\OrderBtnLogic::getOrderBtn($this); } catch (\Throwable $e) { return []; }
     }
 
     /**
@@ -488,8 +489,9 @@ class Order extends BaseModel
      */
     public function getConsigneeAttr($value, $data)
     {
-        return $data['address']->contact ?? '';
-
+        $addr = $data['address'] ?? null;
+        if (empty($addr)) return '';
+        return is_object($addr) ? ($addr->contact ?? '') : ($addr['contact'] ?? '');
     }
 
     /**
@@ -502,7 +504,9 @@ class Order extends BaseModel
      */
     public function getMobileAttr($value,$data)
     {
-        return $data['address']->mobile ?? '';
+        $addr = $data['address'] ?? null;
+        if (empty($addr)) return '';
+        return is_object($addr) ? ($addr->mobile ?? '') : ($addr['mobile'] ?? '');
     }
 
 

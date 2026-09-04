@@ -40,9 +40,11 @@ class OrderController extends BaseShopController
      */
     public function placeOrder()
     {
+        $post = request()->post();
         $data = [
             'terminal' => $this->userInfo['terminal'],
-            'user_id'=> $this->userId
+            'user_id'  => $this->userId,
+            'source'   => !empty($post['source']) ? $post['source'] : (!empty($post['cart_id']) ? 'cart' : 'buy_now'),
         ];
         $params = (new PlaceOrderValidate())->post()->goCheck('', $data);
 

@@ -100,7 +100,7 @@ class OrderLogic extends BaseLogic
             }])
             ->field('o.id,o.order_status,o.sn,o.order_type,o.order_terminal,o.create_time,o.pay_status,o.pay_way,o.pay_time,confirm_take_time,u.id as user_id,
             u.sn as user_sn,u.nickname,o.address,o.express_status,o.delivery_type,o.express_time,o.express_again,o.user_remark,o.order_remarks,
-            o.discount_amount,o.member_amount,o.change_price,o.express_price,o.order_amount,o.integral_amount,o.is_team_success,d.express_name,d.invoice_no,
+            o.discount_amount,o.member_amount,o.change_price,o.express_price,o.order_amount,o.integral_amount,o.deduct_amount,o.is_team_success,d.express_name,d.invoice_no,
             o.pickup_code,v.create_time as verification_time,o.verification_status,o.delivery_content,o.delivery_content1,o.delivery_content_type,d.send_type,o.selffetch_shop_id')
             ->append(['order_status_desc','order_type_desc','order_terminal_desc','pay_status_desc','pay_way_desc','delivery_address','express_status_desc','delivery_type_desc','admin_order_btn'])
             ->find()
@@ -148,8 +148,9 @@ class OrderLogic extends BaseLogic
 //        }
 
         //收货信息
-        $info['contact'] = $info['address']->contact;
-        $info['mobile'] = $info['address']->mobile;
+        $addr = $info['address'] ?? null;
+        $info['contact'] = is_object($addr) ? ($addr->contact ?? '') : ($addr['contact'] ?? '');
+        $info['mobile'] = is_object($addr) ? ($addr->mobile ?? '') : ($addr['mobile'] ?? '');
         unset($info['address']);
 
         //拼团订单显示拼团状态
@@ -719,8 +720,9 @@ class OrderLogic extends BaseLogic
         }
 
         //处理收货信息
-        $info['contact'] = $info['address']->contact;
-        $info['mobile'] = $info['address']->mobile;
+        $addr = $info['address'] ?? null;
+        $info['contact'] = is_object($addr) ? ($addr->contact ?? '') : ($addr['contact'] ?? '');
+        $info['mobile'] = is_object($addr) ? ($addr->mobile ?? '') : ($addr['mobile'] ?? '');
         unset($info['address']);
 
         //获取物流公司

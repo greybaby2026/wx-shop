@@ -66,13 +66,20 @@ class VerificationLogic extends BaseLogic
                 'sn' => $params['admin_info']['account'],
                 'name' => $params['admin_info']['name']
             ];
+            // 操作员绑定门店(0=平台账号)
+            $handleStoreId = intval(\app\common\model\Admin::where('id', $params['admin_info']['admin_id'])->value('store_id') ?: 0);
             $verification = new Verification;
             $verification->order_id = $params['id'];
             $verification->selffetch_shop_id = $order['selffetch_shop_id'];
+            $verification->belong_store_id = intval($order['belong_store_id'] ?? 0);
+            $verification->handle_store_id = $handleStoreId;
             $verification->handle_id = $params['admin_info']['admin_id'];
             $verification->verification_scene = VerificationEnum::TYPE_ADMIN;
             $verification->snapshot = json_encode($snapshot);
             $verification->save();
+
+            // 跨店结算: 自提 + 归属店 != 核销店 时生成结算明细
+            \app\common\logic\StoreSettlementLogic::createForOrder($order, $handleStoreId);
 
             //更新订单状态
             $order->order_status = OrderEnum::STATUS_FINISH;

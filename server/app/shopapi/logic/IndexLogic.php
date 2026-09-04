@@ -41,7 +41,11 @@ class IndexLogic extends BaseLogic
             }
 
             $params = request()->post();
-            if (!isset($params['terminal']) || !in_array($params['terminal'], UserTerminalEnum::ALL_TERMINAL)) {
+            $terminal = $params['terminal'] ?? null;
+            if (is_string($terminal) && $terminal !== '' && ctype_digit($terminal)) {
+                $terminal = (int)$terminal;
+            }
+            if (!in_array($terminal, UserTerminalEnum::ALL_TERMINAL, true)) {
                 throw new \Exception('终端参数缺失或有误');
             }
             $ip =  request()->ip();

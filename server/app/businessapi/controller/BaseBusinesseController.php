@@ -26,6 +26,7 @@ use think\App;
 class BaseBusinesseController extends BaseLikeShopController
 {
     protected int $adminId = 0;
+    protected int $storeId = 0;
     protected array $adminInfo = [];
 
 
@@ -36,6 +37,8 @@ class BaseBusinesseController extends BaseLikeShopController
             $this->adminInfo = $this->request->adminInfo;
             $this->adminId = $this->request->adminInfo['admin_id'];
         }
+        // 门店隔离: 0=平台账号
+        $this->storeId = intval(\app\common\model\Admin::where('id', $this->adminId)->value('store_id') ?: 0);
     }
 
 

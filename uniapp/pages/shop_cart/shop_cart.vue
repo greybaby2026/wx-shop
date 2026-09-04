@@ -1,5 +1,5 @@
 <template>
-    <view class="shop-cart" :class="themeName">
+    <view class="shop-cart" :class="themeName" :style="themeCssVars">
 		<!-- #ifndef  H5 -->
 		<u-sticky offset-top="0" h5-nav-height="0" bg-color="transparent">
 		  	<u-navbar :is-back="false" title="购物车" :title-bold="true" :is-fixed="false" :border-bottom="false"
@@ -525,7 +525,7 @@ export default {
             const carts = this.cartLists.filter((item) => item.selected).map((item) => item.id)
             if (carts.length == 0) return this.$toast({ title: '请选择商品' })
             this.$Router.push({
-                path: '/pages/goods_order/goods_order',
+                path: '/bundle/pages/goods_order/goods_order',
                 query: {
                     from: OrderTypeEnum['GOODS'],
                     payload: {

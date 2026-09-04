@@ -77,7 +77,7 @@
                             <goods-card
                                 shape="rectangle"
                                 :image="orderItem.image"
-                                :contain-style="{ 'border-raius': 0, height: '230rpx' }"
+                                :contain-style="{ 'border-radius': 0, height: '230rpx' }"
                                 :image-style="{ width: '180rpx', height: '180rpx' }"
                             >
                                 <view slot="name">
@@ -228,7 +228,7 @@ export default {
         // 去订单详情
         goOrderDetail(id) {
             this.$Router.push({
-                path: '/pages/order_detail/order_detail',
+                path: '/bundle/pages/order_detail/order_detail',
                 query: { order_id: id }
             })
         },
@@ -236,7 +236,7 @@ export default {
         // 处理：支付
         handlePayment(orderID) {
             this.$Router.push({
-                path: `/pages/payment/payment`,
+                path: `/bundle/pages/payment/payment`,
                 query: {
                     from: 'order',
                     order_id: orderID

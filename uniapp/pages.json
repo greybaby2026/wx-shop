@@ -114,75 +114,6 @@
             "meta": {
                 "auth": false
             }
-        },
-        {
-            "path": "pages/goods_order/goods_order",
-            "style": {
-                "navigationBarTitleText": "订单结算"
-            },
-            "meta": {
-                "auth": true
-            }
-        },
-        {
-            "path": "pages/payment/payment",
-            "style": {
-                "navigationBarTitleText": "订单支付"
-            },
-            "meta": {
-                "auth": true
-            }
-        },
-        {
-            "path": "pages/payment_result/payment_result",
-            "style": {
-                "navigationBarTitleText": "支付结果"
-            },
-            "meta": {
-                "auth": true
-            }
-        },
-
-        {
-            "path": "pages/order_detail/order_detail",
-            "style": {
-                "navigationBarTitleText": "订单详情",
-                "navigationStyle": "custom"
-            },
-            "meta": {
-                "auth": true
-            }
-        },
-        {
-            "path": "pages/address/address",
-            "style": {
-                "navigationBarTitleText": "收货地址"
-            },
-            "meta": {
-                "auth": true
-            }
-        },
-        {
-            "path": "pages/address_edit/address_edit",
-            "style": {
-                "navigationBarTitleText": "地址编辑"
-            },
-            "meta": {
-                "auth": true
-            }
-        },
-        {
-            "path": "pages/webview/webview",
-            "meta": {
-                "auth": false
-            }
-        },
-        {
-            "path": "components/uview-ui/components/u-avatar-cropper/u-avatar-cropper",
-            "style": {
-                "navigationBarTitleText": "头像裁剪",
-                "navigationBarBackgroundColor": "#000000"
-            }
         }
     ],
     "subPackages": [
@@ -195,6 +126,67 @@
             // },
             "root": "bundle",
             "pages": [
+                {
+                    "path": "pages/goods_order/goods_order",
+                    "style": {
+                        "navigationBarTitleText": "订单结算"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/payment/payment",
+                    "style": {
+                        "navigationBarTitleText": "订单支付"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/payment_result/payment_result",
+                    "style": {
+                        "navigationBarTitleText": "支付结果"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/order_detail/order_detail",
+                    "style": {
+                        "navigationBarTitleText": "订单详情",
+                        "navigationStyle": "custom"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/address/address",
+                    "style": {
+                        "navigationBarTitleText": "收货地址"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/address_edit/address_edit",
+                    "style": {
+                        "navigationBarTitleText": "地址编辑"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/webview/webview",
+                    "meta": {
+                        "auth": false
+                    }
+                },
                 {
                     "path": "pages/express_detail/express_detail",
                     "style": {
@@ -835,6 +827,15 @@
                     "path": "pages/integral_settlement/integral_settlement",
                     "style": {
                         "navigationBarTitleText": "积分订单结算"
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
+                    "path": "pages/integral_details/integral_details",
+                    "style": {
+                        "navigationBarTitleText": "积分详情"
                     },
                     "meta": {
                         "auth": true

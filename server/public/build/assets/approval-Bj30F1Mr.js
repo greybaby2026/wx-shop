@@ -1,0 +1,1 @@
+import{r as o}from"./app-DMHLzZwq.js";const r={pendingList:p=>o.get("/approvals/pending",{params:p}),pendingCount:()=>o.get("/approvals/pending-count"),approve:p=>o.post("/approvals/approve",p),reject:p=>o.post("/approvals/reject",p),history:p=>o.get("/approvals/history",{params:p})};export{r as a};

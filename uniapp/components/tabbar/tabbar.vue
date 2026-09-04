@@ -61,17 +61,23 @@ export default {
     },
     methods: {
         changeTab(link) {
-            if (this.basePages.includes(link.path)) {
-                uni.switchTab({
-                    url: link.path
-                })
-            } else {
-                this.$Router.replaceAll({
-                    path: link.path,
-                    query: link.params
-                })
+                const path = link && link.path
+                if (!path || String(path).includes('undefined')) {
+                    // 防御：link.path 为空/undefined 时，避免跳转到 /pages/index/undefined 等异常页面
+                    return
+                }
+
+                if (this.basePages.includes(path)) {
+                    uni.switchTab({
+                        url: path
+                    })
+                } else {
+                    this.$Router.replaceAll({
+                        path,
+                        query: link && link.params
+                    })
+                }
             }
-        }
     },
     computed: {
         ...mapGetters(['isLogin']),
@@ -111,6 +117,11 @@ export default {
         },
         showBadge() {
             return (path) => this.cartNum && path === '/pages/shop_cart/shop_cart'
+            
+        // 为避免页面路径字段缺失导致渲染层加载 /pages/index/undefined
+        // 仅兜底：如果 link.path 不存在，直接返回空样式并阻止跳转
+        // 注意：这里不改变配置，只防御 undefined
+        
         }
     },
     created() {

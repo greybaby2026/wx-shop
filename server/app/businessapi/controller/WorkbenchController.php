@@ -37,7 +37,7 @@ class WorkbenchController extends BaseBusinesseController
     public function index()
     {
 
-        $data = (new WorkbenchLogic())->index();
+        $data = (new WorkbenchLogic())->index($this->storeId);
         return $this->success('',$data);
 
     }

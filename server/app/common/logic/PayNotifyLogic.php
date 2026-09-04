@@ -112,9 +112,10 @@ class PayNotifyLogic extends BaseLogic
         // 汽泡足迹
         event('Footprint', ['type' => FootprintEnum::ORDER_SETTLEMENT, 'user_id' => $order['user_id']]);
 
-        //增加用户累计消费额度
+        //增加用户累计消费额度（扣除抵扣部分，按实际支付金额计算）
+        $actualPayAmount = $order['order_amount'] - ($order['deduct_amount'] ?? 0);
         User::where(['id' => $order['user_id']])
-            ->inc('total_order_amount', $order['order_amount'])
+            ->inc('total_order_amount', $actualPayAmount)
             ->inc('total_order_num')
             ->update();
 
@@ -351,32 +352,32 @@ class PayNotifyLogic extends BaseLogic
     public static function recharge($orderSn, $extra = [])
     {
         $order = RechargeOrder::where('sn', $orderSn)->findOrEmpty();
-        // 增加用户累计充值金额及用户余额
         $user = User::findOrEmpty($order->user_id);
         $user->total_recharge_amount = $user->total_recharge_amount + $order->order_amount;
-        $user->user_money = $user->user_money + $order->order_amount;
+
+        $toActivity = \app\shopapi\logic\activity\DeductService::rechargeToActivity();
+
+        if ($toActivity) {
+            $user->activity_money = $user->activity_money + $order->order_amount;
+            AccountLogLogic::add($order->user_id, AccountLogEnum::BNW_INC_RECHARGE, AccountLogEnum::INC, $order->order_amount, $order->sn, '\u6d3b\u52a8\u5145\u503c');
+        } else {
+            $user->user_money = $user->user_money + $order->order_amount;
+            AccountLogLogic::add($order->user_id, AccountLogEnum::BNW_INC_RECHARGE, AccountLogEnum::INC, $order->order_amount, $order->sn, '\u7528\u6237\u5145\u503c');
+        }
         $user->save();
 
-        // 记录账户流水
-        AccountLogLogic::add($order->user_id, AccountLogEnum::BNW_INC_RECHARGE, AccountLogEnum::INC, $order->order_amount, $order->sn, '用户充值');
-
-        // 更新充值订单状态
         $order->transaction_id = $extra['transaction_id'];
         $order->pay_status = PayEnum::ISPAID;
         $order->pay_time = time();
         $order->save();
 
-        // 充值奖励
         foreach($order->award as $item) {
             if(isset($item['give_money']) && $item['give_money'] > 0) {
-                // 充值送余额
-                self::awardMoney($order, $item['give_money']);
+                self::awardMoney($order, $item['give_money'], $toActivity);
             }
         }
 
-        // 充值分销佣金结算
         RechargeCommissionLogic::settle($order);
-
     }
 
     /**
@@ -386,11 +387,15 @@ class PayNotifyLogic extends BaseLogic
      * @author Tab
      * @date 2021/8/11 14:35
      */
-    public static function awardMoney($order, $giveMoney)
+    public static function awardMoney($order, $giveMoney, $toActivity = false)
     {
         // 充值送余额
         $user = User::findOrEmpty($order->user_id);
-        $user->user_money = $user->user_money + $giveMoney;
+        if ($toActivity) {
+            $user->activity_money = $user->activity_money + $giveMoney;
+        } else {
+            $user->user_money = $user->user_money + $giveMoney;
+        }
         $user->save();
         // 记录账户流水
         AccountLogLogic::add($order->user_id, AccountLogEnum::BNW_INC_RECHARGE_GIVE, AccountLogEnum::INC, $giveMoney, $order->sn, '充值赠送');

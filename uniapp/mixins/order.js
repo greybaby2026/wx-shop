@@ -124,7 +124,7 @@ const OrderMixin = {
 		// 处理：支付
 		handlePayment(orderID) {
 			this.$Router.push({
-				path: `/pages/payment/payment`,
+				path: `/bundle/pages/payment/payment`,
 				query: {
 					from: 'order',
 					order_id: orderID
@@ -134,6 +134,7 @@ const OrderMixin = {
 		// 小程序确认收货
 		comfirmReceive(transaction_id) {
 			return new Promise((resolve, reject) => {
+				// #ifdef MP-WEIXIN
 				wx.openBusinessView({
 					businessType: 'weappOrderConfirm',
 					extraData: {
@@ -152,6 +153,7 @@ const OrderMixin = {
 						reject(err)
 					}
 				})
+				// #endif
 			})
 		},
 		//查询是否收货成功
@@ -215,6 +217,7 @@ const OrderMixin = {
 						return
 					}
 				}
+				// #ifdef MP-WEIXIN
 				if (
 					compareWeChatVersion('2.6.0') === 1 &&
 					wx.openBusinessView &&
@@ -237,6 +240,7 @@ const OrderMixin = {
 					}
 					this.refreshOrderData()
 				} else {
+				// #endif
 					uni.showModal({
 						title: '温馨提示',
 						content: '是否确认收货?',
@@ -328,7 +332,7 @@ const OrderMixin = {
 		},
 		handleContent(orderID) {
 			this.$Router.push({
-				path: `/pages/order_detail/order_detail`,
+				path: `/bundle/pages/order_detail/order_detail`,
 				query: {
 					order_id: orderID
 				}
@@ -430,7 +434,7 @@ const OrderMixin = {
 		// 处理：查看提货码
 		handlePickup(orderID) {
 			this.$Router.push({
-				path: `/pages/order_detail/order_detail`,
+				path: `/bundle/pages/order_detail/order_detail`,
 				query: {
 					order_id: orderID
 				}

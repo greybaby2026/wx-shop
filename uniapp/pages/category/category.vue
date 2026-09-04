@@ -1,5 +1,5 @@
 <template>
-    <view class="category-pages" :class="themeName" :style="[pageStyle]">
+    <view class="category-pages" :class="themeName" :style="[pageStyle, themeCssVars]">
         <!-- #ifndef  H5 -->
         <u-sticky offset-top="0" h5-nav-height="0" bg-color="transparent">
             <u-navbar

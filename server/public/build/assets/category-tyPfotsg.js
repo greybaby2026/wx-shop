@@ -1,0 +1,1 @@
+import{r as t}from"./app-DMHLzZwq.js";const s={getTree:()=>t.get("/categories",{params:{tree:1}}),getList:e=>t.get("/categories",{params:e}),create:e=>t.post("/categories",e),update:(e,r)=>t.put(`/categories/${e}`,r),delete:e=>t.delete(`/categories/${e}`)};export{s as c};

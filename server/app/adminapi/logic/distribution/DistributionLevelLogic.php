@@ -250,37 +250,69 @@ class DistributionLevelLogic extends BaseLogic
     }
 
     /**
-     * @notes 更新分销商等级
+     * @notes 更新分销商等级（按分销树深度）
+     * depth=0（无上级）→ 大将军王(id=1, weights=1)
+     * depth=1（有一级上级）→ 大将军(id=2, weights=2)
+     * depth=2（有二级上级）→ 将军(id=5, weights=3)
      * @param $userId
      * @author Tab
      * @date 2021/7/26 19:14
      */
     public static function updateDistributionLevel($userId)
     {
-        // 非默认等级
-        $levels = DistributionLevel::where('is_default', YesNoEnum::NO)
-            ->order('weights', 'desc')
-            ->column('id,name,weights,update_relation', 'id');
-
-        $userInfo = Distribution::alias('d')
-            ->leftJoin('distribution_level dl', 'dl.id = d.level_id')
-            ->field('d.is_distribution,d.level_id,dl.weights')
-            ->where('d.user_id', $userId)
-            ->findOrEmpty()
-            ->toArray();
-
-        // 非分销会员直接返回false
-        if(empty($userInfo['is_distribution'])) {
+        $distInfo = Distribution::where('user_id', $userId)->findOrEmpty();
+        if ($distInfo->isEmpty() || !$distInfo->is_distribution) {
             return false;
         }
 
-        foreach($levels as $level) {
-            if(self::isMeetConditions($userId, $level) && $level['weights'] > $userInfo['weights']) {
-                // 满足升级条件且是升更高的等级
-                Distribution::where(['user_id' => $userId])->update(['level_id' => $level['id']]);
-                break;
-            }
+        $user = Db::name('user')->where('id', $userId)->field('first_leader,second_leader')->find();
+        if (empty($user)) {
+            return false;
         }
+
+        $targetLevelId = self::getLevelIdByDepth($user['first_leader'], $user['second_leader']);
+
+        if ($distInfo->level_id != $targetLevelId) {
+            Distribution::where(['user_id' => $userId])->update(['level_id' => $targetLevelId]);
+        }
+
+        return true;
+    }
+
+    /**
+     * @notes 根据分销树深度获取等级ID
+     * @param int $firstLeader
+     * @param int $secondLeader
+     * @return int
+     */
+    public static function getLevelIdByDepth($firstLeader, $secondLeader)
+    {
+        if (empty($secondLeader)) {
+            if (empty($firstLeader)) {
+                $weights = 1;
+            } else {
+                $weights = 2;
+            }
+        } else {
+            $weights = 3;
+        }
+
+        $level = DistributionLevel::where('weights', $weights)
+            ->where('is_default', $weights == 1 ? YesNoEnum::YES : YesNoEnum::NO)
+            ->whereNull('delete_time')
+            ->findOrEmpty();
+
+        if ($level->isEmpty()) {
+            $level = DistributionLevel::where('weights', $weights)
+                ->whereNull('delete_time')
+                ->findOrEmpty();
+        }
+
+        if ($level->isEmpty()) {
+            return DistributionLevel::where('is_default', YesNoEnum::YES)->value('id');
+        }
+
+        return $level->id;
     }
 
     /**

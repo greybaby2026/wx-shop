@@ -85,6 +85,30 @@ const routes = [
                     parentPath: '/order'
                 },
                 component: () => import('@/views/order/delivery.vue')
+            {
+                path: '/order/erp_order',
+                name: 'erp_order',
+                meta: {
+                    title: 'ERP订单',
+                    parentPath: '/order',
+                    icon: 'icon_order_guanli',
+                    permission: ['view'],
+                    keepAlive: true
+                },
+                component: () => import('@/views/order/erp_order_list.vue')
+            },
+            {
+                path: '/order/erp_order_detail',
+                name: 'erp_order_detail',
+                meta: {
+                    hidden: true,
+                    title: 'ERP订单详情',
+                    parentPath: '/order',
+                    prevPath: '/order/erp_order'
+                },
+                component: () => import('@/views/order/erp_order_detail.vue')
+            },
+
             }
         ]
     }

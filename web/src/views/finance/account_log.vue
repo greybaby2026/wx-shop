@@ -82,6 +82,7 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="change_type_desc" label="变动类型"> </el-table-column>
+                    <el-table-column prop="remark" label="备注" min-width="160"> </el-table-column>
                     <el-table-column prop="association_sn" label="来源单号"> </el-table-column>
                     <el-table-column prop="create_time" label="记录时间"> </el-table-column>
                 </el-table>

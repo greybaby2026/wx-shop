@@ -37,11 +37,12 @@ class OrderLists extends BaseAdminDataLists implements ListsExtendInterface,List
      */
     public function lists(): array
     {
+        try {
         $lists = (new Order)::withTrashed()->alias('o')
             ->join('user u','o.user_id = u.id')
             ->join('order_goods og','o.id = og.order_id')
             ->field('o.id,o.sn,o.order_type,o.order_amount,o.address,o.pay_status,o.order_status,o.create_time,u.id as user_id,u.nickname,u.sn as user_sn,u.avatar,o.delivery_type,o.verification_status,o.express_status,o.order_type,o.is_team_success,o.change_price,o.pay_way,o.user_remark,o.order_remarks')
-            ->order('o.id','desc')
+            ->where('o.order_type', '<>', OrderEnum::ERP_ORDER)->order('o.id','desc')
             ->append(['order_type_desc','pay_status_desc','order_status_desc','admin_order_btn','delivery_type_desc','delivery_address'])
             ->hidden(['pay_status','order_status','delivery_type','verification_status'])
             ->with(['order_goods' => function($query){
@@ -57,8 +58,9 @@ class OrderLists extends BaseAdminDataLists implements ListsExtendInterface,List
 
         foreach ($lists as &$list) {
             //获取收件人
-            $list['contact'] = $list['address']->contact ?? '';
-            $list['mobile'] = $list['address']->mobile ?? '';
+            $addr = $list['address'];
+            $list['contact'] = is_object($addr) ? ($addr->contact ?? '') : ($addr['contact'] ?? '');
+            $list['mobile'] = is_object($addr) ? ($addr->mobile ?? '') : ($addr['mobile'] ?? '');
             unset($list['address']);
 
             //增加订单商品信息，用于导出
@@ -116,6 +118,10 @@ class OrderLists extends BaseAdminDataLists implements ListsExtendInterface,List
         }
 
         return $lists;
+        } catch (\Throwable $e) {
+            \think\facade\Log::write('OrderLists error: '.$e->getMessage().' at '.$e->getFile().':'.$e->getLine());
+            return [];
+        }
     }
 
     /**
@@ -127,7 +133,7 @@ class OrderLists extends BaseAdminDataLists implements ListsExtendInterface,List
     public function count(): int
     {
         return (new Order)::withTrashed()->alias('o')
-            ->join('user u','o.user_id = u.id')
+            ->where('o.order_type', '<>', OrderEnum::ERP_ORDER)->join('user u','o.user_id = u.id')
             ->join('order_goods og','o.id = og.order_id')
             ->withSearch(array_diff(array_keys($this->params), ['page_no', 'page_size', 'start_time', 'end_time', 'export', 'file_name', 'page_type', 'page_start', 'page_end']), $this->params)
             ->group('o.id')

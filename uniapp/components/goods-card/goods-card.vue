@@ -11,6 +11,11 @@
         <!-- 商品图片 -->
         <view class="goods-images" :style="[imageStyle]">
             <u-image width="100%" height="100%" :src="image" mode="scaleToFill" />
+            <!-- 活动角标（斜丝带样式） -->
+            <view v-if="activityBadge" class="goods-activity-badge" :style="{ '--badge-bg': activityBadge.bgColor || '#FF2C3C' }">
+                <image v-if="activityBadge.icon" :src="activityBadge.icon" class="badge-icon-img" mode="aspectFit" />
+                <text class="badge-label">{{ activityBadge.text }}</text>
+            </view>
             <!--  disableMsg == "商品库存不足" ? "库存不足" : "商品下架" -->
             <view class="goods-status" v-if="disableMsg">{{
                 TipMsg
@@ -60,6 +65,8 @@
  * @example <goods-card shape="rectangle" name="Muze" price="100" minPrice="120" />
  */
 
+import { mapGetters } from 'vuex'
+
 export default {
     name: 'GoodsCard',
 
@@ -93,13 +100,13 @@ export default {
         // 卡片样式
         containStyle: {
             type: Object,
-            default: () => {}
+            default: () => ({})
         },
 
         // 图片样式
         imageStyle: {
             type: Object,
-            default: () => {}
+            default: () => ({})
         },
         disableMsg: {
             type: String,
@@ -107,6 +114,7 @@ export default {
         }
     },
     computed: {
+        ...mapGetters(['deductInfo']),
         TipMsg() {
             switch (this.disableMsg) {
                 case '商品库存不足':
@@ -115,6 +123,19 @@ export default {
                     return '商品下架'
                 case '超过购买限制':
                     return '不可购买'
+                default:
+                    return ''
+            }
+        },
+        // 活动角标：从store读取活动信息
+        activityBadge() {
+            const info = this.deductInfo
+            if (!info || !info.active) return null
+            const theme = info.theme_config || {}
+            return {
+                text: theme.badge_text || info.activity_name || '',
+                icon: theme.badge_icon || '',
+                bgColor: theme.primary_color || '#FF2C3C'
             }
         }
     }
@@ -127,6 +148,7 @@ export default {
     border-radius: 7px;
     background-color: #ffffff;
     overflow: hidden;
+    position: relative;
 
     &--square {
         flex-direction: column;
@@ -170,6 +192,45 @@ export default {
 
         .goods-content {
             margin-left: 20rpx;
+        }
+    }
+
+    &-images {
+        position: relative;
+        overflow: hidden;
+    }
+
+    &-activity-badge {
+        position: absolute;
+        top: 16rpx;
+        left: -28rpx;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4rpx 32rpx;
+        background-color: var(--badge-bg, #FF2C3C);
+        color: #ffffff;
+        font-size: 18rpx;
+        font-weight: 600;
+        line-height: 1.3;
+        transform: rotate(-45deg);
+        transform-origin: center center;
+        box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.2);
+
+        .badge-icon-img {
+            width: 20rpx;
+            height: 20rpx;
+            margin-right: 4rpx;
+        }
+
+        .badge-label {
+            white-space: nowrap;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
         }
     }
 

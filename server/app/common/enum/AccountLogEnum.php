@@ -52,6 +52,7 @@ class AccountLogEnum
     const BNW = 2;
     const GROWTH = 3;
     const INTEGRAL = 4;
+    const ACTIVITY = 5;
 
     /**
      * 动作
@@ -117,6 +118,7 @@ class AccountLogEnum
     const INTEGRAL_DEC_ORDER = 701;
     const INTEGRAL_DEC_LOTTERY = 702;
     const INTEGRAL_DEC_INTEGRAL_ORDER = 703;
+    const INTEGRAL_DEC_REFUND = 704;
 
     /**
      * 积分增加类型
@@ -132,6 +134,16 @@ class AccountLogEnum
     const INTEGRAL_INC_AWARD = 808;
     const INTEGRAL_INC_CANCEL_INTEGRAL = 809;
     const INTEGRAL_INC_USER_REGISTER = 810;
+
+    /**
+     * 活动余额减少类型
+     */
+    const ACTIVITY_DEC_ADMIN = 900;
+
+    /**
+     * 活动余额增加类型
+     */
+    const ACTIVITY_INC_ADMIN = 1000;
 
     /**
      * 不可提现余额（减少类型汇总）
@@ -202,7 +214,8 @@ class AccountLogEnum
         self::INTEGRAL_DEC_ADMIN,
         self::INTEGRAL_DEC_ORDER,
         self::INTEGRAL_DEC_LOTTERY,
-        self::INTEGRAL_DEC_INTEGRAL_ORDER
+        self::INTEGRAL_DEC_INTEGRAL_ORDER,
+        self::INTEGRAL_DEC_REFUND
     ];
 
     /**
@@ -220,6 +233,20 @@ class AccountLogEnum
         self::INTEGRAL_INC_AWARD,
         self::INTEGRAL_INC_CANCEL_INTEGRAL,
         self::INTEGRAL_INC_USER_REGISTER,
+    ];
+
+    /**
+     * 活动余额(减少类型汇总)
+     */
+    const ACTIVITY_DEC = [
+        self::ACTIVITY_DEC_ADMIN
+    ];
+
+    /**
+     * 活动余额(增加类型汇总)
+     */
+    const ACTIVITY_INC = [
+        self::ACTIVITY_INC_ADMIN
     ];
 
     /**
@@ -283,6 +310,7 @@ class AccountLogEnum
             self::INTEGRAL_DEC_ORDER => '下单扣减积分',
             self::INTEGRAL_DEC_LOTTERY => '幸运抽奖扣减积分',
             self::INTEGRAL_DEC_INTEGRAL_ORDER => '积分商城下单扣减积分',
+            self::INTEGRAL_DEC_REFUND => '退款扣减赠送积分',
             self::INTEGRAL_INC_ADMIN => '管理员增加积分',
             self::INTEGRAL_INC_SIGN => '签到赠送积分',
             self::INTEGRAL_INC_RECHARGE => '充值赠送积分',
@@ -294,6 +322,8 @@ class AccountLogEnum
             self::INTEGRAL_INC_AWARD => '消费赠送积分',
             self::INTEGRAL_INC_CANCEL_INTEGRAL => '取消积分订单返还积分',
             self::INTEGRAL_INC_USER_REGISTER    => '用户注册赠送积分',
+            self::ACTIVITY_DEC_ADMIN => '管理员减少活动余额',
+            self::ACTIVITY_INC_ADMIN => '管理员增加活动余额',
         ];
         if($flag) {
             return $desc;
@@ -347,6 +377,18 @@ class AccountLogEnum
             return in_array($key, $integralChangeType);
         }, ARRAY_FILTER_USE_KEY);
         return $integralChangeTypeDesc;
+    }
+
+    /**
+     * @notes 获取活动余额变动类型
+     * @return int[]
+     * @author system
+     * @date 2025/07/03
+     */
+    public static function getActivityChangeType()
+    {
+        $activity = array_merge(self::ACTIVITY_DEC, self::ACTIVITY_INC);
+        return $activity;
     }
 
     /**
@@ -411,6 +453,7 @@ class AccountLogEnum
         return $integral;
     }
 
+
     /**
      * @notes 获取变动对象
      * @param $changeType
@@ -442,6 +485,12 @@ class AccountLogEnum
         $integral = self::getIntegralChangeType();
         if(in_array($changeType, $integral)) {
             return self::INTEGRAL;
+        }
+
+        // 活动余额
+        $activity = self::getActivityChangeType();
+        if(in_array($changeType, $activity)) {
+            return self::ACTIVITY;
         }
 
         return false;

@@ -63,7 +63,8 @@ class RechargeLogic extends BaseLogic
     {
         $set = [
             'open' => ConfigService::get('recharge', 'open'),
-            'min_amount' => ConfigService::get('recharge', 'min_amount')
+            'min_amount' => ConfigService::get('recharge', 'min_amount'),
+            'six_percent_discount' => ConfigService::get('recharge', 'six_percent_discount', 0)
         ];
         return $set;
     }
@@ -129,6 +130,9 @@ class RechargeLogic extends BaseLogic
         }
         if(isset($params['min_amount'])) {
             ConfigService::set('recharge', 'min_amount', $params['min_amount']);
+        if(isset($params['six_percent_discount'])) {
+            ConfigService::set('recharge', 'six_percent_discount', $params['six_percent_discount']);
+        }
         }
     }
 

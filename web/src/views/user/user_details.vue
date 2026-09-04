@@ -61,6 +61,25 @@
                                 </ls-user-change>
                             </div>
                         </el-col>
+        <el-col :span="4" class="flex-col col-center item">
+            <div class="lighter m-b-8">活动余额</div>
+            <div class="flex">
+                <div class="m-r-10">
+                    {{ user_info.activity_money }}
+                </div>
+                <ls-user-change
+                    title="活动余额调整"
+                    :value="user_info.activity_money"
+                    :type="4"
+                    :userId="user_id"
+                    @refresh="userDetail"
+                >
+                    <el-button type="text" slot="trigger" size="small" :disabled="user_info.user_delete"
+                        >调整</el-button
+                    >
+                </ls-user-change>
+            </div>
+        </el-col>
                         <el-col :span="4" class="flex-col col-center item">
                             <div class="lighter m-b-8">积分</div>
                             <div class="flex">

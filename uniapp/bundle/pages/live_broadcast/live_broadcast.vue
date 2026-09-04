@@ -69,9 +69,11 @@
 				console.log('item ', item)
 				const roomId = [item.room_id];
 				console.log('roomId', roomId)
+				// #ifdef MP-WEIXIN
 				wx.navigateTo({
 					url: `plugin-private://wx2b03c6e691cd7370/pages/live-player-plugin?room_id=${roomId}`
 				});
+				// #endif
 			},
 
 			// 上拉加载

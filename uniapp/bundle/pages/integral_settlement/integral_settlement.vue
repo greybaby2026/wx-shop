@@ -4,7 +4,7 @@
             <view class="settlement-main">
                 <router-link
                     :to="{
-                        path: '/pages/address/address',
+                        path: '/bundle/pages/address/address',
                         query: {
                             type: true
                         }
@@ -236,7 +236,7 @@ export default {
                         // 去支付
                         if (this.orderInfo.need_pay) {
                             this.$Router.replace({
-                                path: `/pages/payment/payment`,
+                                path: `/bundle/pages/payment/payment`,
                                 query: {
                                     from: type,
                                     order_id
@@ -258,7 +258,7 @@ export default {
                 case PaymentStatusEnum['SUCCESS']:
                 case PaymentStatusEnum['FAIL']:
                     this.$Router.replace({
-                        path: '/pages/payment_result/payment_result',
+                        path: '/bundle/pages/payment_result/payment_result',
                         query: {
                             order_id,
                             from: 'integral'
@@ -267,7 +267,7 @@ export default {
                     break
                 case PaymentStatusEnum['CLOSE']:
                     this.$Router.push({
-                        path: '/pages/payment_result/payment_result',
+                        path: '/bundle/pages/payment_result/payment_result',
                         query: {
                             order_id,
                             from: 'integral'

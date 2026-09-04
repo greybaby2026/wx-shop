@@ -152,6 +152,15 @@
                             </div>
                         </template>
                     </el-table-column>
+        <el-table-column prop="activity_money" label="活动余额" min-width="120">
+            <template slot-scope="scope">
+                <div class="flex">
+                    <div class v-if="scope.row.activity_money">¥</div>
+                    <div>{{ scope.row.activity_money }}</div>
+                </div>
+            </template>
+        </el-table-column>
+
                     <el-table-column prop="total_order_amount" label="消费金额"></el-table-column>
                     <el-table-column label="用户状态" min-width="80">
                         <template slot-scope="scope">{{ scope.row.disable ? '冻结' : '正常' }}</template>

@@ -12,6 +12,8 @@ module.exports = {
     productionSourceMap: false,
     transpileDependencies: ['vue-echarts', 'resize-detector'],
     chainWebpack(config) {
+            config.plugins.delete("fork-ts-checker");
+            //
         if (mode == 'production') {
             // 去除打印，debug
             config.optimization.minimizer('terser').tap(args => {

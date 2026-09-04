@@ -79,6 +79,7 @@ export const debounce = (func, time = 1000) => {
 
 //判断是否为微信环境
 export function isWeixinClient() {
+    // #ifdef H5
     var ua = navigator.userAgent.toLowerCase()
     if (ua.match(/MicroMessenger/i) == 'micromessenger') {
         //这是微信环境
@@ -87,12 +88,21 @@ export function isWeixinClient() {
         //这是非微信环境
         return false
     }
+    // #endif
+    // #ifndef H5
+    return false
+    // #endif
 }
 
 //判断是否为安卓环境
 export function isAndroid() {
+    // #ifdef H5
     let u = navigator.userAgent
     return u.indexOf('Android') > -1 || u.indexOf('Adr') > -1
+    // #endif
+    // #ifndef H5
+    return false
+    // #endif
 }
 
 //获取url后的参数  以对象返回
@@ -403,23 +413,26 @@ export function getParent(name = undefined) {
  * @param val 需要转换的px值
  */
 export function pxTorpx(val) {
-    let result = 0
-    uni.getSystemInfo({
-        success: function (res) {
-            console.log(750 / res.screenWidth)
-            let screenWidth = res.screenWidth
-            result = val * (750 / screenWidth)
-        }
-    })
-    return result
+    try {
+        const info = uni.getSystemInfoSync()
+        let screenWidth = info.screenWidth
+        return val * (750 / screenWidth)
+    } catch (e) {
+        return val * 2
+    }
 }
 
 /**
  * @description 获取当前微信小程序基础库版本号
  */
 export function getBaseLibraryVersion() {
+    // #ifdef MP-WEIXIN
     const { SDKVersion } = wx.getSystemInfoSync()
     return SDKVersion
+    // #endif
+    // #ifndef MP-WEIXIN
+    return '0.0.0'
+    // #endif
 }
 /**
  * @description 用于比较当前微信基础库版本与目标基础库版本
@@ -484,7 +497,7 @@ export function objectToQuery(params) {
  * @return {Boolean}
  */
 export const isEmpty = (value) => {
-    return value == null && typeof value == 'undefined'
+    return value == null || typeof value == 'undefined'
 }
 /**
  * @description 小程序跳转

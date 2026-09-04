@@ -56,7 +56,7 @@ class SeckillLogic
                 ->join('seckill_activity SA', 'SA.id = SG.seckill_id')
                 ->where('SA.start_time', '<', time())
                 ->where('SA.end_time', '>=', time())
-                ->where('SA.status', '>=', SeckillEnum::SECKILL_STATUS_CONDUCT)
+                ->where('SA.status', '=', SeckillEnum::SECKILL_STATUS_CONDUCT)
                 ->findOrEmpty($params['id'])->toArray();
 
             if (!$seckillGoods) {
@@ -163,7 +163,7 @@ class SeckillLogic
             ->field($filed)
             ->where('SA.start_time', '<', time())
             ->where('SA.end_time', '>=', time())
-            ->where('SA.status', '>=', SeckillEnum::SECKILL_STATUS_CONDUCT)
+            ->where('SA.status', '=', SeckillEnum::SECKILL_STATUS_CONDUCT)
             ->order('AG.id', 'desc')
             ->limit(5)
             ->select()
@@ -208,7 +208,7 @@ class SeckillLogic
                 throw new Exception('下单数量不能少于' . $seckillGoodsItem['min_buy'] . '件');
             }
 
-            if ($params['goods']['count'] > $seckillGoodsItem['min_buy']) {
+            if ($seckillGoodsItem['max_buy'] > 0 && $params['goods']['count'] > $seckillGoodsItem['max_buy']) {
                 throw new Exception('下单数量不能大于' . $seckillGoodsItem['max_buy'] . '件');
             }
 
@@ -220,7 +220,7 @@ class SeckillLogic
             $itemSnap  = json_decode($seckillGoodsItem['item_snap'], true);
             $orderStatus = [
                 'found_id'       => $params['found_id'] ?? null,
-                'order_type'     => OrderEnum::TEAM_ORDER,
+                'order_type'     => OrderEnum::SECKILL_ORDER,
                 'pay_way'        => intval($params['pay_way'] ?? 1),
                 'coupon_id'      => intval($params['coupon_list_id'] ?? 0),
                 'remark'         => $params['remark'] ?? '',

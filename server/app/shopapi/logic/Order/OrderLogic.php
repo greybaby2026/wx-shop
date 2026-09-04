@@ -60,6 +60,7 @@ use app\common\model\TeamGoods;
 use app\common\model\TeamGoodsItem;
 use app\common\model\TeamJoin;
 use app\common\model\User;
+use app\shopapi\logic\activity\DeductService;
 use app\common\logic\BaseLogic;
 use app\common\model\UserAddress;
 use app\common\service\after_sale\AfterSaleService;
@@ -214,6 +215,9 @@ class OrderLogic extends BaseLogic
 
                 'user_id'               => $user['id'],
                 'user_money'            => $user['user_money'],
+                'six_discount_available'          => ConfigService::get('recharge', 'six_percent_discount', 0) && intval($user['six_discount'] ?? 0) === 1 && floatval($user['user_money'] ?? 0) > 0,
+                'six_discount_amount'             => bcadd(0, bcmul(self::$orderPrice['order_amount'], '0.6', 2), 2),
+                'six_discount_save'               => bcadd(0, bcmul(self::$orderPrice['order_amount'], '0.4', 2), 2),
                 'user_remark'           => $params['user_remark'] ?? '',
                 'address'               => $userAddress,
 
@@ -308,6 +312,23 @@ class OrderLogic extends BaseLogic
             $result['express_price']                = bcadd($result['express_price'], 0, 2);
             $result['total_goods_original_price']   = bcadd($result['total_goods_original_price'], 0, 2);
             
+            // 充值抵扣计算
+            $deductInfo = DeductService::check();
+            if ($deductInfo['active']) {
+                $user = User::find($params['user_id']);
+                $calc = DeductService::calculate(
+                    $result['order_amount'],
+                    $user['activity_money'] ?? 0,
+                    $deductInfo['ratio']
+                );
+                $result['deduct_amount'] = $calc['deduct_amount'];
+                $result['pay_amount'] = $calc['pay_amount'];
+                $result['activity_ratio'] = $deductInfo['ratio'];
+            } else {
+                $result['deduct_amount'] = 0;
+                $result['pay_amount'] = $result['order_amount'];
+            }
+
             return $result;
 
         } catch (\Exception $e) {
@@ -692,8 +713,9 @@ class OrderLogic extends BaseLogic
             'goods_price'       => $params['total_goods_price'],
             'order_amount'      => $params['order_amount'],
             'express_price'     => $params['express_price'],
-            'discount_amount'   => $params['discount_amount'],
+            'discount_amount'   => $params['discount_amount'] + ($params['six_discount_amount'] ?? 0),
             'member_amount'     => $params['member_amount'],
+            'deduct_amount'     => $params['deduct_amount'] ?? 0.00,
             'user_remark'       => $params['user_remark'],
             'address'       => [
                 'contact'       => ($params['delivery_type'] == DeliveryEnum::SELF_DELIVERY) ? $params['contact'] : ($params['address']['contact'] ?? ''),
@@ -706,6 +728,7 @@ class OrderLogic extends BaseLogic
             'delivery_type'     => OrderEnum::VIRTUAL_ORDER == $params['order_type'] ? DeliveryEnum::DELIVERY_VIRTUAL : $params['delivery_type'],
             'pickup_code'       => ($params['delivery_type'] == DeliveryEnum::SELF_DELIVERY) ? create_number_sn((new Order()), 'pickup_code', 6) : null,
             'selffetch_shop_id' => ($params['delivery_type'] == DeliveryEnum::SELF_DELIVERY) ? $params['selffetch_shop_id'] : 0,
+            'belong_store_id'   => intval(self::$user['bind_store_id'] ?? 0),
             'draw_record_id'    => $params['draw_record_id'] ?? 0,
             'team_activity_id'     => $params['team_id'] ?? 0,
             'team_found_id'     => $params['found_id'] ?? 0,
@@ -766,7 +789,7 @@ class OrderLogic extends BaseLogic
 
         $field = [
             'gi.id', 'gi.id' => 'item_id', 'gi.image' => 'item_image',
-            'gi.spec_value_str', 'spec_value_ids', 'gi.sell_price',
+            'gi.spec_value_str', 'spec_value_ids', 'gi.sell_price', 'gi.supply_price',
             'gi.volume', 'gi.stock', 'gi.weight', 'gi.bar_code', 'g.id' => 'goods_id',
             'g.name' => 'goods_name', 'g.type', 'g.status', 'g.delete_time', 'g.image',
             'g.express_type', 'g.express_money', 'g.express_template_id',

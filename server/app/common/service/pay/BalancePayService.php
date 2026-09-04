@@ -52,6 +52,42 @@ class BalancePayService extends BasePayService
     }
     
     /**
+     * @notes 活动余额抵扣（混合支付时先扣活动余额部分）
+     * @param $order
+     * @param $deductAmount
+     * @return bool
+     */
+    public function deduct($order, $deductAmount)
+    {
+        try {
+            $user = User::findOrEmpty($order['user_id']);
+            if ($user->isEmpty() || $user['activity_money'] < $deductAmount) {
+                throw new \Exception('活动余额不足');
+            }
+
+            // 扣减活动余额
+            User::update([
+                'activity_money' => ['dec', $deductAmount]
+            ], ['id' => $order['user_id']]);
+
+            // 活动余额流水
+            AccountLogLogic::add(
+                $order['user_id'],
+                AccountLogEnum::BNW_DEC_ORDER,
+                AccountLogEnum::DEC,
+                $deductAmount,
+                $order['sn'],
+                '活动余额抵扣'
+            );
+
+            return true;
+        } catch (\Exception $e) {
+            $this->setStatus(false, $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * @notes 余额支付
      * @param $from //订单类型 (order-普通商品订单, recharge-充值订单, ....)
      * @param $order //订单信息
@@ -62,14 +98,18 @@ class BalancePayService extends BasePayService
     public function pay($from, $order)
     {
         try {
+            $deductAmount = $order['deduct_amount'] ?? 0;
+            $payAmount = $order['order_amount'] - $deductAmount;
+            if ($payAmount < 0) $payAmount = 0;
+
             $user = User::findOrEmpty($order['user_id']);
-            if ($user->isEmpty() || $user['user_money'] < $order['order_amount']) {
+            if ($user->isEmpty() || $user['user_money'] < $payAmount) {
                 throw new \Exception('余额不足');
             }
 
             //扣除余额
             User::update([
-                'user_money' => ['dec', $order['order_amount']]
+                'user_money' => ['dec', $payAmount]
             ], ['id' => $order['user_id']]);
 
             //余额流水
@@ -77,7 +117,7 @@ class BalancePayService extends BasePayService
                 $order['user_id'],
                 AccountLogEnum::BNW_DEC_ORDER,
                 AccountLogEnum::DEC,
-                $order['order_amount'],
+                $payAmount,
                 $order['sn']
             );
 

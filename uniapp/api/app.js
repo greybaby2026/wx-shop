@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 import wechath5 from '@/utils/wechath5'
-import store from 'store'
+import store from '@/store'
 
 // 账号登录
 export const apiAccountLogin = (data) =>

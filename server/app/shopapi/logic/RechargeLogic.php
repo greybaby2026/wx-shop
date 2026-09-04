@@ -147,6 +147,7 @@ class RechargeLogic extends BaseLogic
             'sn'      => generate_sn((new RechargeOrder()),'sn'),
             'terminal'      => $params['terminal'],
             'user_id'       => $params['user_id'],
+            'store_id'      => intval(\app\common\model\User::where('id', $params['user_id'])->value('bind_store_id') ?: 0),
             'pay_status'    => PayEnum::UNPAID,
             'pay_way'       => $params['pay_way'],
             'order_amount'  => $params['money'],

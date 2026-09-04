@@ -56,12 +56,15 @@ class UserLists extends BaseAdminDataLists implements ListsExcelInterface
         $lists = User::withSearch($this->setSearch(), $this->params)
             ->with(['user_level'])
             ->limit($this->limitOffset, $this->limitLength)
-            ->field('id,sn,nickname,avatar,mobile,level,user_money+user_earnings as total_user_money,user_integral,total_order_amount,login_time,create_time,disable,user_delete')
+            ->field('id,sn,nickname,avatar,mobile,level,user_money+user_earnings as total_user_money,activity_money,user_integral,total_order_amount,login_time,create_time,disable,user_delete')
             ->order('id desc')
             ->withAttr('user_money',function ($value){
                 return '¥'.$value;
             })
             ->withAttr('total_order_amount',function ($value){
+                return '¥'.$value;
+            })
+            ->withAttr('activity_money',function ($value){
                 return '¥'.$value;
             })
             ->select()
