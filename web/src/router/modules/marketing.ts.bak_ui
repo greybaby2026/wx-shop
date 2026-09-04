@@ -517,32 +517,6 @@ const routes = [
             }
         ]
     }
-
-    // 门店结算中心
-    {
-        path: '/store_settlement',
-        name: 'store_settlement',
-        meta: {
-            title: '结算中心',
-            hidden: true,
-            moduleName: 'storesettlement'
-        },
-        redirect: '/store_settlement/lists',
-        component: Main,
-        children: [
-            {
-                path: '/store_settlement/lists',
-                name: 'store_settlement_lists',
-                meta: {
-                    title: '结算中心',
-                    parentPath: '/marketing',
-                    moduleName: 'storesettlement',
-                    icon: 'icon_caiwu_yue',
-                    permission: ['view']
-                },
-                component: () => import('@/views/application/store_settlement/lists.vue')
-            }
-        ]
-    }
 ]
 
+export default routes

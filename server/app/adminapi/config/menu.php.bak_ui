@@ -948,23 +948,6 @@ return [
                     ],
                 ],
             ],
-            //门店结算中心
-            [
-                'name'  => '结算中心',
-                'type'  => 1,
-                'sons'  => [
-                    [
-                        'name'      => '查看',
-                        'type'      => 2,
-                        'auth_key'  => 'marketing/storesettlement.view'
-                    ],
-                    [
-                        'name'      => '管理',
-                        'type'      => 2,
-                        'auth_key'  => 'marketing/storesettlement.manage'
-                    ],
-                ],
-            ],
             //小程序直播
             [
                 'name'  => '直播间',

@@ -171,14 +171,6 @@ return [
                     'is_open' => true
                 ],
                 [
-                    'name'      => '门店结算',
-                    'introduce' => '跨店核销 门店货款结算',
-                    'tips'      => '',
-                    'page_path' => '/store_settlement/lists',
-                    'image'     => '/resource/image/adminapi/default/store.png',
-                    'is_open' => true
-                ],
-                [
                     'name'      => '小程序直播',
                     'introduce' => '直播卖货 快速推广',
                     'tips'      => '',

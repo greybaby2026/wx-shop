@@ -815,23 +815,6 @@ return [
                 ],
             ],
         ],
-        //门店结算中心
-        'storesettlement'    => [
-            'page_path'     => '/store_settlement/lists',
-            'view'          => [
-                'button_auth'   => ['view'],
-                'action_auth'   => ['store_settlement.settlement/lists'],
-            ],
-            'manage'            => [
-                'button_auth'   => ['auth_all'],
-                'action_auth'   => [
-                    'store_settlement.settlement/generate',         //生成汇总账单
-                    'store_settlement.settlement/detail',           //账单详情
-                    'store_settlement.settlement/confirm',          //确认账单
-                    'store_settlement.settlement/markpaid',         //标记付款
-                ],
-            ],
-        ],
         //核销员
         'selffetchverifier'    => [
             'page_path'     => '/selffetch/selffetch_verifier',

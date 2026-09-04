@@ -118,20 +118,4 @@ class SettlementLogic
         $bill->save();
         return true;
     }
-
-    private static function fillStoreNames(array $rows): array
-    {
-        $shopIds = [];
-        foreach ($rows as $r) {
-            $shopIds[] = $r['pay_store_id'];
-            $shopIds[] = $r['receive_store_id'];
-        }
-        $shopIds = array_unique(array_filter($shopIds));
-        $names = \app\common\model\SelffetchShop::whereIn('id', $shopIds ?: [0])->column('name', 'id');
-        foreach ($rows as &$r) {
-            $r['pay_store_name'] = $names[$r['pay_store_id']] ?? ('门店' . $r['pay_store_id']);
-            $r['receive_store_name'] = $names[$r['receive_store_id']] ?? ('门店' . $r['receive_store_id']);
-        }
-        return $rows;
-    }
 }
