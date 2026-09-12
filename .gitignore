@@ -20,3 +20,7 @@
 *.bak_ms2
 uniapp*.tar.gz
 *.bak_ui
+
+# OpenAPI 接口文档（含密钥，禁止入库）
+openapi_doc.html
+**/openapi/api_doc.html

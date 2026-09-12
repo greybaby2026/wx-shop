@@ -46,12 +46,12 @@
 ### 2.3 签名示例
 
 ```
-app_key    = jiangjunshijia_open_2026
+app_key    = <APP_KEY>
 timestamp  = 1777135997
 请求参数    = user_id=1
-app_secret = Jjsj@OpenApi#Secret!2026
+app_secret = <APP_SECRET>
 
-签名原文 = "jiangjunshijia_open_20261777135997user_id=1Jjsj@OpenApi#Secret!2026"
+签名原文 = "<APP_KEY>1777135997user_id=1<APP_SECRET>"
 签名结果 = md5(签名原文)
 ```
 
@@ -59,16 +59,16 @@ app_secret = Jjsj@OpenApi#Secret!2026
 
 | 项目 | 值 |
 |------|----|
-| app_key | `jiangjunshijia_open_2026` |
-| app_secret | `Jjsj@OpenApi#Secret!2026` |
+| app_key | `<APP_KEY>` |
+| app_secret | `<APP_SECRET>` |
 | 签名有效期 | 300秒（5分钟） |
 
 ### 2.5 cURL 调用示例
 
 ```bash
 TIMESTAMP=$(date +%s)
-APP_KEY="jiangjunshijia_open_2026"
-APP_SECRET="Jjsj@OpenApi#Secret!2026"
+APP_KEY="<APP_KEY>"
+APP_SECRET="<APP_SECRET>"
 PARAMS="user_id=1"
 SIGN_STR="${APP_KEY}${TIMESTAMP}${PARAMS}${APP_SECRET}"
 SIGN=$(echo -n "$SIGN_STR" | md5sum | awk '{print $1}')
@@ -83,8 +83,8 @@ curl -s "https://www.jiangjunshijia.com/openapi/user/orderAmount?user_id=1" \
 
 ```php
 <?php
-$appKey    = 'jiangjunshijia_open_2026';
-$appSecret = 'Jjsj@OpenApi#Secret!2026';
+$appKey    = '<APP_KEY>';
+$appSecret = '<APP_SECRET>';
 $timestamp = time();
 
 $params = ['user_id' => 1];
