@@ -24,3 +24,17 @@ uniapp*.tar.gz
 # OpenAPI 接口文档（含密钥，禁止入库）
 openapi_doc.html
 **/openapi/api_doc.html
+
+# 运维脚本（硬编码数据库凭据，禁止入库）
+/server/reset_admin.php
+/server/db_migrate.php
+/server/add_field.php
+/server/compare_db.php
+/server/analyze_field.php
+/server/analyze_tables.php
+/server/get_alter_sql.php
+# 调试脚本（曾暴露调试信息，禁止入库）
+/debug_token*.php
+/test_*.php
+/create_*.php
+/copy_dist.php

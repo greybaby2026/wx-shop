@@ -15,8 +15,12 @@ class MnpKefuService
     {
         $this->appId = \app\common\service\ConfigService::get('mini_program', 'app_id', '');
         $this->appSecret = \app\common\service\ConfigService::get('mini_program', 'app_secret', '');
-        $this->token = 'jiangjunshijia_kefu';
-        $this->encodingAesKey = '2DB7g5pFzTZHs3CdE5DlcdkRFRj2zxgUJ6CYKredvMY';
+        // 凭据由 .env 注入，禁止硬编码（见 [KEFU] 段）
+        $this->token = env('KEFU.TOKEN', '');
+        $this->encodingAesKey = env('KEFU.ENCODING_AES_KEY', '');
+        if (empty($this->token) || empty($this->encodingAesKey)) {
+            throw new \Exception('客服回调凭据未配置（KEFU.TOKEN / KEFU.ENCODING_AES_KEY）');
+        }
     }
 
     public function handleMessage()
