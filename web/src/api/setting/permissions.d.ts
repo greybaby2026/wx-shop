@@ -46,6 +46,7 @@ export interface AdminAdd_Req {
     disable: 0 | 1 // 禁用【0：否 | 1：是】
     multipoint_login: 0 | 1 // 支持【0：否 | 1：是】
     avatar?: string // 头像URL
+    store_id?: number // 所属门店ID【0：平台账号 | 非0：门店账号】
 }
 
 export interface AdminDelete_Req {
@@ -61,6 +62,7 @@ export interface AdminEdit_Req {
     role_id: number // 角色ID
     disable: 0 | 1 // 禁用【0：否 | 1：是】
     multipoint_login: 0 | 1 // 禁用【0：否 | 1：是】
+    store_id?: number // 所属门店ID【0：平台账号 | 非0：门店账号】
 }
 /** E 管理员 **/
 

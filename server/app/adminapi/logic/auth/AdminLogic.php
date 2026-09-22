@@ -50,6 +50,7 @@ class AdminLogic extends BaseLogic
             'avatar' => $avatar,
             'password' => $password,
             'role_id' => $params['role_id'],
+            'store_id' => intval($params['store_id'] ?? 0), //所属门店(0=平台账号,非0=门店账号)
             'create_time' => $time,
             'disable' => $params['disable'],
             'multipoint_login' => $params['multipoint_login'],
@@ -80,6 +81,12 @@ class AdminLogic extends BaseLogic
             if(1 == $admin['root']){
                 $roleId = $admin['role_id'];
             }
+            //所属门店(0=平台账号)。前端未传时保留原值,避免被旧版页面/接口清零;
+            //如需改回平台账号,前端显式传 store_id=0 即可。
+            $storeIdChanged = false;
+            if (isset($params['store_id'])) {
+                $storeIdChanged = intval($params['store_id']) != intval($admin['store_id']);
+            }
             $data = [
                 'id' => $params['id'],
                 'name' => $params['name'],
@@ -89,6 +96,9 @@ class AdminLogic extends BaseLogic
                 'avatar' => $avatar,
                 'multipoint_login' => $params['multipoint_login']
             ];
+            if (isset($params['store_id'])) {
+                $data['store_id'] = intval($params['store_id']);
+            }
 
             if (!empty($params['password'])) {
                 $passwordSalt = Config::get('project.unique_identification');
@@ -96,8 +106,8 @@ class AdminLogic extends BaseLogic
             }
 
             $role_id = Admin::where('id', $params['id'])->value('role_id');
-            if ($params['disable'] == 1 || $role_id != $params['role_id']) {
-                // 禁用或更换角色后，让之前登录的token都过期(无论是否支持多处登录)
+            if ($params['disable'] == 1 || $role_id != $params['role_id'] || $storeIdChanged) {
+                // 禁用/更换角色/更换所属门店后，让之前登录的token都过期(无论是否支持多处登录)
                 $tokenArr = AdminSession::where('admin_id', $params['id'])->select()->toArray();
                 foreach ($tokenArr as $token) {
                     self::expireToken($token['token']);
@@ -189,7 +199,7 @@ class AdminLogic extends BaseLogic
      */
     public static function detail($params)
     {
-        return Admin::field('account,root,name,role_id,disable,multipoint_login,avatar')->find($params['id'])->toArray();
+        return Admin::field('account,root,name,role_id,store_id,disable,multipoint_login,avatar')->find($params['id'])->toArray();
     }
 
     /**

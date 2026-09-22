@@ -31,6 +31,21 @@
                         ></el-option>
                     </el-select>
                 </el-form-item>
+                <!-- 所属门店 -->
+                <el-form-item label="所属门店" prop="store_id">
+                    <el-select v-model="form.store_id" placeholder="请选择所属门店">
+                        <el-option label="平台账号（不归属门店）" :value="0"></el-option>
+                        <el-option
+                            v-for="(item, index) in shopList"
+                            :key="index"
+                            :label="item.name"
+                            :value="item.id"
+                        ></el-option>
+                    </el-select>
+                    <div class="muted">
+                        归属门店后，该账号核销时将以此门店作为「实际交货门店」参与门店间结算；平台账号则不参与
+                    </div>
+                </el-form-item>
                 <!-- 密码输入框 -->
                 <el-form-item label="密码" prop="password">
                     <el-input
@@ -93,6 +108,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { apiAdminAdd, apiAdminDetail, apiAdminEdit, apiRoleList } from '@/api/setting/permissions'
 import { AdminAdd_Req, AdminEdit_Req } from '@/api/setting/permissions.d'
+import { apiSelffetchShopList } from '@/api/application/selffetch'
 import { PageMode } from '@/utils/type'
 import MaterialSelect from '@/components/material-select/index.vue'
 import Delivery from '../delivery/index.vue'
@@ -107,6 +123,7 @@ export default class AdminEdit extends Vue {
     mode: string = PageMode.ADD // 当前页面【add: 添加管理员 | edit: 编辑管理员】
     identity: number | null = null // 当前编辑用户的身份ID  valid: mode = 'edit'
     roleList: Array<object> = [] // 角色的数据
+    shopList: Array<any> = [] // 门店列表数据
 
     // 添加管理员表单数据
     form: any = {
@@ -117,7 +134,8 @@ export default class AdminEdit extends Vue {
         role_id: '', // 角色id
         disable: 0, // 禁用：0-否；1-是
         multipoint_login: 1, // N端登录：0-否；1-是
-        avatar: '' // 头像路径
+        avatar: '', // 头像路径
+        store_id: 0 // 所属门店ID【0：平台账号 | 非0：门店账号】
     }
 
     // 校验密码
@@ -217,6 +235,16 @@ export default class AdminEdit extends Vue {
         })
     }
 
+    // 获取门店列表(用于选择所属门店;含停用门店,便于先配后启用)
+    geShopList() {
+        apiSelffetchShopList({
+            page: 1,
+            page_size: 100
+        }).then(res => {
+            this.shopList = res.lists
+        })
+    }
+
     // 表单初始化数据 [编辑模式] mode => edit
     initFormDataForAdminEdit() {
         apiAdminDetail({
@@ -255,6 +283,8 @@ export default class AdminEdit extends Vue {
 
         // 获取角色列表
         this.geRoleList()
+        // 获取门店列表
+        this.geShopList()
     }
 
     @Watch('form.password')
