@@ -72,7 +72,8 @@
                 "oauth" : {
                     "weixin" : {
                         "appid" : "wx85b08190f44afa1f",
-                        "appsecret" : "2b7822a41aed50eef7de51c7a58e36e3",
+                        /* P0-1 安全修复：appsecret 为微信服务端最高权限凭证，已泄露，禁止明文入库。
+                           该值已从源码移除；请在微信开放平台重置，并由服务端持有、代理获取 access_token。 */
                         "UniversalLinks" : "https://b2cplus.likeshop.cn/ulink/"
                     }
                 },
