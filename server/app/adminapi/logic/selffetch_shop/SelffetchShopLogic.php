@@ -66,6 +66,11 @@ class SelffetchShopLogic extends BaseLogic
     public function edit($params)
     {
         $selffetch_shop = SelffetchShop::find($params['id']);
+        //结算比例: 后台门店表单暂无该输入项; 前端未传时保留原值, 避免已配置的比例被清零。
+        //如需改为 0(跟随全局), 前端显式传 settlement_ratio=0 即可。
+        if (isset($params['settlement_ratio'])) {
+            $selffetch_shop->settlement_ratio = $params['settlement_ratio'];
+        }
         $selffetch_shop->name = $params['name'];
         $selffetch_shop->image = $params['image'];
         $selffetch_shop->contact = $params['contact'];

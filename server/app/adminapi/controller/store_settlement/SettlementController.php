@@ -54,6 +54,7 @@ class SettlementController extends BaseAdminController
     public function confirm()
     {
         $params = $this->request->post();
+        $params['admin_id'] = $this->adminId;   //操作人留痕(服务端取,前端无需传)
         $logic = new SettlementLogic();
         if ($logic->confirm($params)) {
             return $this->success('确认成功', [], 1, 1);
@@ -67,9 +68,35 @@ class SettlementController extends BaseAdminController
     public function markPaid()
     {
         $params = $this->request->post();
+        $params['admin_id'] = $this->adminId;   //操作人留痕(服务端取,前端无需传)
         $logic = new SettlementLogic();
         if ($logic->markPaid($params)) {
             return $this->success('操作成功', [], 1, 1);
+        }
+        return $this->fail(SettlementLogic::$error);
+    }
+
+    /**
+     * @notes 结算配置(结算开关/全局比例/门店独立比例)
+     */
+    public function config()
+    {
+        $logic = new SettlementLogic();
+        if ($logic->config()) {
+            return $this->data(SettlementLogic::$returnData);
+        }
+        return $this->fail(SettlementLogic::$error);
+    }
+
+    /**
+     * @notes 保存结算配置
+     */
+    public function saveConfig()
+    {
+        $params = $this->request->post();
+        $logic = new SettlementLogic();
+        if ($logic->saveConfig($params)) {
+            return $this->success('保存成功', [], 1, 1);
         }
         return $this->fail(SettlementLogic::$error);
     }

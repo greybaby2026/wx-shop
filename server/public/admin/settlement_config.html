@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>门店结算配置</title>
+<style>
+  :root{
+    --brand:#e1251b;
+    --brand-dark:#c11d15;
+    --text:#1f2430;
+    --text-2:#6b7280;
+    --line:#e6e8ec;
+    --bg:#f5f6f8;
+    --ok:#0f9d58;
+    --warn:#f59e0b;
+    --err:#d93025;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font:14px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:28px 20px 80px}
+  header{margin-bottom:20px}
+  header h1{margin:0 0 6px;font-size:22px;font-weight:600;letter-spacing:.2px}
+  header .sub{margin:0;color:var(--text-2);font-size:13px}
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:10px;
+    padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 2px rgba(16,24,40,.04);
+  }
+  .card h2{
+    margin:0 0 16px;font-size:15px;font-weight:600;
+    display:flex;align-items:center;gap:8px;
+  }
+  .card h2::before{content:"";width:3px;height:14px;background:var(--brand);border-radius:2px}
+  .row{display:flex;align-items:flex-start;gap:16px;padding:10px 0;border-bottom:1px dashed var(--line)}
+  .row:last-child{border-bottom:0;padding-bottom:0}
+  .row>label{width:110px;flex:none;color:var(--text-2);padding-top:7px}
+  .row .body{flex:1;min-width:0}
+  .radios{display:flex;flex-direction:column;gap:8px}
+  .radios label{display:flex;align-items:center;gap:8px;cursor:pointer}
+  .radios input{accent-color:var(--brand);width:15px;height:15px}
+  .num{display:inline-flex;align-items:center;gap:6px}
+  input[type=number]{
+    width:120px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;
+    font-size:14px;outline:none;transition:.15s;
+  }
+  input[type=number]:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(225,37,27,.08)}
+  input[type=number]:disabled{background:#f3f4f6;color:#9ca3af}
+  .unit{color:var(--text-2)}
+  .hint{margin:6px 0 0;color:var(--text-2);font-size:12px;line-height:1.7}
+  table{width:100%;border-collapse:collapse;margin-top:4px}
+  th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);font-size:13px}
+  th{color:var(--text-2);font-weight:500;background:#fafbfc}
+  th:first-child,td:first-child{padding-left:12px}
+  th:last-child,td:last-child{padding-right:12px;text-align:right}
+  .tag{
+    display:inline-block;padding:1px 7px;border-radius:10px;font-size:12px;
+    background:#eef2f7;color:#5b6472;margin-left:6px;
+  }
+  .tag.on{background:#fdeceb;color:var(--brand)}
+  .tag.off{background:#f3f4f6;color:#9ca3af}
+  .msg{padding:11px 14px;border-radius:8px;margin-bottom:16px;font-size:13px;display:none}
+  .msg.show{display:block}
+  .msg.ok{background:#e9f7ef;color:#0b6b3a;border:1px solid #bfe8cf}
+  .msg.err{background:#fdecea;color:#8f1d15;border:1px solid #f6c9c3}
+  .msg.warn{background:#fef6e6;color:#8a5a06;border:1px solid #f7dfb0}
+  .actions{display:flex;gap:10px;align-items:center;margin-top:4px}
+  button{
+    font:inherit;padding:9px 20px;border-radius:7px;border:1px solid var(--line);
+    background:#fff;color:var(--text);cursor:pointer;transition:.15s;
+  }
+  button:hover{border-color:#c9cdd4}
+  button.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:500}
+  button.primary:hover{background:var(--brand-dark);border-color:var(--brand-dark)}
+  button:disabled{opacity:.55;cursor:not-allowed}
+  .formula{background:#fbfcfd}
+  .formula pre{
+    margin:0;padding:14px;background:#fff;border:1px solid var(--line);border-radius:8px;
+    font-size:12.5px;line-height:1.9;overflow-x:auto;color:#374151;
+  }
+  .foot{color:var(--text-2);font-size:12px;margin-top:24px;text-align:center}
+  .loading{color:var(--text-2);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>门店结算配置</h1>
+    <p class="sub">结算基数：小程序实际成交价 × 比例 —— 归属门店（付款方）向交货门店（收款方）结算</p>
+  </header>
+
+  <div id="msg" class="msg"></div>
+
+  <section class="card">
+    <h2>全局设置</h2>
+    <div class="row">
+      <label>结算模式</label>
+      <div class="body">
+        <div class="radios">
+          <label><input type="radio" name="mode" value="1"> 按「实际成交价 × 比例」结算 <span class="tag on">默认</span></label>
+          <label><input type="radio" name="mode" value="0"> 按商品协商价结算 <span class="tag">兼容旧口径</span></label>
+        </div>
+        <p class="hint">切换到「商品协商价」需商品规格已维护供货价/成本价，否则金额会为 0 并标记「待复核」。</p>
+      </div>
+    </div>
+    <div class="row">
+      <label>全局比例</label>
+      <div class="body">
+        <span class="num"><input id="ratio" type="number" min="0" max="100" step="0.01" placeholder="0"><span class="unit">%</span></span>
+        <p class="hint">
+          门店未单独设置比例时使用该值。<br>
+          <strong>比例含义</strong>：归属门店向交货门店结算的比率（等价于加盟商进货成本率）。<br>
+          例：成交价 169 元、比例 65% → 归属门店付给交货门店 <strong>109.85 元</strong>，归属门店留存 59.15 元。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>门店独立比例</h2>
+    <p class="hint" style="margin-top:-6px">填 <strong>0</strong> 或留空表示跟随全局比例；不同加盟商条件不同时可单独设置。</p>
+    <table>
+      <thead>
+        <tr><th>门店</th><th>店长</th><th>状态</th><th style="width:170px">结算比例(%)</th></tr>
+      </thead>
+      <tbody id="shopBody">
+        <tr><td colspan="4" class="loading">加载中…</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="actions">
+    <button id="saveBtn" class="primary">保存配置</button>
+    <button id="reloadBtn">重新加载</button>
+    <span id="saveTip" class="hint" style="margin:0"></span>
+  </div>
+
+  <section class="card formula" style="margin-top:16px">
+    <h2>计算口径说明</h2>
+    <pre>单件成交价  = (该行实付商品金额 total_pay_price − 运费 express_price) ÷ 数量
+单件结算单价 = 单件成交价 × 所用比例
+行结算额    = 单件结算单价 × 数量
+账单金额    = Σ 行结算额
+
+比例取值优先级：门店独立比例（&gt;0） → 全局比例
+生效前提：订单为「门店自提」且 归属门店 ≠ 交货门店（同店不产生结算）
+异常兜底：比例未配置 / 成交价为 0 → 金额为 0，并标记「待复核」需人工介入</pre>
+  </section>
+
+  <p class="foot">本页为结算配置专用页，直接访问：<code>/admin/settlement_config.html</code></p>
+</div>
+
+<script>
+(function () {
+  var API = '/adminapi/store_settlement.settlement';
+  var shops = [];
+
+  var $msg = document.getElementById('msg');
+  var $body = document.getElementById('shopBody');
+  var $ratio = document.getElementById('ratio');
+  var $save = document.getElementById('saveBtn');
+  var $reload = document.getElementById('reloadBtn');
+  var $tip = document.getElementById('saveTip');
+
+  function show(type, text) {
+    $msg.className = 'msg show ' + type;
+    $msg.innerHTML = text;
+  }
+  function hide() { $msg.className = 'msg'; }
+
+  /* ---------- 取后台登录 token ----------
+   * 后台把 token 存在 localStorage：key = "token"，值为 JSON {expire, value}
+   * 这里做多候选 + 兜底扫描，避免键名变动导致不可用
+   */
+  function readKey(key) {
+    var raw;
+    try { raw = localStorage.getItem(key); } catch (e) { return null; }
+    if (!raw) return null;
+    try {
+      var o = JSON.parse(raw);
+      if (o && typeof o === 'object' && 'value' in o) {
+        if (o.expire && Number(o.expire) < Math.round(Date.now() / 1000)) return null;
+        return o.value;
+      }
+    } catch (e) { /* 非 JSON 则原样使用 */ }
+    return raw;
+  }
+  function getToken() {
+    var direct = readKey('token') || readKey('admin_token');
+    if (direct) return direct;
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && /token/i.test(k)) {
+          var v = readKey(k);
+          if (v) return v;
+        }
+      }
+    } catch (e) { /* ignore */ }
+    return null;
+  }
+
+  /* ---------- 请求封装（成功码 = 1）---------- */
+  function request(method, path, body) {
+    var token = getToken();
+    if (!token) {
+      return Promise.reject(new Error('未检测到后台登录凭证。请先在后台（/admin/）登录，再回到本页刷新。'));
+    }
+    var opt = { method: method, headers: { token: token }, credentials: 'same-origin' };
+    if (body) {
+      opt.headers['Content-Type'] = 'application/json';
+      opt.body = JSON.stringify(body);
+    }
+    return fetch(API + path, opt).then(function (res) {
+      return res.json().catch(function () { return null; }).then(function (json) {
+        if (!json) throw new Error('接口返回异常（HTTP ' + res.status + '）');
+        if (Number(json.code) !== 1) throw new Error(json.msg || '请求失败');
+        return json.data;
+      });
+    });
+  }
+
+  /* ---------- 渲染 ---------- */
+  function render() {
+    if (!shops.length) {
+      $body.innerHTML = '<tr><td colspan="4" class="loading">暂无门店</td></tr>';
+      return;
+    }
+    $body.innerHTML = shops.map(function (s) {
+      var ratio = Number(s.settlement_ratio) || 0;
+      var status = Number(s.status) === 1
+        ? '<span class="tag off">启用</span>'
+        : '<span class="tag">停用</span>';
+      var flag = ratio > 0 ? '<span class="tag on">独立</span>' : '<span class="tag">跟随全局</span>';
+      return '<tr>' +
+        '<td>' + esc(s.name) + '</td>' +
+        '<td>' + esc(s.contact || '-') + '</td>' +
+        '<td>' + status + '</td>' +
+        '<td><span class="num"><input type="number" min="0" max="100" step="0.01" ' +
+        'data-shop-id="' + s.id + '" value="' + ratio + '"><span class="unit">%</span></span> ' + flag + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+  function esc(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  /* ---------- 加载 ---------- */
+  function load() {
+    hide();
+    $body.innerHTML = '<tr><td colspan="4" class="loading">加载中…</td></tr>';
+    $save.disabled = true;
+    request('GET', '/config').then(function (data) {
+      shops = (data && data.shops) || [];
+      var mode = Number(data && data.mode);
+      document.querySelectorAll('input[name=mode]').forEach(function (el) {
+        el.checked = (Number(el.value) === mode);
+      });
+      $ratio.value = Number(data && data.ratio) || 0;
+      render();
+      $save.disabled = false;
+      checkWarn();
+    }).catch(function (err) {
+      $body.innerHTML = '<tr><td colspan="4" class="loading">加载失败</td></tr>';
+      show('err', esc(err.message));
+    });
+  }
+
+  /* 比例为 0 时给出明确提示（此时账单金额会为 0 且标记待复核）*/
+  function checkWarn() {
+    var globalZero = (Number($ratio.value) || 0) <= 0;
+    var allZero = shops.every(function (s) { return (Number(s.settlement_ratio) || 0) <= 0; });
+    if (globalZero && allZero) {
+      $tip.innerHTML = '<span style="color:#b45309">提示：当前实际比例全部为 0，结算金额会为 0 并标记「待复核」，无法标记付款。</span>';
+    } else {
+      $tip.textContent = '';
+    }
+  }
+
+  /* ---------- 保存 ---------- */
+  function save() {
+    hide();
+    var mode = 1;
+    document.querySelectorAll('input[name=mode]').forEach(function (el) {
+      if (el.checked) mode = Number(el.value);
+    });
+    var ratio = Number($ratio.value);
+    if (!(ratio >= 0 && ratio <= 100)) {
+      show('err', '全局比例需在 0 ~ 100 之间');
+      return;
+    }
+    var patch = [];
+    var bad = null;
+    document.querySelectorAll('input[data-shop-id]').forEach(function (el) {
+      var v = Number(el.value);
+      if (!(v >= 0 && v <= 100)) { bad = v; return; }
+      patch.push({ id: Number(el.dataset.shopId), settlement_ratio: v });
+    });
+    if (bad !== null) {
+      show('err', '门店比例需在 0 ~ 100 之间');
+      return;
+    }
+
+    $save.disabled = true;
+    $save.textContent = '保存中…';
+    request('POST', '/saveconfig', { mode: mode, ratio: ratio, shops: patch }).then(function () {
+      show('ok', '保存成功，配置已即时生效。');
+      load();
+    }).catch(function (err) {
+      show('err', esc(err.message));
+    }).then(function () {
+      $save.disabled = false;
+      $save.textContent = '保存配置';
+    });
+  }
+
+  $save.addEventListener('click', save);
+  $reload.addEventListener('click', load);
+  $ratio.addEventListener('input', checkWarn);
+  $body.addEventListener('input', function (e) {
+    if (e.target && e.target.dataset && e.target.dataset.shopId) checkWarn();
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
