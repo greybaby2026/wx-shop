@@ -143,7 +143,13 @@ class NoticeLogic extends BaseLogic
         if (!empty($params['params']['withdraw_id'])) {
             $withdraw = WithdrawApply::findOrEmpty($params['params']['withdraw_id'])->toArray();
             $params['params']['withdraw_money'] = $withdraw['left_money'];
-            $params['params']['withdraw_time'] = date('Y-m-d H:i', intval($withdraw['create_time']));
+            //注意: create_time 经模型 toArray() 会被格式化为 'Y-m-d H:i:s' 字符串,
+            //不能直接 intval() —— intval('2026-07-20 16:39:09') 得到 2026,
+            //渲染出来会是 1970-01-01 08:33。此处兼容时间戳与字符串两种形态。
+            $withdrawTime = is_numeric($withdraw['create_time'])
+                ? intval($withdraw['create_time'])
+                : (strtotime((string) $withdraw['create_time']) ?: 0);
+            $params['params']['withdraw_time'] = $withdrawTime > 0 ? date('Y-m-d H:i', $withdrawTime) : '';
         }
 
 

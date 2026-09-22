@@ -785,14 +785,14 @@ return [
             'page_path'     => '/selffetch/selffetch_order',
             'view'          => [
                 'button_auth'   => ['view'],
-                'action_auth'   => ['selffetchshop.verification/lists'],
+                'action_auth'   => ['selffetch_shop.verification/lists'],
             ],
             'manage'            => [
                 'button_auth'   => ['auth_all'],
                 'action_auth'   => [
-                    'selffetchshop.verification/verification',          //提货核销
-                    'selffetchshop.verification/verificationquery',     //核销查询
-                    'selffetchshop.verification/verificationdetail',    //查看核销详情
+                    'selffetch_shop.verification/verification',          //提货核销
+                    'selffetch_shop.verification/verificationquery',     //核销查询
+                    'selffetch_shop.verification/verificationdetail',    //查看核销详情
                 ],
             ],
         ],
@@ -801,17 +801,17 @@ return [
             'page_path'     => '/selffetch/selffetch_shop',
             'view'          => [
                 'button_auth'   => ['view'],
-                'action_auth'   => ['selffetchshop.selffetchshop/lists'],
+                'action_auth'   => ['selffetch_shop.selffetchshop/lists'],
             ],
             'manage'            => [
                 'button_auth'   => ['auth_all'],
                 'action_auth'   => [
-                    'selffetchshop.selffetchshop/add',              //添加自提门店
-                    'selffetchshop.selffetchshop/edit',             //编辑自提门店
-                    'selffetchshop.selffetchshop/detail',           //查看自提详情
-                    'selffetchshop.selffetchshop/status',           //修改自提门店状态
-                    'selffetchshop.selffetchshop/del',              //删除自提门店
-                    'selffetchshop.selffetchshop/regionSearch',     //腾讯地图区域搜索
+                    'selffetch_shop.selffetchshop/add',              //添加自提门店
+                    'selffetch_shop.selffetchshop/edit',             //编辑自提门店
+                    'selffetch_shop.selffetchshop/detail',           //查看自提详情
+                    'selffetch_shop.selffetchshop/status',           //修改自提门店状态
+                    'selffetch_shop.selffetchshop/del',              //删除自提门店
+                    'selffetch_shop.selffetchshop/regionSearch',     //腾讯地图区域搜索
                 ],
             ],
         ],
@@ -829,6 +829,9 @@ return [
                     'store_settlement.settlement/detail',           //账单详情
                     'store_settlement.settlement/confirm',          //确认账单
                     'store_settlement.settlement/markpaid',         //标记付款
+                    //注意: 此处必须全小写, 且与 strtolower(controller()/action()) 完全一致, 否则不会被管控
+                    'store_settlement.settlement/config',           //读取结算配置
+                    'store_settlement.settlement/saveconfig',       //保存结算配置
                 ],
             ],
         ],
@@ -837,16 +840,16 @@ return [
             'page_path'     => '/selffetch/selffetch_verifier',
             'view'          => [
                 'button_auth'   => ['view'],
-                'action_auth'   => ['selffetchshop.selffetchverifier/lists'],
+                'action_auth'   => ['selffetch_shop.selffetchverifier/lists'],
             ],
             'manage'            => [
                 'button_auth'   => ['auth_all'],
                 'action_auth'   => [
-                    'selffetchshop.selffetchverifier/add',              //添加核销员
-                    'selffetchshop.selffetchverifier/edit',             //编辑核销员
-                    'selffetchshop.selffetchverifier/detail',           //查看核销员
-                    'selffetchshop.selffetchverifier/status',           //修改核销员状态
-                    'selffetchshop.selffetchverifier/del',              //删除核销员
+                    'selffetch_shop.selffetchverifier/add',              //添加核销员
+                    'selffetch_shop.selffetchverifier/edit',             //编辑核销员
+                    'selffetch_shop.selffetchverifier/detail',           //查看核销员
+                    'selffetch_shop.selffetchverifier/status',           //修改核销员状态
+                    'selffetch_shop.selffetchverifier/del',              //删除核销员
                 ],
             ],
         ],
