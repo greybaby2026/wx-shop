@@ -14,6 +14,18 @@
                         <el-input style="width: 280px" v-model="SearchData.nickname" placeholder="请输入用户昵称">
                         </el-input>
                     </el-form-item>
+                    <el-form-item label="所属门店">
+                        <el-select style="width: 200px" v-model="SearchData.store_id" placeholder="全部">
+                            <el-option label="全部" value=""></el-option>
+                            <el-option label="未绑定门店" value="0"></el-option>
+                            <el-option
+                                v-for="(item, index) in shopList"
+                                :key="index"
+                                :label="item.name"
+                                :value="String(item.id)"
+                            ></el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="支付方式">
                         <el-select v-model="SearchData.pay_way" placeholder="全部">
                             <el-option v-for="item in pay_way" :key="item.name" :label="item.label" :value="item.name">
@@ -68,6 +80,7 @@
                         </div>
                     </template>
                 </el-table-column>
+                <el-table-column prop="store_name" label="所属门店" min-width="160"> </el-table-column>
                 <el-table-column prop="order_amount" label="充值金额" width="180"> </el-table-column>
                 <el-table-column prop="give_money" label="赠送余额" width="180"> </el-table-column>
                 <el-table-column prop="pay_way" label="支付方式" width="180"> </el-table-column>
@@ -91,6 +104,7 @@ import LsDialog from '@/components/ls-dialog.vue'
 import { RequestPaging } from '@/utils/util'
 import DatePicker from '@/components/date-picker.vue'
 import { apiRechargeRecord } from '@/api/application/recharge'
+import { apiSelffetchShopList } from '@/api/application/selffetch'
 import ExportData from '@/components/export-data/index.vue'
 @Component({
     components: {
@@ -106,8 +120,12 @@ export default class GooRechargeRecord extends Vue {
 
     apiRechargeRecord = apiRechargeRecord
 
+    // 门店列表(用于按所属门店筛选)
+    shopList: Array<any> = []
+
     SearchData = {
         nickname: '',
+        store_id: '',
         pay_status: '',
         sn: '',
         start_time: '',
@@ -146,6 +164,20 @@ export default class GooRechargeRecord extends Vue {
         })
     }
 
+    // 获取门店列表(用于筛选所属门店;无门店权限时降级为空列表,不影响充值记录查询)
+    geShopList(): void {
+        apiSelffetchShopList({
+            page: 1,
+            page_size: 100
+        })
+            .then((res: any) => {
+                this.shopList = res.lists
+            })
+            .catch(() => {
+                this.shopList = []
+            })
+    }
+
     // 重置搜索领取记录
     resetSearchData() {
         Object.keys(this.SearchData).map(key => {
@@ -157,6 +189,7 @@ export default class GooRechargeRecord extends Vue {
     /** E Method **/
 
     created() {
+        this.geShopList()
         this.getRecord()
     }
 }

@@ -43,6 +43,7 @@ class RechargeLists extends BaseAdminDataLists implements ListsSearchInterface,L
         return [
             'sn' => '充值单号',
             'nickname' => '用户昵称',
+            'store_name' => '所属门店',
             'order_amount' => '充值金额',
             'give_money' => '赠送余额',
             'pay_way' => '支付方式',
@@ -89,6 +90,11 @@ class RechargeLists extends BaseAdminDataLists implements ListsSearchInterface,L
             $this->searchWhere[] = ['u.sn', '=', $this->params['user_sn']];
         }
 
+        // 所属门店(用户绑定门店; 0 = 未绑定门店)
+        if(isset($this->params['store_id']) && $this->params['store_id'] !== '') {
+            $this->searchWhere[] = ['ro.store_id', '=', intval($this->params['store_id'])];
+        }
+
         // 支付时间
         if(isset($this->params['type_time']) && $this->params['type_time'] == 1 && isset($this->params['start_time']) && isset($this->params['end_time'])) {
             $this->searchWhere[] = ['ro.pay_time', 'between', [$this->startTime, $this->endTime]];
@@ -111,10 +117,12 @@ class RechargeLists extends BaseAdminDataLists implements ListsSearchInterface,L
         // 附加搜索
         $this->attachWhere();
 
-        $field = 'ro.sn,ro.order_amount,ro.pay_way,ro.pay_time,ro.pay_status,ro.create_time,ro.award';
+        $field = 'ro.id,ro.sn,ro.store_id,ro.order_amount,ro.pay_way,ro.pay_time,ro.pay_status,ro.create_time,ro.award';
         $field .= ',u.avatar,u.nickname';
+        $field .= ',ss.name as store_name';
         $lists = RechargeOrder::alias('ro')
             ->leftJoin('user u', 'u.id = ro.user_id')
+            ->leftJoin('selffetch_shop ss', 'ss.id = ro.store_id')
             ->field($field)
             ->where($this->searchWhere)
             ->order('ro.id', 'desc')
@@ -125,6 +133,8 @@ class RechargeLists extends BaseAdminDataLists implements ListsSearchInterface,L
         foreach($lists as &$item) {
             $item['avatar'] = FileService::getFileUrl($item['avatar']);
             $item['give_money'] = $this->giveMoney($item);
+            // 门店归属: store_id = 0 表示下单用户未绑定门店
+            $item['store_name'] = empty($item['store_name']) ? '未绑定门店' : $item['store_name'];
             $item['pay_time'] = empty($item['pay_time']) ? '' : date('Y-m-d H:i:s', $item['pay_time']) ;
         }
 
