@@ -29,6 +29,12 @@
                                 <el-form-item label="完成时间">
                                     {{ orderData.confirm_take_time }}
                                 </el-form-item>
+                                <el-form-item label="归属门店">
+                                    {{ orderData.belong_store_name || '未绑定门店' }}
+                                </el-form-item>
+                                <el-form-item label="取货门店">
+                                    {{ (orderData.selffetch_shop && orderData.selffetch_shop.name) || '未关联门店' }}
+                                </el-form-item>
                             </el-form>
                             <el-form
                                 ref="form"

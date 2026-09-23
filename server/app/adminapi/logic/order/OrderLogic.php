@@ -88,6 +88,7 @@ class OrderLogic extends BaseLogic
         $info = Order::withTrashed()->alias('o')
             ->join('user u', 'o.user_id = u.id')
             ->leftjoin('selffetch_shop ss', 'ss.id = o.selffetch_shop_id')
+            ->leftjoin('selffetch_shop bs', 'bs.id = o.belong_store_id')
             ->leftjoin('delivery d', 'd.id = o.delivery_id')
             ->leftjoin('verification v', 'v.order_id = o.id')
             ->where('o.id',$params['id'])
@@ -101,7 +102,8 @@ class OrderLogic extends BaseLogic
             ->field('o.id,o.order_status,o.sn,o.order_type,o.order_terminal,o.create_time,o.pay_status,o.pay_way,o.pay_time,confirm_take_time,u.id as user_id,
             u.sn as user_sn,u.nickname,o.address,o.express_status,o.delivery_type,o.express_time,o.express_again,o.user_remark,o.order_remarks,
             o.discount_amount,o.member_amount,o.change_price,o.express_price,o.order_amount,o.integral_amount,o.deduct_amount,o.is_team_success,d.express_name,d.invoice_no,
-            o.pickup_code,v.create_time as verification_time,o.verification_status,o.delivery_content,o.delivery_content1,o.delivery_content_type,d.send_type,o.selffetch_shop_id')
+            o.pickup_code,v.create_time as verification_time,o.verification_status,o.delivery_content,o.delivery_content1,o.delivery_content_type,d.send_type,o.selffetch_shop_id,
+            o.belong_store_id,bs.name as belong_store_name')
             ->append(['order_status_desc','order_type_desc','order_terminal_desc','pay_status_desc','pay_way_desc','delivery_address','express_status_desc','delivery_type_desc','admin_order_btn'])
             ->find()
             ->toArray();

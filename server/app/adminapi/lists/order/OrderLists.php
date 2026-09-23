@@ -41,7 +41,8 @@ class OrderLists extends BaseAdminDataLists implements ListsExtendInterface,List
         $lists = (new Order)::withTrashed()->alias('o')
             ->join('user u','o.user_id = u.id')
             ->join('order_goods og','o.id = og.order_id')
-            ->field('o.id,o.sn,o.order_type,o.order_amount,o.address,o.pay_status,o.order_status,o.create_time,u.id as user_id,u.nickname,u.sn as user_sn,u.avatar,o.delivery_type,o.verification_status,o.express_status,o.order_type,o.is_team_success,o.change_price,o.pay_way,o.user_remark,o.order_remarks')
+            ->leftJoin('selffetch_shop ss','ss.id = o.selffetch_shop_id')
+            ->field('o.id,o.sn,o.order_type,o.order_amount,o.address,o.pay_status,o.order_status,o.create_time,u.id as user_id,u.nickname,u.sn as user_sn,u.avatar,o.delivery_type,o.verification_status,o.express_status,o.order_type,o.is_team_success,o.change_price,o.pay_way,o.user_remark,o.order_remarks,o.selffetch_shop_id,ss.name as store_name')
             ->where('o.order_type', '<>', OrderEnum::ERP_ORDER)->order('o.id','desc')
             ->append(['order_type_desc','pay_status_desc','order_status_desc','admin_order_btn','delivery_type_desc','delivery_address'])
             ->hidden(['pay_status','order_status','delivery_type','verification_status'])
@@ -201,6 +202,7 @@ class OrderLists extends BaseAdminDataLists implements ListsExtendInterface,List
             'sn'                => '订单编号',
             'order_type_desc'   => '订单类型',
             'delivery_type_desc'=> '配送方式',
+            'store_name'        => '所属门店',
             'create_time'       => '下单时间',
             'nickname'          => '用户名称',
             'goods_code_arr'    => '商品编码',

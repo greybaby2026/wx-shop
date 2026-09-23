@@ -87,6 +87,18 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
+                    <el-form-item label="所属门店">
+                        <el-select v-model="form.store_id" placeholder="全部">
+                            <el-option label="全部" value></el-option>
+                            <el-option label="未关联门店" :value="0"></el-option>
+                            <el-option
+                                v-for="item in shopList"
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id"
+                            ></el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="时间类型">
                         <div class="flex">
                             <el-select style="width: 120px" v-model="form.time_type" placeholder="全部">
@@ -134,6 +146,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import OrderPane from '@/components/order/order-pane.vue'
 import DatePicker from '@/components/date-picker.vue'
 import { apiOrderLists, apiOtherLists } from '@/api/order/order'
+import { apiSelffetchShopList } from '@/api/application/selffetch'
 import ExportData from '@/components/export-data/index.vue'
 import { RequestPaging } from '@/utils/util'
 import { OrderType } from '@/utils/type'
@@ -200,6 +213,7 @@ export default class Order extends Vue {
         pay_way: '', //否	int	支付方式:1-余额支付;2-微信支付;3-支付宝支付;
         pay_status: '', //否	int	支付状态;0-待支付;1-已支付;
         delivery_type: '', //否	int	配送方式;1-快递发货;2-上门自提;3-同城配送
+        store_id: '', //否	int	所属门店(取货/自提门店);0-未关联门店
         time_type: '', //否	string	时间类型:create_time-下单时间;pay_time-支付时间
         start_time: '', //否	string	开始时间
         end_time: '' //否	string	结束时间
@@ -212,6 +226,8 @@ export default class Order extends Vue {
         pay_status_lists: [], //支付状态
         delivery_type_lists: [] //配送方式
     }
+
+    shopList: any = [] //门店列表(用于所属门店筛选)
     // E Data
 
     // S Methods
@@ -254,6 +270,17 @@ export default class Order extends Vue {
             this.otherLists = res
         })
     }
+
+    // 获取门店列表(用于所属门店筛选; 无门店查看权限时降级为空列表, 不影响订单查询)
+    getShopList() {
+        apiSelffetchShopList({ page_no: 1, page_size: 100 } as any)
+            .then((res: any) => {
+                this.shopList = (res && res.lists) || []
+            })
+            .catch(() => {
+                this.shopList = []
+            })
+    }
     // E Methods
 
     // S  life cycle
@@ -263,12 +290,16 @@ export default class Order extends Vue {
         this.getOrderLists()
         // 获取其他方式数据
         this.getOtherMethodList()
+        // 获取门店列表
+        this.getShopList()
     }
     activated() {
         // 获取订单信息
         this.getOrderLists()
         // 获取其他方式数据
         this.getOtherMethodList()
+        // 获取门店列表
+        this.getShopList()
     }
 
     // E life cycle

@@ -144,6 +144,20 @@ class Order extends BaseModel
 
         }
     }
+
+    /**
+     * @notes 筛选订单所属门店(取货/自提门店)
+     * @param $query
+     * @param $value
+     * @param $data
+     */
+    public function searchStoreIdAttr($query,$value,$data){
+        //0 表示未关联门店(快递单), 需与"未传参"区分, 故不能用 if($value) 判断
+        if($value !== '' && $value !== null){
+            $query->where('selffetch_shop_id', '=', intval($value));
+        }
+    }
+
     /**
      * @notes 搜索器-用户id
      * @param $query

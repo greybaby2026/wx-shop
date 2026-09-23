@@ -145,6 +145,14 @@
                     </template>
                 </el-table-column>
 
+                <!-- 所属门店(取货/自提门店) -->
+                <el-table-column label="所属门店" min-width="160">
+                    <template slot-scope="scope">
+                        <el-tag v-if="scope.row.store_name" size="medium">{{ scope.row.store_name }}</el-tag>
+                        <span v-else class="muted">未关联门店</span>
+                    </template>
+                </el-table-column>
+
                 <!-- 支付状态 -->
                 <el-table-column label="支付状态" prop="pay_status_desc" min-width="120">
                     <template slot-scope="scope">
