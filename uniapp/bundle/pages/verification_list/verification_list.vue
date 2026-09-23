@@ -45,6 +45,16 @@
                             >
                         </view>
 
+                        <!-- 门店信息 -->
+                        <view class="order-store">
+                            <text class="muted xs store-line"
+                                >核销门店：{{ orderItem.selffetch_shop_name || '未绑定门店' }}</text
+                            >
+                            <text v-if="orderItem.is_cross_store" class="muted xs store-line"
+                                >归属门店：{{ orderItem.belong_store_name || '未关联门店' }}</text
+                            >
+                        </view>
+
                         <!-- Order Main -->
                         <view class="order-main">
                             <goods-card
@@ -118,7 +128,11 @@
 </template>
 
 <script>
-import { apiVerificationOrderList, apiVerificationOrderDetail } from '@/api/order'
+import {
+    apiVerificationOrderList,
+    apiVerificationOrderDetail,
+    apiVerificationIsVerifier
+} from '@/api/order'
 import OrderMixin from '@/mixins/order'
 import { isWeixinClient } from '@/utils/tools'
 import wechath5 from '@/utils/wechath5'
@@ -254,6 +268,19 @@ export default {
                 }
                 this.goOrderDetail(code)
             })
+        },
+
+        // 非核销员拦截并返回,避免普通用户进入核销界面
+        denyAccess() {
+            this.$toast({ title: '仅门店核销员可访问' })
+            setTimeout(() => {
+                const pages = getCurrentPages()
+                if (pages.length > 1) {
+                    this.$Router.back()
+                } else {
+                    uni.reLaunch({ url: '/pages/index/index' })
+                }
+            }, 800)
         }
     },
 
@@ -262,6 +289,15 @@ export default {
         showInputCode() {
             this.$set(this, 'code', '')
         }
+    },
+
+    onLoad() {
+        // 页面门禁:核销页仅限门店核销员访问
+        apiVerificationIsVerifier()
+            .then((res) => {
+                if (!res || !res.is_verifier) this.denyAccess()
+            })
+            .catch(() => this.denyAccess())
     },
 
     onShow() {
@@ -312,6 +348,16 @@ export default {
                 &--muted {
                     color: $-color-muted;
                 }
+            }
+        }
+
+        &-store {
+            display: flex;
+            flex-direction: column;
+            padding: 12rpx 20rpx 0 0;
+
+            .store-line {
+                line-height: 34rpx;
             }
         }
 

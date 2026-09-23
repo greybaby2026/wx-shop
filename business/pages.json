@@ -104,6 +104,24 @@
             }
         },
         {
+            "path": "pages/settlement_bill/settlement_bill",
+            "style": {
+                "navigationBarTitleText": "结算账单"
+            },
+            "meta": {
+                "auth": true
+            }
+        },
+        {
+            "path": "pages/settlement_detail/settlement_detail",
+            "style": {
+                "navigationBarTitleText": "账单详情"
+            },
+            "meta": {
+                "auth": true
+            }
+        },
+        {
             "path": "pages/webview/webview",
             "meta": {
                 "auth": false

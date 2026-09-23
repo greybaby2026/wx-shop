@@ -30,6 +30,7 @@ use app\common\model\AfterSale;
 use app\common\model\Order;
 use app\common\model\OrderGoods;
 use app\common\model\OrderLog;
+use app\common\model\SelffetchShop;
 use app\common\model\SelffetchVerifier;
 use app\common\model\Verification;
 use app\common\service\ConfigService;
@@ -55,7 +56,7 @@ class VerificationLogic extends BaseLogic
                     ->hidden(['goods_snap']);
             }])
             ->append(['verification_status_desc'])
-            ->field('id,address,verification_status')
+            ->field('id,address,verification_status,selffetch_shop_id,belong_store_id')
             ->find()
             ->toArray();
 
@@ -69,6 +70,16 @@ class VerificationLogic extends BaseLogic
 
         $result['contact'] = $result['address']->contact;
         unset($result['address']);
+
+        // 门店信息: 核销门店(自提门店) 与 归属门店(下单用户所属加盟店)
+        $shopNames = SelffetchShop::getNameMap([
+            $result['selffetch_shop_id'] ?? 0,
+            $result['belong_store_id'] ?? 0,
+        ]);
+        $result['selffetch_shop_name'] = $shopNames[intval($result['selffetch_shop_id'] ?? 0)] ?? '';
+        $result['belong_store_name'] = $shopNames[intval($result['belong_store_id'] ?? 0)] ?? '';
+        $result['is_cross_store'] = (intval($result['belong_store_id'] ?? 0) > 0
+            && intval($result['belong_store_id']) != intval($result['selffetch_shop_id'])) ? 1 : 0;
 
         return $result;
     }
@@ -84,7 +95,17 @@ class VerificationLogic extends BaseLogic
     {
         try {
             $order = Order::find($params['id']);
+            if (empty($order)) {
+                throw new \Exception('订单不存在');
+            }
+            // 幂等兜底:防止重复/并发提交写入多条核销记录与跨店结算明细
+            if ($order['verification_status'] == OrderEnum::WRITTEN_OFF) {
+                throw new \Exception('订单已核销');
+            }
             $selffetch_verifier = SelffetchVerifier::where(['user_id'=>$params['user_id'],'selffetch_shop_id'=>$order['selffetch_shop_id'],'status'=>1])->find();
+            if (empty($selffetch_verifier)) {
+                throw new \Exception('非门店核销员，无法核销订单');
+            }
 
             //添加核销记录
             $snapshot = [
@@ -128,6 +149,34 @@ class VerificationLogic extends BaseLogic
             self::$error = $e->getMessage();
             return false;
         }
+    }
+
+    /**
+     * @notes 当前用户是否为门店核销员(用于核销入口显隐与页面门禁)
+     * @param int $userId
+     * @return array
+     * @author likeshop
+     * @date 2026/9/23
+     */
+    public static function isVerifier($userId)
+    {
+        $verifier = SelffetchVerifier::where(['user_id' => $userId, 'status' => 1])
+            ->field('id,selffetch_shop_id')
+            ->findOrEmpty()
+            ->toArray();
+
+        if (empty($verifier)) {
+            return ['is_verifier' => 0, 'store_id' => 0, 'store_name' => ''];
+        }
+
+        $shopId = intval($verifier['selffetch_shop_id']);
+        $shopNames = SelffetchShop::getNameMap([$shopId]);
+
+        return [
+            'is_verifier' => 1,
+            'store_id' => $shopId,
+            'store_name' => $shopNames[$shopId] ?? '',
+        ];
     }
 
     /**

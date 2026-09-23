@@ -25,6 +25,9 @@
                 <view class="m-t-10 xs muted" v-if="deductActive">
                     活动余额为 <text class="tips"> ¥{{ activityMoney }}</text>，充值金额将进入活动余额，仅用于订单抵扣
                 </view>
+                <view class="m-t-15 xs muted recharge-store-rule">
+                    跨店取货说明：充值余额充入后与账号绑定，可在支持的门店消费使用；自提取货门店以下单时选择的门店为准。
+                </view>
             </view>
 
             <view class="recharge-btn flex row-center br60 lg white" @click="recharge('')">

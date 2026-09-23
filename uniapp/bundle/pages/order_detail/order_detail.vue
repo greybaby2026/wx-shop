@@ -80,6 +80,11 @@
                             <u-icon name="tags" size="35" />
                             <text class="black m-l-15 lg">{{ orderInfo.selffetch_shop.name }}</text>
                         </view>
+                        <!-- 归属门店(跨店自提时与取货门店不同) -->
+                        <view v-if="orderInfo.is_cross_store" class="m-t-20">
+                            <u-icon name="home" size="35" />
+                            <text class="muted m-l-15">归属门店：{{ orderInfo.belong_store_name }}</text>
+                        </view>
                         <view class="flex row-between">
                             <view>
                                 <view class="m-t-15 muted xs">

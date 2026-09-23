@@ -21,6 +21,7 @@ namespace app\shopapi\lists;
 
 
 use app\common\model\SelffetchShop;
+use app\common\model\User;
 
 class SelffetchShopLists extends BaseShopDataLists
 {
@@ -42,17 +43,32 @@ class SelffetchShopLists extends BaseShopDataLists
         $latitude = $coordinate['lat'];
         $distance = "round((6378.138*2*asin(sqrt(pow(sin(( {$latitude} *pi()/180-latitude*pi()/180)/2),2)+cos( {$latitude} *pi()/180)*cos(latitude*pi()/180)* pow(sin(( {$longitude} *pi()/180-longitude*pi()/180)/2),2)))*1000))/1000";
 
-        $lists = SelffetchShop::field(['id', 'name', $distance => 'distance','mobile', 'business_start_time','business_end_time','province','city','district','address','longitude','latitude'])
+        //归属门店(扫门店码绑定, 首绑终身): 列表置顶并打标, 便于用户到「我的门店」提货。
+        //不置顶会导致用户按距离选到其他门店 → 归属门店与取货门店不一致 → 产生跨店结算。
+        //未登录/未绑定门店时为 0, 保持原「按距离排序」行为。
+        $myStoreId = 0;
+        if ($this->userId > 0) {
+            $myStoreId = intval(User::where('id', $this->userId)->value('bind_store_id') ?: 0);
+        }
+
+        $query = SelffetchShop::field(['id', 'name', $distance => 'distance','mobile', 'business_start_time','business_end_time','province','city','district','address','longitude','latitude'])
             ->append(['detailed_address'])
             ->hidden(['province','city','district','address'])
-            ->where(['status'=>1])
-            ->order(['distance' => 'asc'])
+            ->where(['status'=>1]);
+        if ($myStoreId > 0) {
+            //`id` = 本店 的布尔值为 1 排在前, 其余为 0 继续按距离升序; $myStoreId 已 intval, 无注入风险
+            $query->orderRaw("`id` = {$myStoreId} desc, `distance` asc");
+        } else {
+            $query->order(['distance' => 'asc']);
+        }
+        $lists = $query
             ->limit($this->limitOffset, $this->limitLength)
             ->select()
             ->toArray();
 
         foreach ($lists as &$item) {
             $item['distance'] = round($item['distance'], 2) . 'km';
+            $item['is_my_store'] = ($myStoreId > 0 && intval($item['id']) === $myStoreId) ? 1 : 0;
 //            $coordinate = Convert_BD09_To_GCJ02($item['latitude'], $item['longitude']);
 //            $item['longitude'] = $coordinate['lng'];
 //            $item['latitude'] = $coordinate['lat'];

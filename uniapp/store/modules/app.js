@@ -4,7 +4,7 @@ import { CONFIG, USER_INFO, TOKEN, INVITE_CODE , PENDING_STORE_ID } from '@/conf
 import wechath5 from '@/utils/wechath5'
 import Cache from '@/utils/cache'
 import { router } from '@/router'
-import { getClient } from '@/utils/tools'
+import { getClient, toast } from '@/utils/tools'
 import { apiserviceConfig, apishareConfig } from '@/api/app'
 
 const state = {
@@ -45,9 +45,19 @@ const mutations = {
         // 登录完成绑定门店(首绑定终身)
         const pendingStore = Cache.get(PENDING_STORE_ID)
         if (pendingStore) {
-            apiUserBindStore({ store_id: pendingStore, hide: 1 }).finally(() => {
-                Cache.remove(PENDING_STORE_ID)
-            })
+            apiUserBindStore({ store_id: pendingStore, hide: 1 })
+                .then((res) => {
+                    // 补绑成功给出明确反馈,避免用户对归属门店无感
+                    if (res && res.is_new && res.store_name) {
+                        setTimeout(() => {
+                            toast({ title: `已加入${res.store_name}` })
+                        }, 300)
+                    }
+                })
+                .catch(() => {})
+                .finally(() => {
+                    Cache.remove(PENDING_STORE_ID)
+                })
         }
     },
     logout(state) {

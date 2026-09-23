@@ -24,6 +24,7 @@ use app\common\enum\OrderEnum;
 use app\common\enum\TeamEnum;
 use app\common\logic\CommonPresellLogic;
 use app\common\model\Order;
+use app\common\model\SelffetchShop;
 
 
 class OrderLists extends BaseShopDataLists
@@ -49,11 +50,21 @@ class OrderLists extends BaseShopDataLists
                     ->append(['goods_image', 'spec_value_str'])
                     ->hidden(['goods_snap']);
             }])
-            ->field(['id', 'sn', 'order_type', 'order_status', 'total_num', 'order_amount', 'delivery_type', 'is_team_success', 'pay_way', 'pay_status', 'pay_time', 'express_status','delivery_content', 'delivery_content1', 'delivery_content_type', 'create_time', 'presell_id', 'transaction_id' ])
+            ->field(['id', 'sn', 'order_type', 'order_status', 'total_num', 'order_amount', 'delivery_type', 'selffetch_shop_id', 'belong_store_id', 'is_team_success', 'pay_way', 'pay_status', 'pay_time', 'express_status','delivery_content', 'delivery_content1', 'delivery_content_type', 'create_time', 'presell_id', 'transaction_id' ])
             ->append(['btn','cancel_unpaid_orders_time'])
             ->order(['id' => 'desc'])
             ->limit($this->limitOffset, $this->limitLength)
             ->select()->toArray();
+
+        //自提订单门店名映射(取货门店/归属门店),批量查询避免循环内查询
+        $shopIdList = [];
+        foreach ($lists as $tmpOrder) {
+            if ($tmpOrder['delivery_type'] == DeliveryEnum::SELF_DELIVERY) {
+                $shopIdList[] = intval($tmpOrder['selffetch_shop_id'] ?? 0);
+                $shopIdList[] = intval($tmpOrder['belong_store_id'] ?? 0);
+            }
+        }
+        $shopNameMap = SelffetchShop::getNameMap($shopIdList);
 
         foreach ($lists as &$list){
             //查看提货码按钮
@@ -69,6 +80,14 @@ class OrderLists extends BaseShopDataLists
 
             //订单类型
             $list['order_type_desc'] = ($list['delivery_type'] == DeliveryEnum::SELF_DELIVERY) ? '自提订单' : OrderEnum::getOrderTypeDesc($list['order_type']);
+
+            //自提订单补充门店名(取货门店/归属门店)
+            if ($list['delivery_type'] == DeliveryEnum::SELF_DELIVERY) {
+                $list['selffetch_shop_name'] = $shopNameMap[intval($list['selffetch_shop_id'] ?? 0)] ?? '';
+                $list['belong_store_name'] = $shopNameMap[intval($list['belong_store_id'] ?? 0)] ?? '';
+                $list['is_cross_store'] = (intval($list['belong_store_id'] ?? 0) > 0
+                    && intval($list['belong_store_id']) != intval($list['selffetch_shop_id'] ?? 0)) ? 1 : 0;
+            }
             
             // 预售信息
             if ($list['order_type'] == OrderEnum::PRESELL_ORDER) {

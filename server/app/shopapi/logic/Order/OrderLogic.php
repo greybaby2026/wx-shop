@@ -231,31 +231,46 @@ class OrderLogic extends BaseLogic
                 'is_address'            => $is_address,
                 'draw_record_id'        => $params['draw_record_id'] ?? 0,
             ];
-            //门店自提显示上次提货人信息
+            //门店自提: 上次提货人信息 + 默认门店
             if ($params['delivery_type'] == DeliveryEnum::SELF_DELIVERY) {
+                $selffetch_field = [
+                    'id', 'name', 'image', 'contact', 'mobile',
+                    'province', 'city', 'district', 'longitude', 'address', 'latitude',
+                    'business_start_time', 'business_end_time', 'weekdays', 'remark',
+                    'status',
+                ];
                 $selffetch_info = Order::where(['user_id' => $user['id'], 'delivery_type' => DeliveryEnum::SELF_DELIVERY])
                     ->field('address,selffetch_shop_id')
                     ->order('id desc')
                     ->findOrEmpty()->toArray();
 
-                //上一次提货人
-                if ($selffetch_info) {
-                    $selffetch_field = [
-                        'id', 'name', 'image', 'contact', 'mobile',
-                        'province', 'city', 'district', 'longitude', 'address', 'latitude',
-                        'business_start_time', 'business_end_time', 'weekdays', 'remark',
-                        'status',
-                    ];
-                    $result['selffetch_info'] = [
-                        'selffetch_shop_id' => $selffetch_info['selffetch_shop_id'] ?? '',
-                        'contact'           => $selffetch_info['address']->contact ?? '',
-                        'mobile'            => $selffetch_info['address']->mobile ?? '',
-                        'selffetch_shop'    => SelffetchShop::where('status', 1)
-                            ->field($selffetch_field)
-                            ->append([ 'detailed_address' ])
-                            ->find($selffetch_info['selffetch_shop_id'] ?? 0),
-                    ];
+                //默认门店: 上次自提门店(须仍启用) → 否则回退「我的门店」(扫门店码绑定的归属门店)。
+                //归属门店兜底的意义: 用户扫码加入门店后首次下单也能默认选中本店, 不必自己翻列表找,
+                //避免误选其他门店导致归属门店与取货门店不一致(进而产生跨店结算)。
+                $defaultShopId = intval($selffetch_info['selffetch_shop_id'] ?? 0);
+                $defaultShop = $defaultShopId > 0
+                    ? SelffetchShop::where('status', 1)->field($selffetch_field)->append(['detailed_address'])->find($defaultShopId)
+                    : null;
+                if (empty($defaultShop) || $defaultShop->isEmpty()) {
+                    $defaultShopId = 0;
+                    $defaultShop = null;
+                    $bindStoreId = intval(User::where('id', $user['id'])->value('bind_store_id') ?: 0);
+                    if ($bindStoreId > 0) {
+                        $bindShop = SelffetchShop::where('status', 1)->field($selffetch_field)->append(['detailed_address'])->find($bindStoreId);
+                        if (!empty($bindShop) && !$bindShop->isEmpty()) {
+                            $defaultShopId = $bindStoreId;
+                            $defaultShop = $bindShop;
+                        }
+                    }
                 }
+
+                //提货人信息仍取自上次下单, 无历史时保持为空(不预填, 与原行为一致)
+                $result['selffetch_info'] = [
+                    'selffetch_shop_id' => $defaultShopId,
+                    'contact'           => $selffetch_info['address']->contact ?? '',
+                    'mobile'            => $selffetch_info['address']->mobile ?? '',
+                    'selffetch_shop'    => $defaultShop,
+                ];
             }
             // 营销活动附加参数: 秒杀、拼团、砍价
             switch ($params['order_type']) {
@@ -986,6 +1001,14 @@ class OrderLogic extends BaseLogic
             ->append(['detailed_address'])
             ->hidden([ 'create_time', 'update_time', 'delete_time' ])
             ->find();
+
+        //归属门店(下单用户所属加盟店,与取货门店可能不同=跨店自提)
+        $belongStoreId = intval($result['belong_store_id'] ?? 0);
+        $result['belong_store_name'] = $belongStoreId > 0
+            ? (SelffetchShop::where('id', $belongStoreId)->value('name') ?: '')
+            : '';
+        $result['is_cross_store'] = ($belongStoreId > 0
+            && $belongStoreId != intval($result['selffetch_shop_id'] ?? 0)) ? 1 : 0;
 
         //地址  省市区分隔开
         $result['address']->province = Region::where('id', $result['address']->province)->value('name');

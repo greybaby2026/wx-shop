@@ -73,9 +73,10 @@
                         label="创建时间"
                         width="180"
                     /> -->
-                    <el-table-column label="操作" min-width="200">
+                    <el-table-column label="操作" min-width="240">
                         <!-- 操作 -->
                         <template slot-scope="scope">
+                            <el-button type="text" size="small" @click="showShopQrCode(scope.row)">门店码</el-button>
                             <el-button type="text" size="small" @click="goSelffetchShopEdit(scope.row)">编辑</el-button>
                             <ls-dialog class="m-l-10 inline" @confirm="onSelffetchShopDelete(scope.row)">
                                 <el-button type="text" size="small" slot="trigger">删除</el-button>
@@ -90,6 +91,31 @@
                 </div>
             </div>
         </div>
+
+        <!-- 门店码弹窗 -->
+        <el-dialog title="门店专属小程序码" :visible.sync="qrDialog.show" width="420px">
+            <div v-loading="qrDialog.loading" class="qr-wrap">
+                <template v-if="qrDialog.image">
+                    <img class="qr-image" :src="qrDialog.image" alt="门店码" />
+                    <div class="qr-name">{{ qrDialog.name }}</div>
+                    <div class="qr-tip">
+                        顾客扫码进入小程序后，将自动绑定为该门店会员（首绑终身）。<br />
+                        可直接保存图片用于门店物料，或复制场景值到微信公众平台自行生成。
+                    </div>
+                    <div class="qr-scene">场景值：{{ qrDialog.scene }}</div>
+                </template>
+                <template v-else>
+                    <div class="qr-empty">暂无门店码</div>
+                </template>
+            </div>
+            <div slot="footer">
+                <el-button size="small" @click="qrDialog.show = false">关闭</el-button>
+                <el-button size="small" :disabled="!qrDialog.scene" @click="copyQrScene">复制场景值</el-button>
+                <el-button type="primary" size="small" :disabled="!qrDialog.image" @click="downloadQrCode">
+                    下载门店码
+                </el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -118,6 +144,15 @@ export default class SelffetchShop extends Vue {
         status: '' //角色id
     }
     pager: RequestPaging = new RequestPaging()
+
+    // 门店码弹窗：扫码进入小程序后自动绑定该门店（scene=store_id=x）
+    qrDialog = {
+        show: false,
+        loading: false,
+        name: '',
+        image: '',
+        scene: ''
+    }
     /** E Data **/
 
     /** S Methods **/
@@ -187,6 +222,58 @@ export default class SelffetchShop extends Vue {
         })
     }
 
+    // 门店码：生成并展示（scene=store_id=x，扫码后自动绑定该门店）
+    // 说明：门店码由微信接口实时生成，需小程序已发布且首页存在，否则接口会返回失败提示
+    showShopQrCode(data: any) {
+        this.qrDialog = {
+            show: true,
+            loading: true,
+            name: data.name,
+            image: '',
+            scene: `store_id=${data.id}`
+        }
+        apiSelffetchShopQrCode({ id: data.id })
+            .then((res: any) => {
+                this.qrDialog.image = res && res.base64 ? res.base64 : ''
+                if (!this.qrDialog.image) {
+                    this.$message.error('门店码生成失败，请稍后重试')
+                }
+            })
+            .catch(() => {})
+            .finally(() => {
+                this.qrDialog.loading = false
+            })
+    }
+
+    // 下载门店码（base64 直接触发浏览器下载，无需服务端落盘）
+    downloadQrCode() {
+        if (!this.qrDialog.image) return
+        const a = document.createElement('a')
+        a.href = this.qrDialog.image
+        a.download = `门店码_${this.qrDialog.name || this.qrDialog.scene}.png`
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+    }
+
+    // 复制场景值：便于到微信公众平台自行生成小程序码
+    copyQrScene() {
+        if (!this.qrDialog.scene) return
+        const input = document.createElement('textarea')
+        input.value = this.qrDialog.scene
+        input.style.position = 'fixed'
+        input.style.top = '-9999px'
+        document.body.appendChild(input)
+        input.select()
+        try {
+            document.execCommand('copy')
+            this.$message.success('已复制场景值')
+        } catch (e) {
+            this.$message.error('复制失败，请手动复制')
+        }
+        document.body.removeChild(input)
+    }
+
     /** E Methods **/
 
     /** S Life Cycle **/
@@ -197,12 +284,52 @@ export default class SelffetchShop extends Vue {
     /** E Life Cycle **/
 }
 </script>
-s
 
 <style lang="scss" scoped>
 .pagination {
     padding-right: 5%;
     display: flex;
     justify-content: flex-end;
+}
+
+.qr-wrap {
+    min-height: 200px;
+    text-align: center;
+
+    .qr-image {
+        width: 260px;
+        height: 260px;
+    }
+
+    .qr-name {
+        margin-top: 8px;
+        font-size: 14px;
+        color: #333;
+        font-weight: 500;
+    }
+
+    .qr-tip {
+        margin-top: 12px;
+        font-size: 12px;
+        line-height: 20px;
+        color: #999;
+        text-align: left;
+    }
+
+    .qr-scene {
+        margin-top: 12px;
+        font-size: 12px;
+        color: #666;
+        background: #f5f7fa;
+        border-radius: 4px;
+        padding: 6px 10px;
+        word-break: break-all;
+    }
+
+    .qr-empty {
+        padding: 60px 0;
+        color: #999;
+        font-size: 13px;
+    }
 }
 </style>

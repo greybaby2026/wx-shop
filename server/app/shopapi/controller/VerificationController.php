@@ -71,4 +71,16 @@ class VerificationController extends BaseShopController
         }
         return $this->success('提货成功',[],1,1);
     }
+
+    /**
+     * @notes 当前用户是否为门店核销员(用于核销入口显隐与页面门禁)
+     * @return \think\response\Json
+     * @author likeshop
+     * @date 2026/9/23
+     */
+    public function isVerifier()
+    {
+        $result = VerificationLogic::isVerifier($this->userId);
+        return $this->success('', $result);
+    }
 }

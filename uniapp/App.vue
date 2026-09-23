@@ -111,9 +111,28 @@ export default {
             const store_id = options.query.store_id || sceneParams.store_id
             if (store_id) {
                 // 扫门店码绑定(首绑定终身):未登录先暂存,登录后补绑
-                apiUserBindStore({ store_id: store_id, hide: 1 }).catch(() => {
+                if (!this.$store.getters.token) {
                     Cache.set(PENDING_STORE_ID, store_id)
-                })
+                } else {
+                    // 已登录:立即绑定并给出明确反馈(绑定成功/已绑定其他门店/门店已停用)
+                    apiUserBindStore({ store_id: store_id, hide: 1 })
+                        .then((res) => {
+                            if (res && res.is_new) {
+                                this.$toast({ title: `已加入${res.store_name || ''}` })
+                            } else if (
+                                res &&
+                                res.store_id &&
+                                String(res.store_id) !== String(store_id)
+                            ) {
+                                this.$toast({ title: res.msg || '您已加入其他门店，无法更换' })
+                            }
+                        })
+                        .catch((msg) => {
+                            this.$toast({
+                                title: typeof msg === 'string' && msg ? msg : '门店绑定失败'
+                            })
+                        })
+                }
             }
             let invite_code =
                 options.query.invite_code ||

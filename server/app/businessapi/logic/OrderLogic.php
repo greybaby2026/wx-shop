@@ -471,13 +471,25 @@ class OrderLogic  extends BaseLogic
             }])
             ->append(['consignee'])
             ->hidden(['address'])
-            ->field(['id', 'sn', 'user_id', 'order_type', 'order_status', 'total_num', 'order_amount', 'delivery_type', 'pay_status', 'address', 'create_time','verification_status'])
+            ->field(['id', 'sn', 'user_id', 'order_type', 'order_status', 'total_num', 'order_amount', 'delivery_type', 'pay_status', 'address', 'create_time','verification_status','selffetch_shop_id','belong_store_id'])
             ->order(['id' => 'desc'])
             ->findOrEmpty();
         if($order->isEmpty()) {
             return '订单不存在';
         }
-        return $order->toArray();
+        $result = $order->toArray();
+
+        //核销员需就地看到取货/归属门店,便于识别跨店订单
+        $shopNameMap = \app\common\model\SelffetchShop::getNameMap([
+            $result['selffetch_shop_id'] ?? 0,
+            $result['belong_store_id'] ?? 0,
+        ]);
+        $result['selffetch_shop_name'] = $shopNameMap[intval($result['selffetch_shop_id'] ?? 0)] ?? '';
+        $result['belong_store_name'] = $shopNameMap[intval($result['belong_store_id'] ?? 0)] ?? '';
+        $result['is_cross_store'] = (intval($result['belong_store_id'] ?? 0) > 0
+            && intval($result['belong_store_id']) != intval($result['selffetch_shop_id'] ?? 0)) ? 1 : 0;
+
+        return $result;
     }
 
 

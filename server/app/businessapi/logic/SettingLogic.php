@@ -37,7 +37,7 @@ class SettingLogic
      * @author cjhao
      * @date 2023/2/16 14:35
      */
-    public function getShopConfig()
+    public function getShopConfig($adminId = 0)
     {
         $config = [
             'name'                  => ConfigService::get('shop', 'name'),
@@ -55,6 +55,15 @@ class SettingLogic
         $config['logo'] = FileService::getFileUrl($config['logo']);
         $config['region_address'] = RegionService::getAddress([$config['return_province'], $config['return_city'], $config['return_district']]);
         $config['address'] = $config['region_address'].$config['return_address'];
+
+        //当前登录账号所属门店(门店身份露出;store_id=0 为平台账号,核销不参与门店结算)
+        $admin = Admin::field('id,store_id')->findOrEmpty($adminId)->toArray();
+        $storeId = intval($admin['store_id'] ?? 0);
+        $config['store_id'] = $storeId;
+        $config['store_name'] = $storeId > 0
+            ? (\app\common\model\SelffetchShop::where('id', $storeId)->value('name') ?: '')
+            : '';
+        $config['is_platform_account'] = $storeId > 0 ? 0 : 1;
         return $config;
 
     }

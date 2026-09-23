@@ -63,4 +63,19 @@ class SelffetchShop extends BaseModel
     {
         return YesNoEnum::getIsShowDesc($data['status']);
     }
+
+    /**
+     * @notes 批量获取门店名称映射[id => name]
+     * 用途: 订单/核销列表展示「核销门店」「归属门店」
+     * @param array $shopIds
+     * @return array
+     */
+    public static function getNameMap(array $shopIds): array
+    {
+        $shopIds = array_values(array_unique(array_filter(array_map('intval', $shopIds))));
+        if (empty($shopIds)) {
+            return [];
+        }
+        return self::whereIn('id', $shopIds)->column('name', 'id');
+    }
 }

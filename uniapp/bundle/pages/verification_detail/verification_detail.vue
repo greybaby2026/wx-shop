@@ -10,6 +10,16 @@
                     }}</view>
                 </view>
 
+                <!-- 门店信息 -->
+                <view class="order-store">
+                    <text class="muted xs store-line"
+                        >核销门店：{{ orderInfo.selffetch_shop_name || '未绑定门店' }}</text
+                    >
+                    <text v-if="orderInfo.is_cross_store" class="muted xs store-line"
+                        >归属门店：{{ orderInfo.belong_store_name || '未关联门店' }}</text
+                    >
+                </view>
+
                 <!-- Order Main -->
                 <view class="order-main">
                     <goods-card
@@ -34,8 +44,11 @@
                 </view>
             </view>
 
-            <view class="operation operation--primary" @click="showVerificationModal = true"
-                >已提货</view
+            <view
+                class="operation operation--primary"
+                :class="{ 'operation--submitting': submitting }"
+                @click="openVerificationModal"
+                >{{ submitting ? '核销中...' : '已提货' }}</view
             >
             <view class="operation operation--normal" @click="goVerificationList"
                 >返回核销列表</view
@@ -71,7 +84,7 @@
 </template>
 
 <script>
-import { apiVerificationOrderDetail, apiVerificationOrderConfirm } from '@/api/order'
+import { apiVerificationOrderDetail, apiVerificationOrderConfirm, apiVerificationIsVerifier } from '@/api/order'
 import { PageStatusEnum } from '@/utils/enum'
 
 export default {
@@ -82,7 +95,8 @@ export default {
             code: '', // 核销码
             orderInfo: {}, // 订单信息
             pageStatus: PageStatusEnum['LOADING'],
-            showVerificationModal: false // 显示(核销)：是|否
+            showVerificationModal: false, // 显示(核销)：是|否
+            submitting: false // 核销请求中(防重复提交)
         }
     },
 
@@ -99,26 +113,55 @@ export default {
                         resolve(data)
                     })
                     .catch((err) => {
-                        reject(err.message)
+                        reject(typeof err === 'string' ? err : (err && err.msg) || '')
                     })
             })
         },
 
+        // 打开核销确认弹窗(核销请求中不可再次打开)
+        openVerificationModal() {
+            if (this.submitting) return
+            this.showVerificationModal = true
+        },
+
         // 确认核销订单
         handleVerificationConfirm() {
+            // 防重复核销:请求未返回前直接拦截,避免重复写入核销记录与跨店结算明细
+            if (this.submitting) return
+            this.submitting = true
             apiVerificationOrderConfirm({
                 id: this.orderInfo.id
-            }).then((data) => {
-                // this.initOrderData()
-                setTimeout(() => {
-                    this.$Router.back()
-                }, 0.5 * 1000)
             })
+                .then((data) => {
+                    // this.initOrderData()
+                    setTimeout(() => {
+                        this.$Router.back()
+                    }, 0.5 * 1000)
+                })
+                .catch((err) => {
+                    this.submitting = false
+                    this.$toast({
+                        title: typeof err === 'string' && err ? err : '核销失败，请重试'
+                    })
+                })
         },
 
         // 返回核销列表
         goVerificationList() {
             this.$Router.back()
+        },
+
+        // 非核销员拦截(服务端虽会拒绝, 但需避免普通用户看到核销界面甚至扫码)
+        denyAccess() {
+            this.$toast({ title: '仅门店核销员可访问' })
+            setTimeout(() => {
+                const pages = getCurrentPages()
+                if (pages.length > 1) {
+                    this.$Router.back()
+                } else {
+                    uni.reLaunch({ url: '/pages/index/index' })
+                }
+            }, 800)
         }
     },
 
@@ -126,6 +169,14 @@ export default {
         const options = this.$Route.query
 
         try {
+            // 页面门禁: 核销页仅限门店核销员访问(与核销列表页口径一致)
+            const verifier = await apiVerificationIsVerifier().catch(() => null)
+            if (!verifier || !verifier.is_verifier) {
+                this.pageStatus = PageStatusEnum['ERROR']
+                this.denyAccess()
+                return
+            }
+
             if (!options.code) throw new Error('订单异常')
             this.code = options.code
             await this.initOrderData()
@@ -133,9 +184,9 @@ export default {
             this.pageStatus = PageStatusEnum['NORMAL']
         } catch (err) {
             console.log(err)
-            // setTimeout(() => {
-            // 	this.$Router.back()
-            // }, 0.5 * 1000)
+            if (typeof err === 'string' && err) {
+                this.$toast({ title: err })
+            }
             this.pageStatus = PageStatusEnum['ERROR']
         }
     }
@@ -202,6 +253,10 @@ export default {
     &--normal {
         background-color: #ffffff;
         color: $-color-normal;
+    }
+
+    &--submitting {
+        opacity: 0.6;
     }
 }
 </style>

@@ -23,6 +23,13 @@
                         <view class="xxl white" v-if="userInfo.nickname">
                             {{ userInfo.nickname }}
                         </view>
+                        <!-- 所属门店(扫门店码绑定,首绑终身) -->
+                        <view class="xs m-t-10 store-bind" v-if="userInfo.bind_store_name">
+                            所属门店：{{ userInfo.bind_store_name }}
+                        </view>
+                        <view class="xs m-t-10 store-bind store-bind--none" v-else>
+                            暂未加入门店，扫门店码加入
+                        </view>
                         <view
                             class="flex user-id m-t-10"
                             v-if="userInfo.sn && content.show_user_sn"
@@ -180,6 +187,14 @@ export default {
                 padding: 3rpx 20rpx;
                 border-radius: 20rpx;
                 background: #fff;
+            }
+        }
+
+        .store-bind {
+            opacity: 0.85;
+
+            &--none {
+                opacity: 0.65;
             }
         }
     }

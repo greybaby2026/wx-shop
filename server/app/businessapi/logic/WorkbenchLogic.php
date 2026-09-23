@@ -51,6 +51,12 @@ class WorkbenchLogic
 
         return [
             'shop_name'     => ConfigService::get('shop', 'name'),
+            //门店身份露出(store_id=0 为平台账号,核销不参与门店结算)
+            'store_id'      => $storeId,
+            'store_name'    => $storeId > 0
+                ? (\app\common\model\SelffetchShop::where('id', $storeId)->value('name') ?: '')
+                : '',
+            'is_platform_account' => $storeId > 0 ? 0 : 1,
             'today'         => $today,
             'pending'       => $pending,
             'business5'    => $business5,

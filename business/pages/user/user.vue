@@ -27,6 +27,13 @@
 										<view class="account">
 											<view>当前账号：{{ user_info.name }}</view>
 										</view>
+										<!-- 所属门店(门店身份;平台账号不参与门店结算) -->
+										<view class="account" v-if="info.store_id">
+											<view>所属门店：{{ info.store_name }}</view>
+										</view>
+										<view class="account store-warning" v-else-if="info.name">
+											<view>平台账号：核销不参与门店结算</view>
+										</view>
 									</view>
 								</template>
 								<template v-if="!isLogin">
@@ -235,6 +242,10 @@ page {
 					color: white;
 					font-size: small;
 					margin-top: 10rpx;
+
+					&.store-warning {
+						color: #ffe58f;
+					}
 				}
 			}
 

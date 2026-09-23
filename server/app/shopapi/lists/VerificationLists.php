@@ -26,6 +26,7 @@ use app\common\enum\PayEnum;
 use app\common\enum\YesNoEnum;
 use app\common\lists\ListsSearchInterface;
 use app\common\model\Order;
+use app\common\model\SelffetchShop;
 
 class VerificationLists extends BaseShopDataLists implements ListsSearchInterface
 {
@@ -68,7 +69,7 @@ class VerificationLists extends BaseShopDataLists implements ListsSearchInterfac
      */
     public function lists(): array
     {
-        $lists = Order::field('o.id,o.address,o.verification_status')
+        $lists = Order::field('o.id,o.address,o.verification_status,o.selffetch_shop_id,o.belong_store_id')
             ->alias('o')
             ->join('selffetch_verifier sv', 'sv.selffetch_shop_id = o.selffetch_shop_id')
             ->with(['order_goods' => function ($query) {
@@ -84,9 +85,19 @@ class VerificationLists extends BaseShopDataLists implements ListsSearchInterfac
             ->select()
             ->toArray();
 
+        // 核销门店(自提门店) 与 归属门店(下单用户所属加盟店)
+        $shopNames = SelffetchShop::getNameMap(array_merge(
+            array_column($lists, 'selffetch_shop_id'),
+            array_column($lists, 'belong_store_id')
+        ));
+
         foreach ($lists as &$list) {
             $list['contact'] = $list['address']->contact;
             unset($list['address']);
+            $list['selffetch_shop_name'] = $shopNames[intval($list['selffetch_shop_id'])] ?? '';
+            $list['belong_store_name'] = $shopNames[intval($list['belong_store_id'])] ?? '';
+            $list['is_cross_store'] = (intval($list['belong_store_id']) > 0
+                && intval($list['belong_store_id']) != intval($list['selffetch_shop_id'])) ? 1 : 0;
         }
 
         return $lists;

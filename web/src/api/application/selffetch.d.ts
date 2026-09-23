@@ -53,6 +53,11 @@ export interface MapRegionSearch_Req {
     boundary: string // 搜索区域
     key: string // 开发秘钥
 }
+
+// 生成门店专属小程序码
+export interface SelffetchShopQrCode_Req {
+    id: number // 门店ID
+}
 /** E 门店自提 **/
 
 /** S 核销员 **/

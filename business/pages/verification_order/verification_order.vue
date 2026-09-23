@@ -29,6 +29,13 @@
 							</view>
 						</view>
 
+						<!-- 取货/归属门店 -->
+						<view class="order-shop xs muted">
+							<text>取货门店：{{ orderItem.selffetch_shop_name || '-' }}</text>
+							<text class="m-l-16">归属门店：{{ orderItem.belong_store_name || '未绑定' }}</text>
+							<text class="cross-tip m-l-16" v-if="orderItem.is_cross_store">跨店</text>
+						</view>
+
 						<!-- Order Main -->
 						<view class="order-main">
 
@@ -55,7 +62,9 @@
 							</view>
 						</view>
 						<view class="button" v-if="!orderItem.verification_status">
-							<button @click="toVerification(orderItem.id)">核销订单</button>
+							<button :disabled="submitting" @click="toVerification(orderItem.id)">
+								{{ submitting ? '核销中...' : '核销订单' }}
+							</button>
 						</view>
 					</view>
 				</view>
@@ -114,6 +123,7 @@ export default {
 
 			code: '',						// 核销码
 			showInputCode: false,			// 显示(输入核销码)：是 | 否
+			submitting: false,				// 核销请求中(防重复提交)
 		}
 	},
 
@@ -159,13 +169,24 @@ export default {
 		},
 		//确定核销
 		async confirmVer(isConfirm = 0){
-			const res = await apiVerificationOrderConfirm({id: this.code, confirm: isConfirm})
-			if (res.code === 10) {
-				this.verifyTips = res.msg
-				this.verificationDialog = true
-				return
+			//防重复核销:请求未返回前直接拦截
+			if (this.submitting) return
+			this.submitting = true
+			try {
+				const res = await apiVerificationOrderConfirm({id: this.code, confirm: isConfirm})
+				if (res.code === 10) {
+					this.verifyTips = res.msg
+					this.verificationDialog = true
+					return
+				}
+				this.refreshOrderData()
+			} catch (err) {
+				this.$toast({
+					title: typeof err === 'string' && err ? err : '核销失败，请重试'
+				})
+			} finally {
+				this.submitting = false
 			}
-			this.refreshOrderData()
 		}
 	}
 }
@@ -179,6 +200,14 @@ export default {
 	// max-height: 100vh;
 	// overflow: hidden;
 	padding-bottom: 200rpx;
+}
+
+.order-shop {
+	padding: 12rpx 20rpx 0;
+
+	.cross-tip {
+		color: #f2a626;
+	}
 }
 
 .goods {

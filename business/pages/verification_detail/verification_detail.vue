@@ -8,6 +8,13 @@
 					<view :class="['order-status', 'order-status--primary']">{{ orderInfo.verification_status_desc }}</view>
 				</view>
 				
+				<!-- 取货/归属门店 -->
+				<view class="order-shop" v-if="orderInfo.selffetch_shop_name || orderInfo.belong_store_name">
+					<view class="xs muted">取货门店：{{ orderInfo.selffetch_shop_name || '-' }}</view>
+					<view class="xs muted m-t-6">归属门店：{{ orderInfo.belong_store_name || '未绑定' }}</view>
+					<view class="xs cross-tip m-t-6" v-if="orderInfo.is_cross_store">跨店订单：与归属门店不一致，请确认后再核销</view>
+				</view>
+
 				<!-- Order Main -->
 				<view class="order-main">
 					<view class="goods" v-for="(goodsItem, goodsIndex) in orderInfo.order_goods">
@@ -30,7 +37,11 @@
 				</view>
 			</view>
 			
-			<view class="operation operation--primary" @click="showVerificationModal = true">已提货</view>
+			<view
+				class="operation operation--primary"
+				:class="{ 'operation--submitting': submitting }"
+				@click="openVerificationModal"
+			>{{ submitting ? '核销中...' : '已提货' }}</view>
 			<view class="operation operation--normal" @click="goVerificationList">返回核销列表</view>
 		</view>
 		
@@ -69,6 +80,7 @@
 				orderInfo: {},						// 订单信息
 				pageStatus: PageStatusEnum['LOADING'],
 				showVerificationModal: false,		// 显示(核销)：是|否
+				submitting: false,					// 核销请求中(防重复提交)
 			}
 		},
 		
@@ -87,8 +99,17 @@
 				})
 			},
 			
+			// 打开核销确认弹窗(核销请求中不可再次打开)
+			openVerificationModal() {
+				if (this.submitting) return
+				this.showVerificationModal = true
+			},
+			
 			// 确认核销订单
 			handleVerificationConfirm() {
+				// 防重复核销:请求未返回前直接拦截
+				if (this.submitting) return
+				this.submitting = true
 				apiVerificationOrderConfirm({
 					id: this.orderInfo.id
 				}).then(data => {
@@ -96,6 +117,11 @@
 					setTimeout(() => {
 						this.$Router.back()
 					}, 0.5 * 1000)
+				}).catch(err => {
+					this.submitting = false
+					this.$toast({
+						title: typeof err === 'string' && err ? err : '核销失败，请重试'
+					})
 				})
 			},
 			
@@ -138,7 +164,15 @@
 		margin-top: 20rpx;
 		border-radius: 5px;
 		background-color: #FFFFFF;
-		
+
+		&-shop {
+			padding: 12rpx 20rpx 0;
+
+			.cross-tip {
+				color: #f2a626;
+			}
+		}
+
 		&-header {
 			display: flex;
 			height: 80rpx;
@@ -207,6 +241,10 @@
 		&--normal {
 			background-color: #FFFFFF;
 			color: $-color-normal;
+		}
+		
+		&--submitting {
+			opacity: 0.6;
 		}
 	}
 </style>

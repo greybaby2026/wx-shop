@@ -385,7 +385,9 @@ export default {
                     if (orderItem.order_type == 1 && orderItem.is_team_success == 0) {
                         return '拼团成功后发货'
                     } else if (orderItem.delivery_type == 2) {
-                        return '请前往指定门店取货'
+                        return orderItem.selffetch_shop_name
+                            ? `请前往【${orderItem.selffetch_shop_name}】取货`
+                            : '请前往指定门店取货'
                     } else if (orderItem.order_type == 5) {
                         return orderItem.presell.order_send_text
                     } else {

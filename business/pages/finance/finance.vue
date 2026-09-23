@@ -74,6 +74,9 @@ export default {
 		async getUserFinance() {
 			const data = await userFinance()
 			this.finance = data
+		},
+		toSettlementBill() {
+			this.$Router.push('/pages/settlement_bill/settlement_bill')
 		}
 	},
 	onLoad() {
@@ -93,6 +96,18 @@ export default {
     font-size: 32rpx;
     font-weight: 500;
 	margin-bottom: 28rpx;
+}
+
+.entry {
+	padding: 30rpx 24rpx;
+	border-radius: 14rpx;
+	margin-bottom: 40rpx;
+
+	.entry-arrow {
+		font-size: 40rpx;
+		color: #c8c9cc;
+		line-height: 1;
+	}
 }
 
 .card {

@@ -6,9 +6,18 @@
                 <view class="index-wrap">
                     <!-- Header -->
                     <view class="index-header flex row-between">
-                        <view class="md" style="font-weight: 400">{{
-                            pagesData.shop_name || "-"
-                        }}</view>
+                        <view class="flex-col">
+                            <view class="md" style="font-weight: 400">{{
+                                pagesData.shop_name || "-"
+                            }}</view>
+                            <!-- 门店身份(平台账号核销不参与门店结算) -->
+                            <view class="xs m-t-6" v-if="pagesData.shop_name"
+                                :class="{ 'store-warning': pagesData.is_platform_account }">
+                                {{ pagesData.is_platform_account
+                                    ? "平台账号：核销不参与门店结算"
+                                    : "当前门店：" + (pagesData.store_name || "-") }}
+                            </view>
+                        </view>
                         <view class="xs">{{ time }}</view>
                     </view>
 
@@ -202,6 +211,10 @@ export default {
             background-size: 100% 100rpx;
             background-color: #3868f9;
             // padding-bottom: 200rpx;
+
+            .store-warning {
+                color: #ffe58f;
+            }
         }
 
         .index-section {

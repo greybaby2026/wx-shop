@@ -68,10 +68,17 @@ class UserLogic extends BaseLogic
      */
     public function centre(array $userInfo): array
     {
-        $user = User::with('user_level')->field('id,sn,sex,nickname,avatar,user_money,user_integral,mobile,level,create_time,code,is_new_user,is_register_award')
+        $user = User::with('user_level')->field('id,sn,sex,nickname,avatar,user_money,user_integral,mobile,level,create_time,code,is_new_user,is_register_award,bind_store_id')
             ->find($userInfo['user_id']);
         $user->level_rank = $user->rank ?? '';
         $user->level_name = $user->name ?? '';
+        //所属门店(扫门店码绑定,首绑终身;供「我的」页展示)
+        $bindStoreId = intval($user->bind_store_id ?? 0);
+        $user->bind_store_id = $bindStoreId;
+        $user->bind_store_name = $bindStoreId > 0
+            ? (\app\common\model\SelffetchShop::where('id', $bindStoreId)->value('name') ?: '')
+            : '';
+        $user->is_bind_store = $bindStoreId > 0 ? 1 : 0;
         //待支付
         $user->wait_pay = Order::where(['user_id' => $userInfo['user_id'], 'order_status' => OrderEnum::STATUS_WAIT_PAY, 'pay_status' => PayEnum::UNPAID])->count();
         //待发货
@@ -466,7 +473,13 @@ class UserLogic extends BaseLogic
      */
     public static function info($userId)
     {
-        $user = User::field('sn,avatar,nickname,sex,mobile,create_time')->findOrEmpty($userId)->toArray();
+        $user = User::field('sn,avatar,nickname,sex,mobile,create_time,bind_store_id')->findOrEmpty($userId)->toArray();
+        //所属门店(扫门店码绑定,首绑终身)
+        $bindStoreId = intval($user['bind_store_id'] ?? 0);
+        $user['bind_store_name'] = $bindStoreId > 0
+            ? (\app\common\model\SelffetchShop::where('id', $bindStoreId)->value('name') ?: '')
+            : '';
+        $user['is_bind_store'] = $bindStoreId > 0 ? 1 : 0;
         $user['has_password'] = empty($user['password']) ? '未设置' : '已设置';
         $user['version'] = request()->header('version');
         return $user;
@@ -676,7 +689,21 @@ class UserLogic extends BaseLogic
             }
             // 首绑定终身:已绑定不换绑
             if ($user->bind_store_id > 0) {
-                return true;
+                $boundStoreName = \app\common\model\SelffetchShop::where(['id' => $user->bind_store_id])->value('name') ?? '';
+                if ($user->bind_store_id == $storeId) {
+                    return [
+                        'is_new' => 0,
+                        'store_id' => intval($user->bind_store_id),
+                        'store_name' => $boundStoreName,
+                        'msg' => '您已加入该门店',
+                    ];
+                }
+                return [
+                    'is_new' => 0,
+                    'store_id' => intval($user->bind_store_id),
+                    'store_name' => $boundStoreName,
+                    'msg' => '您已加入' . ($boundStoreName ?: '其他门店') . '，无法更换门店',
+                ];
             }
             $store = \app\common\model\SelffetchShop::where(['id' => $storeId, 'status' => 1])->findOrEmpty();
             if ($store->isEmpty()) {
@@ -687,7 +714,12 @@ class UserLogic extends BaseLogic
                 'bind_store_id' => $storeId,
                 'bind_store_time' => time(),
             ]);
-            return true;
+            return [
+                'is_new' => 1,
+                'store_id' => $storeId,
+                'store_name' => $store['name'] ?? '',
+                'msg' => '已加入' . ($store['name'] ?? '门店'),
+            ];
         } catch (\Exception $e) {
             self::setError($e->getMessage());
             return false;

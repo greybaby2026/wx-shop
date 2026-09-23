@@ -37,6 +37,9 @@ export const apiVerificationOrderDetail = (params) =>
 // 确认核销
 export const apiVerificationOrderConfirm = (params) =>
     request.post('verification/verificationConfirm', params)
+
+// 是否门店核销员(核销入口显隐/页面门禁)
+export const apiVerificationIsVerifier = () => request.get('verification/isVerifier')
 /** E 核销订单 **/
 
 /** S 评价 **/

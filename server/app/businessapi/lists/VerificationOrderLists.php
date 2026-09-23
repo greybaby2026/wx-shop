@@ -78,13 +78,26 @@ class VerificationOrderLists extends BaseBusinesseDataLists{
             ->append(['consignee','mobile'])
             ->hidden(['address'])
             ->where($this->searchwhere())
-            ->field(['id', 'sn', 'user_id','order_type', 'order_status', 'total_num', 'order_amount', 'delivery_type', 'pay_status','address','create_time','verification_status'])
+            ->field(['id', 'sn', 'user_id','order_type', 'order_status', 'total_num', 'order_amount', 'delivery_type', 'pay_status','address','create_time','verification_status','selffetch_shop_id','belong_store_id'])
             ->order(['id' => 'desc'])
             ->limit($this->limitOffset, $this->limitLength)
             ->select()->toArray();
 
+        //核销员需就地看到取货/归属门店(批量查询,避免循环内查询)
+        $shopIdList = [];
+        foreach ($lists as $tmpOrder) {
+            $shopIdList[] = intval($tmpOrder['selffetch_shop_id'] ?? 0);
+            $shopIdList[] = intval($tmpOrder['belong_store_id'] ?? 0);
+        }
+        $shopNameMap = \app\common\model\SelffetchShop::getNameMap($shopIdList);
 
         foreach ($lists as &$list){
+            //门店信息
+            $list['selffetch_shop_name'] = $shopNameMap[intval($list['selffetch_shop_id'] ?? 0)] ?? '';
+            $list['belong_store_name'] = $shopNameMap[intval($list['belong_store_id'] ?? 0)] ?? '';
+            $list['is_cross_store'] = (intval($list['belong_store_id'] ?? 0) > 0
+                && intval($list['belong_store_id']) != intval($list['selffetch_shop_id'] ?? 0)) ? 1 : 0;
+
             foreach ($list['order_goods'] as &$orderGoods){
                 //售后状态
                 $orderGoods['after_sale_status_desc'] = '无售后';

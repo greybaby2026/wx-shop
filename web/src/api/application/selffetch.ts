@@ -28,6 +28,10 @@ export const apiSelffetchShopDel = (params: Interface.SelffetchShopDel_Req): Pro
 
 export const apiMapRegionSearch = (params: Interface.MapRegionSearch_Req): Promise<any> =>
     request.get('/selffetch_shop.selffetch_shop/regionSearch', { params })
+
+// 门店自提--生成门店专属小程序码（带 scene=store_id=x，扫码进入小程序后自动绑定该门店）
+export const apiSelffetchShopQrCode = (params: Interface.SelffetchShopQrCode_Req): Promise<any> =>
+    request.get('/selffetch_shop.selffetch_shop/qrCode', { params })
 /** E 门店自提 **/
 
 /** S 核销员 **/

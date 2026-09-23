@@ -42,6 +42,8 @@
                             <view class="m-b-20">
                                 <text class="bold lg black">{{ item.name }}</text>
                                 <text class="muted xs m-l-10">{{ item.distance }}</text>
+                                <!-- 归属门店(扫门店码绑定): 服务端已置顶, 此处打标 -->
+                                <text v-if="item.is_my_store" class="my-store-tag m-l-10">我的门店</text>
                             </view>
                             <view class="black xs m-b-20 flex">
                                 <u-icon class="md m-r-10" name="map" />
@@ -221,5 +223,16 @@ page {
             border-radius: 50%;
         }
     }
+}
+
+/* 归属门店标记 */
+.my-store-tag {
+    display: inline-block;
+    padding: 0 10rpx;
+    font-size: 20rpx;
+    line-height: 30rpx;
+    color: #ffffff;
+    border-radius: 6rpx;
+    @include background_color();
 }
 </style>

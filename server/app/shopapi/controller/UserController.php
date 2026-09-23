@@ -451,7 +451,7 @@ class UserController extends BaseShopController
         }
         $result = UserLogic::bindStore($this->userId, $storeId);
         if ($result) {
-            return $this->success('绑定成功', [], 1, 1);
+            return $this->success($result['msg'] ?? '绑定成功', $result, 1, 1);
         }
         return $this->fail(UserLogic::getError());
     }

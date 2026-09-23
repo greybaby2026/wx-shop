@@ -39,7 +39,7 @@ class SettingController extends BaseBusinesseController
     public function getShopConfig()
     {
 
-        $config = (new SettingLogic())->getShopConfig();
+        $config = (new SettingLogic())->getShopConfig($this->adminId);
         return $this->data($config);
     }
 
