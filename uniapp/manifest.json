@@ -31,6 +31,18 @@
         /* 应用发布信息 */
         "distribute" : {
             /* android打包配置 */
+            /* 权限按「最小必要」裁剪（批次3 FIX-U20）：原模板 20 项含多项与业务无关的危险权限，
+               会引发应用市场审核问询。已移除：
+                 CALL_PHONE                    —— 客服拨号走 uni.makePhoneCall（系统拨号盘 ACTION_DIAL），无需此权限
+                 CHANGE_NETWORK_STATE / CHANGE_WIFI_STATE —— 应用不切换网络状态
+                 GET_ACCOUNTS                  —— 读取设备账号，与业务无关
+                 MOUNT_UNMOUNT_FILESYSTEMS     —— 系统级权限，普通应用不可申请
+                 READ_LOGS                     —— 系统级权限，市场审核高风险
+                 READ_PHONE_STATE              —— 读取设备标识，属敏感权限
+                 WRITE_SETTINGS                —— 系统级权限，普通应用不可申请
+               保留项均有对应功能：相机/闪光灯（扫码核销、上传头像、客服发图）、
+               粗略定位（门店距离）、网络与 WiFi 状态（网络判断）、音频（直播）、震动、唤醒锁（WebSocket 保活）、
+               外部存储（保存图片到相册）。如真机回归发现某功能异常，请先核对是否因此裁剪导致。 */
             "android" : {
                 "permissions" : [
                     "<uses-feature android:name=\"android.hardware.camera\"/>",
@@ -38,21 +50,13 @@
                     "<uses-permission android:name=\"android.permission.ACCESS_COARSE_LOCATION\"/>",
                     "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\"/>",
-                    "<uses-permission android:name=\"android.permission.CALL_PHONE\"/>",
                     "<uses-permission android:name=\"android.permission.CAMERA\"/>",
-                    "<uses-permission android:name=\"android.permission.CHANGE_NETWORK_STATE\"/>",
-                    "<uses-permission android:name=\"android.permission.CHANGE_WIFI_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.FLASHLIGHT\"/>",
-                    "<uses-permission android:name=\"android.permission.GET_ACCOUNTS\"/>",
                     "<uses-permission android:name=\"android.permission.INTERNET\"/>",
                     "<uses-permission android:name=\"android.permission.MODIFY_AUDIO_SETTINGS\"/>",
-                    "<uses-permission android:name=\"android.permission.MOUNT_UNMOUNT_FILESYSTEMS\"/>",
-                    "<uses-permission android:name=\"android.permission.READ_LOGS\"/>",
-                    "<uses-permission android:name=\"android.permission.READ_PHONE_STATE\"/>",
                     "<uses-permission android:name=\"android.permission.VIBRATE\"/>",
                     "<uses-permission android:name=\"android.permission.WAKE_LOCK\"/>",
-                    "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>",
-                    "<uses-permission android:name=\"android.permission.WRITE_SETTINGS\"/>"
+                    "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\"/>"
                 ]
             },
             /* ios打包配置 */
@@ -185,6 +189,11 @@
             "disableHostCheck" : true
         },
         "sdkConfigs" : {
+            /* 地图 key 安全（批次3 FIX-U20）：前端 key 无法真正隐藏（打包后可在产物中检索到），
+               主要防护手段是「腾讯位置服务后台」侧的限制，请务必配置：
+                 ① 为该 key 绑定本应用域名（WebServiceAPI 域名白名单）
+                 ② 设置调用量配额与告警，避免被盗用后消耗配额/产生费用
+               如需更换 key，替换下方字符串即可（无需改代码）。 */
             "maps" : {
                 "qqmap" : {
                     "key" : "FWEBZ-WHSHV-IRFPO-UNMRL-5EUWV-BFBFW"

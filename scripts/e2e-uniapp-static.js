@@ -329,10 +329,52 @@ if (!pagesJson.preloadRule || !Object.keys(pagesJson.preloadRule).length) {
 }
 report(10, `pages.json 关键配置（meta.auth ${routes.size} 页 / 按需注入 / 分包预下载）`, cfgProblems.length === 0, cfgProblems.join('\n'))
 
+// ---------- 11 安全基线（U20）：Android 危险权限 / 发布脚本防护 / 签名密钥 ----------
+const secProblems = []
+
+// 11.1 Android 高危险/无关权限不得再申请
+const HIGH_RISK_PERMS = ['CALL_PHONE', 'GET_ACCOUNTS', 'MOUNT_UNMOUNT_FILESYSTEMS', 'READ_LOGS', 'READ_PHONE_STATE', 'WRITE_SETTINGS', 'CHANGE_NETWORK_STATE', 'CHANGE_WIFI_STATE']
+const manifestRaw = fs.readFileSync(path.join(UNIAPP, 'manifest.json'), 'utf8')
+for (const perm of HIGH_RISK_PERMS) {
+    // 仅匹配权限声明行（注释里的「已移除 xxx」说明不算）
+    const re = new RegExp('^\\s*"<uses-permission[^"]*' + perm + '[^"]*"')
+    if (manifestRaw.split('\n').some(line => re.test(line.trim()))) {
+        secProblems.push(`manifest.json 仍申请高风险权限: ${perm}`)
+    }
+}
+
+// 11.2 发布脚本必须具备防护（set -euo pipefail / 源目录校验 / 路径前缀断言）
+for (const s of ['autoRelease.sh', 'autoMiniprogram.sh']) {
+    const p = path.join(UNIAPP, s)
+    if (!fs.existsSync(p)) { secProblems.push(`缺少发布脚本: ${s}`); continue }
+    const code = fs.readFileSync(p, 'utf8')
+    if (!/set\s+-euo\s+pipefail/.test(code)) secProblems.push(`${s} 未启用 set -euo pipefail`)
+    if (!/源目录/.test(code) || !/exit 1/.test(code)) secProblems.push(`${s} 未对源目录做校验并中止`)
+    if (!/server\/public\//.test(code) || !/case\s+"\$releaseAbs"/.test(code)) secProblems.push(`${s} 缺少发布目录前缀断言`)
+    // 逐行判定「先删除生产目录」的危险写法；跳过 echo / 注释行（回滚提示文案里会出现 rm -rf）
+    const dangerousLine = code.split('\n').find(line => {
+        const t = line.trim()
+        if (t.startsWith('echo') || t.startsWith('#')) return false
+        return /\brm\s+-rf?\s+"?\$releasePath\b/.test(t)
+    })
+    if (dangerousLine) secProblems.push(`${s} 仍存在「先删除生产目录」的危险写法: ${dangerousLine.trim()}`)
+}
+
+// 11.3 签名密钥：不得入库 + 权限收紧
+const gitignore = fs.existsSync(path.join(REPO_ROOT, '.gitignore')) ? fs.readFileSync(path.join(REPO_ROOT, '.gitignore'), 'utf8') : ''
+const uniGitignore = fs.existsSync(path.join(UNIAPP, '.gitignore')) ? fs.readFileSync(path.join(UNIAPP, '.gitignore'), 'utf8') : ''
+if (!/\*\.keystore/.test(gitignore + uniGitignore)) secProblems.push('.gitignore 未忽略 *.keystore')
+const keystore = path.join(UNIAPP, 'my-release-key.keystore')
+if (fs.existsSync(keystore)) {
+    const mode = fs.statSync(keystore).mode & 0o777
+    if (mode & 0o077) secProblems.push(`签名密钥权限过宽（同机其他用户可读）: 当前 ${mode.toString(8)}，应为 600`)
+}
+report(11, '安全基线（Android 权限裁剪 / 发布脚本防护 / 签名密钥）', secProblems.length === 0, secProblems.join('\n'))
+
 // ---------- 汇总 ----------
 console.log(`\n${'─'.repeat(60)}`)
 if (failures.length === 0) {
-    console.log(`✅ 全部通过：${passCount}/10 项检查`)
+    console.log(`✅ 全部通过：${passCount}/11 项检查`)
     process.exit(0)
 } else {
     console.log(`❌ 失败 ${failures.length} 项：`)
