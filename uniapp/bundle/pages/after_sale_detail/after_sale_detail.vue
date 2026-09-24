@@ -387,7 +387,6 @@ export default {
             copy(str)
         },
         previewImage(imgArr, current) {
-            console.log(urls, current)
             const urls = imgArr.map((item) => item)
             uni.previewImage({
                 current,

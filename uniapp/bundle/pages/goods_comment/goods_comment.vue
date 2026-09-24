@@ -155,7 +155,6 @@
             },
 			
 			previewImage(imgArr, current) {
-				console.log(urls, current)
 				const urls = imgArr.map(item => item.uri);
 				uni.previewImage({
 					current,

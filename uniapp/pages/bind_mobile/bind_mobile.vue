@@ -69,6 +69,9 @@ import {
 } from "@/api/user";
 import { mapGetters, mapMutations } from "vuex";
 import { getCode } from "@/utils/login";
+// currentPage：bindSuccess() 里用于取「上一页」的 onLoad/options 以刷新其状态，
+// 原先漏了这行导入 → 绑定手机号成功后返回回调抛 ReferenceError，上一页不刷新
+import { currentPage } from "@/utils/tools";
 import Cache from "@/utils/cache";
 import { BACK_URL } from "@/config/cachekey";
 export default {
