@@ -375,7 +375,8 @@ class PayNotifyLogic extends BaseLogic
 
         // 充值会员折扣：单笔充值达标即授予（只升不降、幂等；开关关闭时内部直接返回）
         // 注意：达标金额取「实充金额」order_amount，赠送金额不计入
-        RechargeMemberDiscountLogic::grantOnRecharge(intval($order->user_id), $order->order_amount);
+        // 传入订单：在该笔充值订单上记录「充值前/后」折扣率，供「充值记录」展示折扣升级
+        RechargeMemberDiscountLogic::grantOnRecharge(intval($order->user_id), $order->order_amount, $order);
 
         RechargeCommissionLogic::settle($order);
     }

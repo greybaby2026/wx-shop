@@ -1,6 +1,7 @@
 <?php
 namespace app\common\logic;
 
+use app\common\model\RechargeOrder;
 use app\common\model\RechargeTemplate;
 use app\common\model\User;
 use app\common\service\ConfigService;
@@ -104,28 +105,35 @@ class RechargeMemberDiscountLogic
     /**
      * @notes 充值成功后授予折扣（幂等 + 只升不降）
      *        在 PayNotifyLogic::recharge() 内、累加 total_recharge_amount 之后调用
-     * @param int   $userId
-     * @param mixed $amount 本次实充金额（order_amount，不含赠送）
+     * @param int                  $userId
+     * @param mixed                $amount 本次实充金额（order_amount，不含赠送）
+     * @param mixed                $order  本次充值订单（可选）：传入时会在该订单上记录
+     *                                     「充值前/后」折扣率，供「充值记录」展示折扣升级
      */
-    public static function grantOnRecharge(int $userId, $amount): bool
+    public static function grantOnRecharge(int $userId, $amount, $order = null): bool
     {
         try {
             if (!self::checkOpen()) {
+                // 开关关闭：不授予，也不记录（订单保持默认 0/0，不展示升级标记）
                 return true;
             }
             $amount = floatval($amount);
             if ($amount <= 0) {
                 return true;
             }
-            $level = self::matchLevelByAmount($amount);
-            if (empty($level)) {
-                return true;
-            }
-            $newDiscount = floatval($level['discount']);
             $user = User::findOrEmpty($userId);
             if ($user->isEmpty()) {
                 return true;
             }
+            $oldDiscount = floatval($user['recharge_discount'] ?? 0);
+
+            $level = self::matchLevelByAmount($amount);
+            if (empty($level)) {
+                // 未达任何档位：折扣不变，仍记录前/后值（便于记录页区分「已处理未升级」与「历史数据」）
+                self::markOrderDiscount($order, $oldDiscount, $oldDiscount);
+                return true;
+            }
+            $newDiscount = floatval($level['discount']);
             // 条件更新（防并发 + 天然幂等）：仅当「当前无折扣(0)」或「当前折扣差于新折扣(数值更大)」时才升级
             $affected = User::where('id', $userId)
                 ->where(function ($query) use ($newDiscount) {
@@ -137,13 +145,17 @@ class RechargeMemberDiscountLogic
                     'recharge_discount_level_id' => intval($level['id']),
                     'recharge_discount_time'     => time(),
                 ]);
+            // 以库中实际值为准：并发下折扣可能已被另一笔充值升级，避免记录页与用户真实折扣不一致
+            $afterDiscount = floatval(User::where('id', $userId)->value('recharge_discount') ?: 0);
+            self::markOrderDiscount($order, $oldDiscount, $afterDiscount);
+
             if ($affected > 0) {
                 Log::write(
                     'recharge_member_discount_grant | user_id=' . $userId
                     . ' | amount=' . $amount
                     . ' | level_id=' . intval($level['id'])
                     . ' | discount=' . $newDiscount
-                    . ' | old=' . floatval($user['recharge_discount'] ?? 0),
+                    . ' | old=' . $oldDiscount,
                     'info'
                 );
             }
@@ -159,6 +171,26 @@ class RechargeMemberDiscountLogic
             );
             return true;
         }
+    }
+
+    /**
+     * @notes 在充值订单上记录本笔充值「前 / 后」的折扣率
+     *        仅更新这两列（定向 update，不触碰订单其它字段）；失败不抛出，避免影响充值主流程。
+     * @param mixed $order RechargeOrder 模型 / 订单 ID；为空则跳过
+     */
+    private static function markOrderDiscount($order, float $before, float $after): void
+    {
+        if (empty($order)) {
+            return;
+        }
+        $orderId = is_object($order) ? intval($order->id ?? 0) : intval($order);
+        if ($orderId <= 0) {
+            return;
+        }
+        RechargeOrder::where('id', $orderId)->update([
+            'discount_before' => $before,
+            'discount_after'  => $after,
+        ]);
     }
 
     /**

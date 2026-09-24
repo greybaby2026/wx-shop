@@ -11,6 +11,11 @@
                             <view class="xl primary">+{{item.order_amount}}</view>
                         </view>
                         <view class="xs muted">{{item.create_time}}</view>
+                        <!-- 该笔充值带来的折扣升级（服务端按充值前/后折扣率判定） -->
+                        <view v-if="item.discount_upgrade" class="discount-upgrade m-t-10">
+                            <text class="upgrade-badge">折扣升级</text>
+                            <text class="xs">本次充值后享 {{item.discount_after}} 折，下单使用余额支付即享</text>
+                        </view>
                     </view>
                 </view>
                 
@@ -101,6 +106,23 @@
 
                 &:not(:last-of-type) {
                     border-bottom: 1rpx solid #E5E5E5;
+                }
+
+                /* 折扣升级标记 */
+                .discount-upgrade {
+                    display: flex;
+                    align-items: center;
+
+                    .upgrade-badge {
+                        flex-shrink: 0;
+                        margin-right: 10rpx;
+                        padding: 0 10rpx;
+                        font-size: 20rpx;
+                        line-height: 30rpx;
+                        color: #ffffff;
+                        border-radius: 6rpx;
+                        background: rgba(242, 166, 38, 1);
+                    }
                 }
             }
         }

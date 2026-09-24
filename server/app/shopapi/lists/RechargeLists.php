@@ -41,7 +41,7 @@ class RechargeLists extends BaseShopDataLists
      */
     public function lists(): array
     {
-        $lists = RechargeOrder::field('order_amount,award,create_time')
+        $lists = RechargeOrder::field('order_amount,award,create_time,discount_before,discount_after')
             ->where([
                 'user_id' => $this->userId,
                 'pay_status' => PayEnum::ISPAID
@@ -52,6 +52,14 @@ class RechargeLists extends BaseShopDataLists
 
         foreach($lists as &$item) {
             $item['tips'] = $this->getTips($item);
+
+            // 本笔充值是否带来折扣升级（供「充值记录」展示）：
+            //   升级 = 充值后确有折扣，且「由无到有」或「折扣数值变小（折扣更优）」
+            //   历史记录（两列均为 0）与未升级记录都不标记
+            $before = floatval($item['discount_before'] ?? 0);
+            $after  = floatval($item['discount_after'] ?? 0);
+            $item['discount_upgrade'] = ($after > 0 && $after < 10 && ($before <= 0 || $after < $before)) ? 1 : 0;
+            $item['discount_after']   = $after;
         }
 
         return $lists;
