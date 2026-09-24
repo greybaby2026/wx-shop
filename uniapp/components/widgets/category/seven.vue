@@ -39,13 +39,11 @@
 
 <script type="text/javascript">
 import leftAside from './left-aside.vue'
-import right from './right.vue'
 import imgList from './img-list.vue'
 import category from './category.js'
 export default {
     components: {
         leftAside,
-        right,
         imgList
     },
     mixins: [category],
