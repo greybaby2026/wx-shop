@@ -353,14 +353,12 @@ export default {
             this.pageErrorMsg = errMsg
             this.pageStatus = PageStatusEnum['ERROR']
         }
-    },
-
-    onUnload() {
-        this.$Router.push({
-            path: '/bundle/pages/payment_result/payment_result',
-            query: { order_id: this.order_id, from: this.from }
-        })
     }
+
+    // ⚠️ 原实现存在问题：曾在此处 onUnload 中 push 支付结果页。
+    // 用户以任何方式离开支付页（返回键、侧滑、被跳转）都会触发 onUnload，
+    // 于是被强制再入栈一个结果页 → 导航劫持、页面栈重复，返回键需按多次，严重时陷入循环。
+    // 支付成功后的跳转已由 handlePayResult() 用 replace 正确处理（见上），此处不再跳转。
 }
 </script>
 
