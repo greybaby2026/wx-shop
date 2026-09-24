@@ -39,18 +39,8 @@
 				type: String,
 				default: ''
 			},
-			// 图片
-			image: {
-				type: String,
-				default: ''
-			},
 			// 创建时间
 			create_time: {
-				type: String,
-				default: ''
-			},
-			// views
-			views: {
 				type: String,
 				default: ''
 			},

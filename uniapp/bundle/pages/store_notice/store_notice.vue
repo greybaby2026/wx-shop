@@ -14,8 +14,6 @@
         <view @click="toNoticeDetail(item.id)">
           <section-card
             :name="item.name"
-            :views="item.views"
-            :image="item.image"
             :desc="item.synopsis"
             :create_time="item.create_time"
             :is_tips="index == 0"
