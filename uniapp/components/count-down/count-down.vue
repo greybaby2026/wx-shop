@@ -12,7 +12,6 @@
             :bg-color="bgColor || themeColor"
             :separator-color="separatorColor || themeColor"
         />
-        <!-- :height="height" -->
 
         <u-count-down
             :timestamp="timestampHMS"
@@ -37,7 +36,6 @@
  * @property {String} bgColor 倒计时数字的背景颜色 （默认：主题色）
  * @property {String} separatorColor 分隔符的颜色 （默认：主题色）
  * @property {String} color 倒计时数字的颜色 （默认：#FFFFFF）
- * @property {String | Number} height 数字高度值(宽度等同此值) （默认：40）
  * @example <count-down :time-end="endTime" />
  */
 
@@ -83,12 +81,6 @@ export default {
         color: {
             type: String,
             default: '#FFFFFF'
-        },
-
-        // 数字高度值(宽度等同此值)，设置边框时看情况是否需要设置此值
-        height: {
-            type: [String, Number],
-            default: 40
         }
     },
 

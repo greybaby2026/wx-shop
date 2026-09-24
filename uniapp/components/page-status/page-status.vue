@@ -8,11 +8,17 @@
 		</template>
 		<!-- Error -->
 		<template v-if="status === PageStatusEnum['ERROR']">
-			<slot name="error"></slot>
+			<!-- 默认内容：使用方未提供 #error 插槽时给出明确提示，避免「纯白全屏」 -->
+			<slot name="error">
+				<u-empty text="加载失败，请稍后重试" src="/static/images/empty/shop.png" :icon-size="280" />
+			</slot>
 		</template>
 		<!-- Empty -->
 		<template v-if="status === PageStatusEnum['EMPTY']">
-			<slot name="empty"></slot>
+			<!-- 默认内容：使用方未提供 #empty 插槽时给出明确提示，避免「纯白全屏」 -->
+			<slot name="empty">
+				<u-empty text="暂无数据" src="/static/images/empty/order.png" :icon-size="280" />
+			</slot>
 		</template>
 	</view>
 </template>
@@ -29,12 +35,6 @@
 				type: String,
 				default: PageStatusEnum['LOADING']
 			},
-		},
-		
-		data() {
-			return {
-				
-			}
 		},
 		
 		computed: {

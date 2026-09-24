@@ -223,7 +223,6 @@
                                 color="#999999"
                                 separator-color="#999999"
                                 bg-color="transparent"
-                                height="24"
                             />
                         </view>
                     </view>
