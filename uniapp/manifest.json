@@ -76,9 +76,13 @@
                            该值已从源码移除；请在微信开放平台重置，并由服务端持有、代理获取 access_token。 */
                         /* 原为第三方域名 https://b2cplus.likeshop.cn/ulink/（二开残留）→ 已换为自有域名。
                            ⚠️ iOS 端生效前置（需运维/Apple 后台配合，未完成前 iOS 微信登录/支付/分享的
-                           Universal Link 回调不可用）：
-                             1) 在 https://jiangjunshijia.com/ulink/apple-app-site-association 部署
-                                含本应用 Team ID + Bundle ID 的 AASA（见工程根 apple-app-site-association）
+                           Universal Link 回调不可用；2026-09-24 实测 /.well-known 与 /ulink/ 均为 404）：
+                             1) AASA 必须部署在域名「根路径」：
+                                  https://jiangjunshijia.com/.well-known/apple-app-site-association
+                                  （或 https://jiangjunshijia.com/apple-app-site-association）
+                                  注意：不是 /ulink/ 下 —— /ulink/ 只是 UL 匹配前缀（AASA 内 paths 为 /ulink/*）。
+                                  文件内容见工程根 apple-app-site-association，需填入本应用
+                                  Apple Team ID + Bundle ID 后再部署。
                              2) Apple 开发者后台开启 Associated Domains 并配置 applinks:jiangjunshijia.com
                              3) 使用同一域名重打 iOS 包（UL 域名变更后必须重新打包） */
                         "UniversalLinks" : "https://jiangjunshijia.com/ulink/"
