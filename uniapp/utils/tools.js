@@ -1,7 +1,13 @@
 import { baseURL, version } from '@/config/app.js'
 import { ClientEnum } from '@/utils/enum'
 import store from '@/store'
-import { isObject } from '@vue/shared'
+
+// isObject：原从 '@vue/shared' 引入（Vue3 的包）。
+// 本工程是 Vue2 + HBuilderX 内置构建环境（无 package.json / node_modules），
+// 该依赖来源在工程内不可见、版本不可控，且此处仅用到这一函数。改为本地实现（语义与原实现一致）。
+function isObject(val) {
+    return val !== null && typeof val === 'object'
+}
 
 // 获取客户端
 export const getClient = () => {
