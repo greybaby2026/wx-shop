@@ -413,17 +413,22 @@ export default {
 
         // 获取购物车数据列表
         getCartList() {
-            return apiCartLists().then((res) => {
-                this.total_amount = res.total_amount
-                res.lists.forEach((item, index) => {
-                    res.lists[index].selected = item.selected == 1 ? true : false
+            return apiCartLists()
+                .then((res) => {
+                    this.total_amount = res.total_amount
+                    res.lists.forEach((item, index) => {
+                        res.lists[index].selected = item.selected == 1 ? true : false
+                    })
+                    this.cartLists = res.lists
+                    this.baseSelect(res.lists)
+                    this.$store.dispatch('getCartNum')
+                    return Promise.resolve()
                 })
-                this.cartLists = res.lists
-                this.baseSelect(res.lists)
-                this.$store.dispatch('getCartNum')
-                this.isChangeLoading = false
-                return Promise.resolve()
-            })
+                .finally(() => {
+                    // 无论成功/失败都复位操作遮罩：原实现只在成功路径复位，
+                    // 一旦列表接口失败，u-mask 会永久停留 → 购物车页完全不可操作，用户只能杀进程重进
+                    this.isChangeLoading = false
+                })
         },
 
         // 初始化商品的选中状态
@@ -463,13 +468,19 @@ export default {
         // 删除购物车的商品
         async goodsDelete() {
             this.isChangeLoading = true
-            await apiCartDel({
-                cart_id: this.cart_id
-            })
-            await this.getCartList()
-            this.$toast({
-                title: '删除成功'
-            })
+            try {
+                await apiCartDel({
+                    cart_id: this.cart_id
+                })
+                await this.getCartList()
+                this.$toast({
+                    title: '删除成功'
+                })
+            } finally {
+                // 异常路径（断网/服务端 5xx）也必须复位：原实现无 try/catch，
+                // 接口失败时既不复位遮罩、也不会走到 getCartList 的复位逻辑 → 页面卡死
+                this.isChangeLoading = false
+            }
         },
 
         // 单选
@@ -479,9 +490,14 @@ export default {
             apiCartSelectChange({
                 cart_id: [id],
                 selected: status
-            }).then((res) => {
-                this.getCartList()
             })
+                .then((res) => {
+                    this.getCartList()
+                })
+                .finally(() => {
+                    // 接口失败时 .then 不会执行 → 遮罩必须在此兜底复位
+                    this.isChangeLoading = false
+                })
         },
         //管理状态下单选商品
         async adminGoodsStatus() {
@@ -504,9 +520,14 @@ export default {
             apiCartSelectChange({
                 cart_id: cartIDs,
                 selected: status
-            }).then((res) => {
-                this.getCartList()
             })
+                .then((res) => {
+                    this.getCartList()
+                })
+                .finally(() => {
+                    // 接口失败时 .then 不会执行 → 遮罩必须在此兜底复位
+                    this.isChangeLoading = false
+                })
         },
         //管理商品状态下全选商品
         adminAllSelect() {
@@ -577,12 +598,17 @@ export default {
         //清空失效商品
         async handleClearAll() {
             this.isChangeLoading = true
-            const cart_ids = this.inactiveLists.map((item) => {
-                return item.id
-            })
+            try {
+                const cart_ids = this.inactiveLists.map((item) => {
+                    return item.id
+                })
 
-            await apiclearAll({ cart_ids })
-            this.getCartList()
+                await apiclearAll({ cart_ids })
+                this.getCartList()
+            } finally {
+                // 异常路径必须复位遮罩，否则 u-mask 永久停留
+                this.isChangeLoading = false
+            }
         },
         //管理商品状态下删除
         async handleAdminDel() {
@@ -597,8 +623,13 @@ export default {
             if (cart_ids.length == 0) {
                 return (this.isChangeLoading = false)
             }
-            await apiclearAll({ cart_ids })
-            this.getCartList()
+            try {
+                await apiclearAll({ cart_ids })
+                this.getCartList()
+            } finally {
+                // 异常路径必须复位遮罩（未选中任何商品时的提前 return 已在上面复位）
+                this.isChangeLoading = false
+            }
         }
     },
     computed: {
