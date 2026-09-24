@@ -1,15 +1,15 @@
 <template>
 	<view class="indicator" :style="{bottom: `${bottom}rpx`}" v-if="length > 1">
-		<view v-if="type==1||type==2" class="indicator-content" :class="{
-	                fillet:type==1,
-	                circle:type==2,
+		<view v-if="safeType==1||safeType==2" class="indicator-content" :class="{
+	                fillet:safeType==1,
+	                circle:safeType==2,
 	            }" :style="{
 	                'text-align':align
 	            }">
 			<text v-for="(item,index) in length" :key="index" class="indicator-item"
 				:style="[current==index ? {'background-color':color }: {}]"></text>
 		</view>
-		<view v-if="type==3" :style="{
+		<view v-if="safeType==3" :style="{
 	                'text-align':align,
 	            }">
 			<text class="indicator-number">{{current + 1}}/{{length}}</text>
@@ -44,8 +44,16 @@
 				type: Number,
 				default: 15
 			}
-		}
-	};
+			},
+			computed: {
+			// 兜底：type 越界（非 1/2/3，如后端配置 0 或 4）时按「圆点」样式渲染，
+			// 否则整块指示器会渲染为空白，用户看不到当前页位置
+			safeType() {
+				const type = Number(this.type);
+				return [1, 2, 3].includes(type) ? type : 2;
+			}
+			}
+			};
 </script>
 
 <style lang="scss" scoped>

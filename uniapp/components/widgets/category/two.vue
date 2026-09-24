@@ -2,6 +2,8 @@
     <view class="style-two bg-white" style="height: 100%">
         <!-- <u-tabs :active-color="themeColor" :current="selectIndex" :list="lists"  :bar-width="64" @change="changeActive">
 		</u-tabs> -->
+        <!-- 注：以上为历史注释保留（是否恢复该 u-tabs 分支需产品决策）；其中 changeActive 方法
+             已作为死方法清理删除（模板无调用），若日后恢复此分支，需一并恢复该方法实现。 -->
         <!-- <view class="content-warp">
             <goods
                 v-if="height"
@@ -50,9 +52,6 @@ export default {
         return {}
     },
     methods: {
-        changeActive(index) {
-            this.parent.selectIndex = index
-        },
         handleClick(id) {
             uni.navigateTo({
                 url: '/bundle/pages/category/category?id=' + id

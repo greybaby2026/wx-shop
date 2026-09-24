@@ -31,13 +31,6 @@
 			this.update()
 		},
 		methods: {
-			getComputedName: function() {
-				if (this.data.name !== '') {
-					return this.data.name;
-				}
-
-				return this.index;
-			},
 			updateRender: function(active, parent) {
 				
 				let parentData = parent;
