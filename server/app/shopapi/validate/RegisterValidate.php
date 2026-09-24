@@ -36,7 +36,9 @@ class RegisterValidate extends BaseValidate
         'mobile' => 'require|mobile',
         'code' => 'checkCode',
         'password' => 'require|length:6,25|alphaDash|checkComplexity',
-        'password_confirm' => 'require|confirm'
+        'password_confirm' => 'require|confirm',
+        //所属门店ID：注册页选择门店后传入（是否为必填由「强制绑定门店」开关在逻辑层判定）
+        'store_id' => 'number'
     ];
 
     protected $message = [
@@ -47,7 +49,8 @@ class RegisterValidate extends BaseValidate
         'password.length' => '密码须在6-25位之间',
         'password.alphaDash' => '密码须为字母数字下划线或破折号',
         'password_confirm.require' => '请确认密码',
-        'password_confirm.confirm' => '两次输入的密码不一致'
+        'password_confirm.confirm' => '两次输入的密码不一致',
+        'store_id.number' => '所属门店参数错误'
     ];
 
     /**

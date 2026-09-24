@@ -20,6 +20,8 @@
 namespace app\shopapi\logic;
 
 use app\common\logic\BaseLogic;
+use app\common\logic\RechargeMemberDiscountLogic;
+use app\common\model\SelffetchShop;
 use app\common\model\User;
 use app\common\model\UserLevel;
 use app\common\service\ConfigService;
@@ -36,6 +38,19 @@ class RegisterLogic extends BaseLogic
     public static function register($params)
     {
         try {
+            // 所属门店（注册页选择门店后传入；首绑终身，与扫门店码绑定同口径）
+            // 「强制绑定门店」开关开启时为必填；关闭时选填（不填即不绑定）
+            $bindStoreId = intval($params['store_id'] ?? 0);
+            if ($bindStoreId <= 0 && RechargeMemberDiscountLogic::isForceBindStore()) {
+                throw new \Exception('请选择所属门店后再注册');
+            }
+            if ($bindStoreId > 0) {
+                $store = SelffetchShop::where(['id' => $bindStoreId, 'status' => 1])->findOrEmpty();
+                if ($store->isEmpty()) {
+                    throw new \Exception('所选门店不存在或已停用，请重新选择');
+                }
+            }
+
             $defaultAvatar = ConfigService::get('default_image', 'user_avatar');
             $passwordSalt = Config::get('project.unique_identification');
             $password = create_password($params['password'], $passwordSalt);
@@ -57,6 +72,11 @@ class RegisterLogic extends BaseLogic
                 'user_earnings' => 0,
                 'is_register_award' => 0,
             ];
+            // 注册时绑定门店（首绑终身）
+            if ($bindStoreId > 0) {
+                $data['bind_store_id'] = $bindStoreId;
+                $data['bind_store_time'] = time();
+            }
             $user = User::create($data);
             // 注册奖励
             \app\common\logic\UserLogic::registerAward($user->id);

@@ -25,6 +25,17 @@ use app\shopapi\lists\SelffetchShopLists;
 class SelffetchShopController extends BaseShopController
 {
     /**
+     * 免登录接口
+     *
+     * 说明：`lists` 供「注册页选择所属门店」使用（注册前尚未登录，拿不到 token）。
+     * 仅返回启用中门店的名称 / 地址 / 营业时间 / 电话等门店公示信息，不含用户数据。
+     * 登录后调用时行为不变（仍会按 userId 置顶归属门店并回传 is_my_store）。
+     *
+     * @var array
+     */
+    public array $notNeedLogin = ['lists'];
+
+    /**
      * @notes 查看自提门店列表
      * @return \think\response\Json
      * @author ljj
