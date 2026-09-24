@@ -49,6 +49,10 @@ const events = {
                 url: '/bundle/pages/business_suspended/business_suspended'
             })
         }, 0)
+        // 必须返回 rejected Promise（同对象内其余 4 个事件均已如此）：
+        // 原先无 return，业务层 await 得到 undefined 且不会 reject →
+        // 页面继续执行「下单成功」后续逻辑（弹成功提示、跳订单详情），而实际商城已关闭 → 误导用户
+        return Promise.reject(msg)
     },
     // 提示
     tips({ code, msg }) {
