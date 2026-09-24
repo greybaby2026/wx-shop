@@ -313,10 +313,26 @@ for (const f of ['manifest.json', 'androidPrivacy.json', 'apple-app-site-associa
 }
 report(9, '第三方域名功能性残留（likeshop / yixiangonline）', thirdParty.length === 0, thirdParty.join('\n'))
 
+// ---------- 10 pages.json 关键工程配置（U18）----------
+const metaProblems = []
+for (const [route, page] of routes) {
+    if (!page.meta || typeof page.meta.auth !== 'boolean') {
+        metaProblems.push(`未显式声明 meta.auth（路由守卫会因 undefined 而不拦截）: ${route}`)
+    }
+}
+const cfgProblems = [...metaProblems]
+if (pagesJson.lazyCodeLoading !== 'requiredComponents') {
+    cfgProblems.push(`lazyCodeLoading 应为 "requiredComponents"，实际=${JSON.stringify(pagesJson.lazyCodeLoading)}（未开启按需注入，冷启动全量注入组件）`)
+}
+if (!pagesJson.preloadRule || !Object.keys(pagesJson.preloadRule).length) {
+    cfgProblems.push('缺少 preloadRule（分包预下载），进入分包页需等待下载')
+}
+report(10, `pages.json 关键配置（meta.auth ${routes.size} 页 / 按需注入 / 分包预下载）`, cfgProblems.length === 0, cfgProblems.join('\n'))
+
 // ---------- 汇总 ----------
 console.log(`\n${'─'.repeat(60)}`)
 if (failures.length === 0) {
-    console.log(`✅ 全部通过：${passCount}/9 项检查`)
+    console.log(`✅ 全部通过：${passCount}/10 项检查`)
     process.exit(0)
 } else {
     console.log(`❌ 失败 ${failures.length} 项：`)

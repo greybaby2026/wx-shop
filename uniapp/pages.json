@@ -771,12 +771,22 @@
                     "path": "pages/h5_pay_query/h5_pay_query",
                     "style": {
                         "navigationBarTitleText": "支付查询"
+                    },
+                    //auth 显式声明为 false：本页是 H5 支付回跳后的订单状态查询页（仅 apiPayStatus + order_id），
+                    //由外部浏览器链路进入，设计为免登录；页面内已有 pageErrorMsg 空状态兜底
+                    "meta": {
+                        "auth": false
                     }
                 },
                 {
                     "path": "pages/live_broadcast/live_broadcast",
                     "style": {
                         "navigationBarTitleText": "直播间"
+                    },
+                    //auth 显式声明为 false：直播间列表/观看为公开内容（仅 apiLiveRoomLists），
+                    //进入无需登录；页面内无依赖用户态的初始化
+                    "meta": {
+                        "auth": false
                     }
                 },
                 {
@@ -784,6 +794,13 @@
                     "style": {
                         "navigationBarTitleText": "积分抽奖",
                 "navigationStyle": "custom"
+                    },
+                    //auth 显式声明为 false（有意为之，勿改为 true）：
+                    //① 本页常由分享链接直接进入，若加守卫会被重定向到登录页，而守卫保存的返回地址是
+                    //   「来路页」而非本页 → 登录后丢失深链目标，用户回不到抽奖页；
+                    //② 页面内已处理未登录：接口返回「请求参数缺token」时以 pageErrorMsg 提示「请先登录」。
+                    "meta": {
+                        "auth": false
                     }
                 },
                 {
@@ -907,6 +924,21 @@
             ]
         }
     ],
+
+    //按需注入：小程序启动时只注入当前页面用到的自定义组件与代码，降低冷启动耗时
+    //（项目 82 个自有组件 + uView 组件原先会被全量注入）。
+    //前置核查（2026-09-24）：全库无 <component :is> 动态组件用法；u-parse 内部亦无动态组件；
+    //easycom 规则（^u-(.*) / ^w-(.*)）与按需注入兼容。若日后新增动态组件用法需同步回归。
+    "lazyCodeLoading": "requiredComponents",
+
+    //分包预下载：首页停留时预下载 bundle 分包（83/95 个页面在该分包内，原先进入需等待下载→白屏明显）。
+    //仅在 wifi 下预下载（不消耗用户移动流量）；bundle 分包体积约 1.5MB，在 2MB 限额内。
+    "preloadRule": {
+        "pages/index/index": {
+            "network": "wifi",
+            "packages": ["bundle"]
+        }
+    },
 
     "globalStyle": {
         "navigationBarTextStyle": "black",
