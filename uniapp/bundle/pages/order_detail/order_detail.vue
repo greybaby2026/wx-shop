@@ -171,7 +171,7 @@
             <!-- <view v-if="orderInfo.delivery_type == 2" class="contain receive">
                 <view v-if="orderInfo.verification_status" class="delivery--die">
                     <u-image
-                        src="/static/images/delivery_die.png"
+                        src="/bundle/static/images/delivery_die.png"
                         width="134"
                         height="98"
                         mode="scaleFill"
@@ -738,7 +738,7 @@ export default {
 
     async onLoad() {
         const options = this.$Route.query
-        if (!this.isLogin) return this.$Router.replace('/pages/login/login')
+        if (!this.isLogin) return this.$Router.replace('/sub/pages/login/login')
 
         try {
             if (!options.order_id) throw new Error('订单异常')

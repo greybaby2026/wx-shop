@@ -290,7 +290,7 @@ export default {
         },
         goSearch() {
             this.$Router.push({
-                path: '/pages/goods_search/goods_search',
+                path: '/sub/pages/goods_search/goods_search',
                 query: {
                     category_id: this.categoryId
                 }

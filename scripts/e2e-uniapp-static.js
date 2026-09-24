@@ -371,10 +371,55 @@ if (fs.existsSync(keystore)) {
 }
 report(11, '安全基线（Android 权限裁剪 / 发布脚本防护 / 签名密钥）', secProblems.length === 0, secProblems.join('\n'))
 
+// ---------- 12 静态资源引用完整性 ----------
+// 校验代码中引用的 /static、/bundle/static、/sub/static 路径都能落回真实文件。
+// 背景：为压降主包体积，会把「仅被分包引用」的图片从 static/ 移到 bundle/static/ 或 sub/static/；
+//       这类改动不会导致构建失败，只会静默丢图，故必须有门禁兜住。
+const staticMissing = []
+const staticChecked = new Set()
+// 已登记的「历史缺失图片」（原模板残留，文件从未存在于本工程；非本次引入）。
+// 待产品/设计提供合适图标后替换，或改指向同义现有图（如 order.png / money.png）。
+const STATIC_ALLOWLIST = [
+    { ref: '/static/images/icon_warning.png', where: 'bundle/pages/address/address.vue', note: '地址页告警图标，工程内无任何 icon_warning 系列文件' },
+    { ref: '/static/images/order_null.png', where: 'bundle/pages/integral_details/integral_details.vue', note: '积分明细空状态图，疑为 order.png/money.png 的历史改名' },
+    { ref: '/static/images/empty/goods.png', where: 'bundle/pages/integral_mall/integral_mall.vue', note: '积分商城空状态图，empty/ 下无 goods.png' },
+]
+const staticAllowed = []
+;(function walkStaticRefs(dir) {
+    for (const name of fs.readdirSync(dir)) {
+        const full = path.join(dir, name)
+        const st = fs.statSync(full)
+        if (st.isDirectory()) {
+            if (!['node_modules', 'unpackage', 'dist', '.git', 'js_sdk', 'plugin', 'uview-ui'].includes(name)) walkStaticRefs(full)
+        } else if (/\.(vue|js)$/.test(name)) {
+            const relToUniapp = path.relative(UNIAPP, full).replace(/\\/g, '/')
+            const code = stripComments(fs.readFileSync(full, 'utf8'))
+            const re = /["'`(]((?:@\/|\/)(?:bundle\/|sub\/)?static\/[^"'`)\s]+)/g
+            let m
+            while ((m = re.exec(code))) {
+                let ref = m[1].replace(/^@\//, '/').split(/[?#]/)[0]
+                if (ref.includes('${')) continue // 动态拼接路径（如 require(`...${name}.png`)）不在此校验
+                if (staticChecked.has(ref)) continue
+                staticChecked.add(ref)
+                if (!fs.existsSync(path.join(UNIAPP, ref.replace(/^\//, '')))) {
+                    const allow = STATIC_ALLOWLIST.find(a => a.ref === ref)
+                    if (allow) staticAllowed.push(`${allow.where} → ${ref}（${allow.note}）`)
+                    else staticMissing.push(`${relToUniapp} → ${ref}`)
+                }
+            }
+        }
+    }
+})(UNIAPP)
+report(12, `静态资源引用完整性（校验 ${staticChecked.size} 个引用）`, staticMissing.length === 0, staticMissing.join('\n'))
+if (staticAllowed.length) {
+    console.log(`     已登记 ${staticAllowed.length} 处历史缺失图片（非本次引入，待替换）：`)
+    staticAllowed.forEach(x => console.log('       · ' + x))
+}
+
 // ---------- 汇总 ----------
 console.log(`\n${'─'.repeat(60)}`)
 if (failures.length === 0) {
-    console.log(`✅ 全部通过：${passCount}/11 项检查`)
+    console.log(`✅ 全部通过：${passCount}/12 项检查`)
     process.exit(0)
 } else {
     console.log(`❌ 失败 ${failures.length} 项：`)

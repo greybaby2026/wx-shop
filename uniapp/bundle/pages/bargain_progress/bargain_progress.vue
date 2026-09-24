@@ -392,7 +392,7 @@
 				spec,
 				number
 			}) {
-				if (!this.isLogin) return this.$Router.push('/pages/login/login')
+				if (!this.isLogin) return this.$Router.push('/sub/pages/login/login')
 				apiBargainInitiate({
 					activity_id: this.activityId,
 					item_id: spec.id,
@@ -477,7 +477,7 @@
 							//TODO 处理未登录路由不执行next方法
 							// if (errMsg == "登录超时，请重新登录" || "请求参数缺token") {
 							this.$Router.replace({
-								path: '/pages/login/login'
+								path: '/sub/pages/login/login'
 							})
 							// }
 							reject(errMsg)

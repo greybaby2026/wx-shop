@@ -87,7 +87,7 @@
     <u-empty
       :show="!hasComment"
       text="暂无评价"
-      src="/static/images/empty/evaluate.png"
+      src="/bundle/static/images/empty/evaluate.png"
       :icon-size="280"
       margin-top="280"
     ></u-empty>

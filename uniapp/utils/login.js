@@ -115,7 +115,7 @@ function _toLogin() {
 		currentRoute
 	} = router
 	if (currentRoute.meta.auth) {
-		router.push('/pages/login/login')
+		router.push('/sub/pages/login/login')
 	}
 	// #endif
 }

@@ -245,7 +245,7 @@
             <view v-if="!isLogin" class="login column-center" style="padding: 200rpx 0 50rpx">
                 <image class="img-null" src="/static/images/empty/cart.png"></image>
                 <view class="muted mt20">登录后才能查看购物车哦</view>
-                <navigator class="white br60 row-center btn" url="/pages/login/login">
+                <navigator class="white br60 row-center btn" url="/sub/pages/login/login">
                     <text>去登录</text>
                 </navigator>
             </view>

@@ -79,7 +79,7 @@ export default {
       upOpt: {
         noMoreSize: 10,
         empty: {
-          icon: "/static/images/empty/collect.png",
+          icon: "/bundle/static/images/empty/collect.png",
           tip: "暂无收藏~",
           fixed: true,
         },

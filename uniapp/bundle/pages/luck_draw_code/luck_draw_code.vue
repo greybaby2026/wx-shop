@@ -124,7 +124,7 @@ export default {
         textColor: "#fff",
         empty: {
           tip: "暂无奖品~", // 提示
-          icon: "/static/images/empty/gift.png",
+          icon: "/bundle/static/images/empty/gift.png",
           top: "200rpx",
           textColor: "#fff",
         },

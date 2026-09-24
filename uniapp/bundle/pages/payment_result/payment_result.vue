@@ -12,7 +12,7 @@
       />
       <u-image
         class="status-image"
-        src="/static/images/payment/icon_succeed.png"
+        src="/bundle/static/images/payment/icon_succeed.png"
         width="100"
         height="100"
         shape="circle"
@@ -103,11 +103,11 @@ export default {
       mapStatus: {
         succeed: {
           text: "支付成功",
-          image: "/static/images/payment/icon_succeed.png",
+          image: "/bundle/static/images/payment/icon_succeed.png",
         },
         waiting: {
           text: "等待支付",
-          image: "/static/images/payment/icon_waiting.png",
+          image: "/bundle/static/images/payment/icon_waiting.png",
         },
       },
       from: "",

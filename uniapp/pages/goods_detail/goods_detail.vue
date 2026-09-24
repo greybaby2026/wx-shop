@@ -486,7 +486,7 @@ export default {
     // 更改商品收藏状态
     changeCollect(value) {
       value = !!value ? 0 : 1;
-      if (!this.isLogin) return this.$Router.push("/pages/login/login");
+      if (!this.isLogin) return this.$Router.push("/sub/pages/login/login");
 
       apiGoodsCollect({
         goods_id: this.goods_id,
@@ -530,7 +530,7 @@ export default {
 
     // 领取优惠券
     getCoupon(id) {
-      if (!this.isLogin) return this.$Router.push("/pages/login/login");
+      if (!this.isLogin) return this.$Router.push("/sub/pages/login/login");
 
       apiCouponGet({
         id,
@@ -569,7 +569,7 @@ export default {
 
     // 处理 加入购物车
     handleCartAdd({ spec, number }) {
-      if (!this.isLogin) return this.$Router.push("/pages/login/login");
+      if (!this.isLogin) return this.$Router.push("/sub/pages/login/login");
 
       apiCartAdd({
         item_id: spec.id,

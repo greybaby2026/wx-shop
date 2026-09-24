@@ -196,7 +196,7 @@ export default {
         // 领取优惠券
         onButton() {
             if (!this.isLogin) {
-                this.$Router.push('/pages/login/login')
+                this.$Router.push('/sub/pages/login/login')
                 return
             }
             // if (this.button.disable) return

@@ -153,7 +153,7 @@ export default {
 			console.log(data,8888)
         },
         async getPoster() {
-            if (!this.isLogin) return this.$Router.push('/pages/login/login')
+            if (!this.isLogin) return this.$Router.push('/sub/pages/login/login')
             if (this.poster) {
                 this.showPoster = true
                 this.showshare = false

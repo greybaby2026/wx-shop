@@ -365,7 +365,7 @@ export default {
                     this.throwSpecEmit(event)
                 },
                 (err) => {
-                    if (!this.isLogin) return this.$Router.push('/pages/login/login')
+                    if (!this.isLogin) return this.$Router.push('/sub/pages/login/login')
 
                     this.showModal = true
                 }

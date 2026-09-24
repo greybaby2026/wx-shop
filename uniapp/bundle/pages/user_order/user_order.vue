@@ -407,7 +407,7 @@ export default {
         handleLogin() {
             Cache.set('back_url', '/bundle/pages/user_order/user_order')
             this.$Router.replace({
-                path: '/pages/login/login'
+                path: '/sub/pages/login/login'
             })
         },
         // 更改当前Tab页

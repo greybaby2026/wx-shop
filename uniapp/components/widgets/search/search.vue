@@ -1,5 +1,5 @@
 <template>
-	<router-link to="/pages/goods_search/goods_search">
+	<router-link to="/sub/pages/goods_search/goods_search">
 		<widget-root :styles="styles">
 			<div class="search">
 				<div class="search-content" :style="{

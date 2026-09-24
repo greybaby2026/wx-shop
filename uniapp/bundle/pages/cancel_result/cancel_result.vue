@@ -2,7 +2,7 @@
     <view :class="themeName">
         <view class="success" v-if="passType == 1">
             <image
-                src="/static/images/icon_success.png"
+                src="/bundle/static/images/icon_success.png"
                 class="img m-b-40"
                 style="margin-top: 150rpx"
             ></image>
@@ -15,7 +15,7 @@
         <view style="padding: 0 42rpx" v-if="passType == 0">
             <view class="fail">
                 <image
-                    src="/static/images/icon_fail.png"
+                    src="/bundle/static/images/icon_fail.png"
                     class="img m-b-20"
                     style="margin-top: 50rpx"
                 ></image>

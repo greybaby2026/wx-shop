@@ -398,7 +398,7 @@ export default {
                         this.logout()
 
                         uni.redirectTo({
-                            url: '/pages/login/login'
+                            url: '/sub/pages/login/login'
                         })
                     })
                 }

@@ -94,7 +94,7 @@
             :border-bottom="false"
           >
             <view class="forget-btn p-l-20" slot="right">
-              <router-link to="/pages/forget_pwd/forget_pwd">
+              <router-link to="/sub/pages/forget_pwd/forget_pwd">
                 忘记密码?
               </router-link>
             </view>
@@ -185,7 +185,7 @@
               'margin-left': 'auto',
             }"
           >
-            <router-link to="/pages/register/register" v-if="isPhoneRegister"
+            <router-link to="/sub/pages/register/register" v-if="isPhoneRegister"
               >注册账号
             </router-link>
           </view>
@@ -436,7 +436,7 @@ export default {
       this.$store.dispatch("getCartNum");
       uni.hideLoading();
       if (this.isBindMobile && !data.mobile) {
-        return this.$Router.replace("/pages/bind_mobile/bind_mobile");
+        return this.$Router.replace("/sub/pages/bind_mobile/bind_mobile");
       }
       this.goBack();
     },

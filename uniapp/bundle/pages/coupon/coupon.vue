@@ -86,7 +86,7 @@ export default {
                 auto: false, // 不自动加载
                 noMoreSize: 4, //如果列表已无数据,可设置列表的总数量要大于半页才显示无更多数据;避免列表数据过少(比如只有一条数据),显示无更多数据会不好看; 默认5
                 empty: {
-                    icon: '/static/images/empty/coupon.png',
+                    icon: '/bundle/static/images/empty/coupon.png',
                     tip: '暂无优惠券数据', // 提示
                     fixed: true,
                     top: '200rpx'

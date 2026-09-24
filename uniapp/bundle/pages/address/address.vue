@@ -3,7 +3,7 @@
         <view class="address">
             <!-- 收货地址空状态 -->
             <view class="no-address" v-if="addressList.length==0">
-                <image src="@/static/images/empty/address.png"></image>
+                <image src="@/bundle/static/images/empty/address.png"></image>
                 <view class="sm muted">暂无添加地址，请添加~</view>
             </view>
             
@@ -29,11 +29,11 @@
                         </radio>
                         <view class="flex">
                             <view class="sm m-r-25" @click.stop="editAddress(item.id)">
-                                <image class="icon-md m-r-5" src="@/static/images/address_icon_edit.png"></image>
+                                <image class="icon-md m-r-5" src="@/bundle/static/images/address_icon_edit.png"></image>
                                 编辑
                             </view>
                             <view class="sm" @click.stop="showSurePop(item.id)">
-                                <image class="icon-md m-r-5" src="@/static/images/address_icon_del.png"></image>
+                                <image class="icon-md m-r-5" src="@/bundle/static/images/address_icon_del.png"></image>
                                 删除
                             </view>
                         </view>

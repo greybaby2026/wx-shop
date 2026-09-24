@@ -45,7 +45,7 @@
                         </view>
                     </view>
                 </view>
-                <router-link v-else to="/pages/login/login">
+                <router-link v-else to="/sub/pages/login/login">
                     <view class="flex white">
                         <image
                             class="icon-avatar"

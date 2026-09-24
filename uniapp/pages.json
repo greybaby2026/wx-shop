@@ -13,15 +13,6 @@
             }
         },
         {
-            "path": "pages/page/page",
-            "style": {
-                "navigationBarTitleText": "微页面"
-            },
-            "meta": {
-                "auth": false
-            }
-        },
-        {
             "path": "pages/category/category",
             "style": {
                 "navigationBarTitleText": "分类",
@@ -58,54 +49,6 @@
             }
         },
         {
-            "path": "pages/login/login",
-            "style": {
-                "navigationBarTitleText": "登录",
-                "navigationStyle": "custom"
-            },
-            "meta": {
-                "auth": false
-            }
-        },
-        {
-            "path": "pages/register/register",
-            "style": {
-                "navigationBarTitleText": "注册",
-                "navigationStyle": "custom"
-            },
-            "meta": {
-                "auth": false
-            }
-        },
-        {
-            "path": "pages/forget_pwd/forget_pwd",
-            "style": {
-                "navigationBarTitleText": "忘记密码",
-                "navigationStyle": "custom"
-            },
-            "meta": {
-                "auth": false
-            }
-        },
-        {
-            "path": "pages/bind_mobile/bind_mobile",
-            "style": {
-                "navigationBarTitleText": "绑定手机号"
-            },
-            "meta": {
-                "auth": false
-            }
-        },
-        {
-            "path": "pages/goods_search/goods_search",
-            "style": {
-                "navigationBarTitleText": "搜索"
-            },
-            "meta": {
-                "auth": false
-            }
-        },
-        {
             "path": "pages/goods_detail/goods_detail",
             "style": {
                 "navigationBarTitleText": "商品详情",
@@ -127,6 +70,72 @@
         }
     ],
     "subPackages": [
+        {
+            // 分包 sub：承载「非首屏必需」的登录/注册类与搜索/微页面，用于压降主包体积。
+            // 背景：主包曾达 2126KB 超微信 2MB 上限；这些页面均为按需进入（非 tabBar、非启动页），
+            // 且已在 preloadRule 中配置「首页 wifi 下预下载」，避免首次进入的等待感。
+            // 说明：此处 path 相对 root 解析，故仍写作 pages/login/login（完整路径为 /sub/pages/login/login）。
+            "root": "sub",
+            "pages": [
+                {
+                    "path": "pages/login/login",
+                    "style": {
+                        "navigationBarTitleText": "登录",
+                        "navigationStyle": "custom"
+                    },
+                    "meta": {
+                        "auth": false
+                    }
+                },
+                {
+                    "path": "pages/register/register",
+                    "style": {
+                        "navigationBarTitleText": "注册",
+                        "navigationStyle": "custom"
+                    },
+                    "meta": {
+                        "auth": false
+                    }
+                },
+                {
+                    "path": "pages/forget_pwd/forget_pwd",
+                    "style": {
+                        "navigationBarTitleText": "忘记密码",
+                        "navigationStyle": "custom"
+                    },
+                    "meta": {
+                        "auth": false
+                    }
+                },
+                {
+                    "path": "pages/bind_mobile/bind_mobile",
+                    "style": {
+                        "navigationBarTitleText": "绑定手机号"
+                    },
+                    "meta": {
+                        "auth": false
+                    }
+                },
+                {
+                    "path": "pages/goods_search/goods_search",
+                    "style": {
+                        "navigationBarTitleText": "搜索"
+                    },
+                    "meta": {
+                        "auth": false
+                    }
+                },
+                {
+                    "path": "pages/page/page",
+                    "style": {
+                        "navigationBarTitleText": "微页面"
+                    },
+                    "meta": {
+                        "auth": false
+                    }
+                }
+            ]
+        },
         {
             // "plugins": {
             //     "live-player-plugin": {
@@ -936,7 +945,7 @@
     "preloadRule": {
         "pages/index/index": {
             "network": "wifi",
-            "packages": ["bundle"]
+            "packages": ["bundle", "sub"]
         }
     },
 

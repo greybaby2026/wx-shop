@@ -166,7 +166,7 @@ export default {
             // 本页 meta.auth = false（选择模式需在未登录时访问），故绑定模式在此自行校验登录态，
             // 未登录直接去登录页，避免展示一个点了会报「缺 token」的绑定按钮
             if (!store.getters.token) {
-                return uni.redirectTo({ url: '/pages/login/login' })
+                return uni.redirectTo({ url: '/sub/pages/login/login' })
             }
             this.getBoundInfo()
         }

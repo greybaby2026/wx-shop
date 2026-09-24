@@ -159,7 +159,7 @@ export default {
     },
     methods: {
         handleReceive(item) {
-            if (!this.isLogin) return this.$Router.push('/pages/login/login')
+            if (!this.isLogin) return this.$Router.push('/sub/pages/login/login')
             apiCouponGet({
                 id: item.id
             }).then(() => {

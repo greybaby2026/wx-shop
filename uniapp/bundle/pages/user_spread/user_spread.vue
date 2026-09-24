@@ -124,8 +124,8 @@
                             class="apply-result-img"
                             :src="
                                 applyObject.status == 2
-                                    ? '/static/images/icon_fail.png'
-                                    : '/static/images/icon_wait.png'
+                                    ? '/bundle/static/images/icon_fail.png'
+                                    : '/bundle/static/images/icon_wait.png'
                             "
                         />
                         <view class="m-t-10 bold" style="line-height: 40rpx">{{

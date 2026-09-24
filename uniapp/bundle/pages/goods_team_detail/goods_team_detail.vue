@@ -434,7 +434,7 @@ export default {
         // 更改商品收藏状态
         changeCollect(value) {
             value = !!value ? 0 : 1
-            if (!this.isLogin) return this.$Router.push('/pages/login/login')
+            if (!this.isLogin) return this.$Router.push('/sub/pages/login/login')
 
             apiGoodsCollect({
                 goods_id: this.goods_id,
@@ -468,7 +468,7 @@ export default {
 
         // 处理 开团
         handleTeam({ spec, number }) {
-            if (!this.isLogin) return this.$Router.push('/pages/login/login')
+            if (!this.isLogin) return this.$Router.push('/sub/pages/login/login')
 
             this.$Router.push({
                 path: '/bundle/pages/goods_order/goods_order',
@@ -491,7 +491,7 @@ export default {
 
         // 处理 参团
         handleJoin({ spec, number }) {
-            if (!this.isLogin) return this.$Router.push('/pages/login/login')
+            if (!this.isLogin) return this.$Router.push('/sub/pages/login/login')
             this.$Router.push({
                 path: '/bundle/pages/goods_order/goods_order',
                 query: {

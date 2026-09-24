@@ -55,7 +55,7 @@ router.beforeEach((to, from, next) => {
         !store.getters.token &&
         to.path !== '/bundle/pages/business_suspended/business_suspended'
     ) {
-        next('/pages/login/login')
+        next('/sub/pages/login/login')
         return
     } else {
         next()

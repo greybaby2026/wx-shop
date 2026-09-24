@@ -6,7 +6,7 @@
             :up-option="{
                 noMoreSize: 10,
                 empty: {
-                    icon: '/static/images/empty/coupon.png',
+                    icon: '/bundle/static/images/empty/coupon.png',
                     tip: '暂无优惠券~',
                     fixed: true
                 }
