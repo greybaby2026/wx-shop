@@ -79,7 +79,10 @@ service.interceptors.request.use(
     (error) => {
         // Do something with request error
         console.log(error) // for debug
-        Promise.reject(error)
+        // 必须 return：原先漏写 return 时该回调返回 undefined，
+        // axios 会把它当作「成功后的 config」继续走完拦截器链，
+        // 带着无效 config 发请求或抛出与根因无关的二次错误（同文件响应拦截器已正确 return）
+        return Promise.reject(error)
     }
 )
 
@@ -92,7 +95,16 @@ service.interceptors.response.use(
                 title: msg
             })
         }
-        return events[APICodeEnum[code]](response.data)
+        // 业务码兜底：APICodeEnum 只有 5 个 key（1/0/-1/1020/10），后端返回表外 code
+        // （1001、-2、null…或网关注入的码）时，原实现 events[undefined](...) 会直接抛
+        // TypeError: events[...] is not a function —— 调用方 .catch(err) 读不到 msg，
+        // 真实原因被掩盖，且形成大面积未处理 rejection。此处统一兜底为 fail（含 msg）。
+        const handler = events[APICodeEnum[code]]
+        if (!handler) {
+            console.warn('[request] 未知业务码，已按 fail 兜底：code=', code, ' msg=', msg)
+            return events.fail(response.data)
+        }
+        return handler(response.data)
     },
     (error) => {
         // uni.showToast({
