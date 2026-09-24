@@ -36,6 +36,13 @@ class Socket {
 		fun && fun(data)
 	}
 
+	// 移除订阅（与 addEvent 配对，页面 onUnload 时应调用，避免持有已销毁页面的回调）
+	offEvent(type) {
+		if (Object.prototype.hasOwnProperty.call(this.events, type)) {
+			this.events[type] = null
+		}
+	}
+
 	connect() {
 		// 已经连接则无需重复连接
 		if (this.connected) return
@@ -63,6 +70,11 @@ class Socket {
 		}
 		// 重连次数过多，断开不重连
 		if (this.reconnectNums >= 5) {
+			// 「静默失效」对用户不可接受（客服聊天会表现为「发消息没反应」）：给出可见提示
+			uni.showToast({
+				title: '连接已断开，请退出页面后重试',
+				icon: 'none'
+			})
 			return
 		}
 
@@ -83,7 +95,8 @@ class Socket {
 				event: 'ping'
 			})
 			this.serverTimeout = setTimeout(() => {
-				this.socketTask.close()
+				// 判空：与 close() 内的守卫保持一致（未连接/已释放时 socketTask 可能是空对象或 undefined）
+				this.socketTask && this.socketTask.close && this.socketTask.close()
 			}, this.timeout)
 		}, this.timeout)
 	}
@@ -121,7 +134,20 @@ class Socket {
 		// console.log('连接错误', res)
 	}
 	onMessage({data}) {
-		this.dispatch('message', JSON.parse(data))
+		// 服务端消息不一定是 JSON（纯文本 pong / 心跳应答 / 异常时的 HTML 错误页）：
+		// 原实现直接 JSON.parse，抛 SyntaxError 会中断本回调后续语句 ——
+		// 于是 reset() 不执行（心跳不重置、reconnectNums 不归零）→
+		// 紧接着 start() 的 serverTimeout 会误判超时并主动关闭连接 → 触发重连；
+		// 反复几次后 reconnectNums >= 5 → 彻底放弃重连且不给用户任何提示（客服聊天是核心通道）
+		let payload
+		try {
+			payload = JSON.parse(data)
+		} catch (e) {
+			// 非 JSON：按协议只重置心跳，不派发消息
+			this.reset()
+			return
+		}
+		this.dispatch('message', payload)
 		// console.log('收到信息:', data)
 		// 重置心跳
 		this.reset()

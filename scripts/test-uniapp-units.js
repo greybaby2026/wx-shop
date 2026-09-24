@@ -158,7 +158,19 @@ if (logoutBypass.length) logoutBypass.forEach(x => console.log('      ' + x))
 assert('OPENIMAGE* 字面量已清零（除 cachekey 定义）', openImageLiteral.length, 0)
 if (openImageLiteral.length) openImageLiteral.forEach(x => console.log('      ' + x))
 
-// 2.6 全量枚举 new Promise（供人工复核：每个分支是否都 settle）——信息性输出
+// 2.6 U12 socket 健壮性
+const socketSrc = read('utils/socket.js')
+assert('socket.js onMessage 对 JSON.parse 做了保护',
+    /onMessage\(\{data\}\)\s*\{[\s\S]{0,300}?try\s*\{[\s\S]{0,120}?JSON\.parse\(data\)/.test(socketSrc) ? 1 : 0, 1)
+assert('socket.js onMessage 解析失败分支仍重置心跳',
+    /catch\s*\(e\)\s*\{[\s\S]{0,200}?this\.reset\(\)[\s\S]{0,80}?return/.test(socketSrc) ? 1 : 0, 1)
+assert('socket.js 提供 offEvent（订阅移除）', /offEvent\s*\(type\)\s*\{/.test(socketSrc) ? 1 : 0, 1)
+assert('socket.js 重连超限有用户可见提示',
+    /reconnectNums\s*>=\s*5[\s\S]{0,200}?uni\.showToast/.test(socketSrc) ? 1 : 0, 1)
+assert('socket.js serverTimeout 关闭前判空',
+    /serverTimeout\s*=\s*setTimeout\([\s\S]{0,200}?this\.socketTask\s*&&\s*this\.socketTask\.close/.test(socketSrc) ? 1 : 0, 1)
+
+// 2.7 全量枚举 new Promise（供人工复核：每个分支是否都 settle）——信息性输出
 console.log('\n[3] utils/ 与 mixins/ 中 new Promise 清单（供人工复核 settle 分支）')
 const promiseList = []
 for (const dir of ['utils', 'mixins']) {
