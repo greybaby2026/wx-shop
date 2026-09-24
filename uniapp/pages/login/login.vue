@@ -444,8 +444,12 @@ export default {
       if (getCurrentPages().length > 1) {
         this.$Router.back(1, {
           success: () => {
+            // 刷新返回后的来源页：这里取到的是「该页自身的 options」再重跑其 onLoad，
+            // 属有意保留（仅登录成功这一次、低频；来源页可能是结算/购物车等依赖登录态才取到数据的页面，
+            // 若改成纯事件通知，未监听事件的页面将不再刷新 → 返回后看到陈旧数据）。
+            // 注意：不要照抄到 utils/login.js 的静默登录路径 —— 那里触发频率极高（任何接口 -1 都会重跑），
+            // 已在批次3 FIX-U15 改为 uni.$emit('loginSuccess') 事件通知。
             const { onLoad, options } = currentPage();
-            // 刷新上一个页面
             onLoad && onLoad(options);
           },
         });

@@ -1,6 +1,5 @@
 import {
 	isWeixinClient,
-	currentPage,
 	trottle
 } from './tools'
 import store from '@/store'
@@ -86,12 +85,6 @@ export async function mnpLogin() {
 		code
 	})
 	// #endif
-	const {
-		options,
-		onLoad,
-		onShow,
-		route
-	} = currentPage()
 	// 需要强制绑定手机号
 	if (coerce_mobile && !loginData.mobile) {
 		return
@@ -100,9 +93,13 @@ export async function mnpLogin() {
 		store.commit('login', loginData)
 		store.dispatch('getUser')
 		store.dispatch('getCartNum')
-		// 刷新页面
-		onLoad && onLoad(options)
-		onShow && onShow()
+		// 刷新当前页数据：改用事件通知，由页面按需响应（全局 mixin mixins/app.js 已监听）。
+		// ⚠️ 原实现是 `onLoad && onLoad(options); onShow && onShow()` —— 直接手动重跑当前页生命周期：
+		//    ① 破坏「onLoad 只执行一次」与参数契约
+		//    ② 本函数触发频率极高：任何接口返回 -1（token 失效）都会走到这里，
+		//       于是每次静默登录都重复初始化当前页 → 重复发请求、重复埋点，
+		//       并重置用户已做的页面状态（已加载分页、已选筛选条件）
+		uni.$emit('loginSuccess')
 	}
 
 }

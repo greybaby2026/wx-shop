@@ -143,8 +143,10 @@ export default {
         if (pageLen > 1) {
           this.$Router.back(1, {
             success: () => {
+              // 刷新返回后的来源页：取「该页自身的 options」再重跑其 onLoad，属有意保留
+              // （绑定成功仅一次、低频；来源页可能是下单/用户中心，需按新登录态重新取数）。
+              // 与批次3 FIX-U15 改掉的 utils/login.js 静默登录路径不同：那里每次 token 失效都会重跑，故改为事件通知。
               const { onLoad, options } = currentPage();
-              // 刷新上一个页面
               onLoad && onLoad(options);
             },
           });

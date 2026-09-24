@@ -414,10 +414,14 @@ const OrderMixin = {
 								uni.navigateBack({
 									delta: 1,
 									success: function() {
-										const pages = getCurrentPages(); //获取当前页面栈
-										const prevPage = pages[pages.length -
-											1]; //获取上一个页面实例对象
-										prevPage.onLoad(); //调用上一个页面的onLoad方法
+										// 返回后通知列表页刷新数据。
+										// ⚠️ 原实现是 `prevPage.onLoad()` —— 无参手动重跑上一页的 onLoad：
+										//    ① 破坏「onLoad 只执行一次」语义，且上一页会拿到 undefined 的 options
+										//       （本项目 mixins/order.js:63 恰好有 options != null 守卫才没出事，
+										//        其它页面若直接读 options.xxx 将抛 TypeError）
+										//    ② 上一页的初始化（请求、埋点、状态重置）会被重复执行一遍
+										// 改为事件通知，由全局 mixin（mixins/app.js）转发到页面的 refreshOrderData()
+										uni.$emit('orderListRefresh')
 									}
 								});
 

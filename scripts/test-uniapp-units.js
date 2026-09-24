@@ -92,10 +92,38 @@ assert('request.js closeShop 返回 Promise.reject',
 
 // 2.4 「Promise 必须 settle」——U16 各处的定点断言
 const read = (f) => fs.readFileSync(path.join(UNIAPP, f), 'utf8')
+
+/**
+ * 剥除注释（// 行注释、块注释、<!-- --> 模板注释），等长空格替换以保持行号。
+ * 断言「某写法已不存在」时必须先剥注释 —— 否则修复说明的注释里引用了「原实现」，
+ * 会被误判为未修复（这是本脚本踩过的坑）。
+ */
+function stripCodeComments(src) {
+    let out = '', state = 'code'
+    for (let i = 0; i < src.length; i++) {
+        const c = src[i], n = src[i + 1]
+        if (state === 'code') {
+            if (c === '/' && n === '/') { state = 'line'; out += '  '; i++; continue }
+            if (c === '/' && n === '*') { state = 'block'; out += '  '; i++; continue }
+            if (c === '<' && src.startsWith('<!--', i)) { state = 'html'; out += '    '; i += 3; continue }
+            if (c === '"' || c === "'" || c === '`') { state = c; out += c; continue }
+            out += c; continue
+        }
+        if (state === 'line') { if (c === '\n') { state = 'code'; out += '\n' } else out += ' '; continue }
+        if (state === 'block') { if (c === '*' && n === '/') { state = 'code'; out += '  '; i++; continue } out += (c === '\n') ? '\n' : ' '; continue }
+        if (state === 'html') { if (c === '-' && src.startsWith('-->', i)) { state = 'code'; out += '   '; i += 2; continue } out += (c === '\n') ? '\n' : ' '; continue }
+        out += c
+        if (c === '\\') { out += (n || ''); i++; continue }
+        if (c === state) state = 'code'
+    }
+    return out
+}
+
 const loginSrc = read('utils/login.js')
 const toolsSrc = read('utils/tools.js')
 const wx5Src = read('utils/wechath5.js')
 const orderSrc = read('mixins/order.js')
+const orderCode = stripCodeComments(orderSrc)
 const integralSrc = read('mixins/integral_order.js')
 
 assert('login.js getUserProfile 失败分支已 reject', /fail\s*\(res\)\s*\{\s*reject\(res\)/.test(loginSrc) ? 1 : 0, 1)
@@ -170,7 +198,58 @@ assert('socket.js 重连超限有用户可见提示',
 assert('socket.js serverTimeout 关闭前判空',
     /serverTimeout\s*=\s*setTimeout\([\s\S]{0,200}?this\.socketTask\s*&&\s*this\.socketTask\.close/.test(socketSrc) ? 1 : 0, 1)
 
-// 2.7 全量枚举 new Promise（供人工复核：每个分支是否都 settle）——信息性输出
+// 2.7 U15 不再手动重跑页面生命周期（改为事件通知）
+// 注意：必须剥除注释后再匹配 —— 修复说明的注释里会引用「原实现」的写法，
+//       不剥注释会把这些说明误判为「未修复」
+assert('mixins/order.js 删除后改用事件通知（不再 prevPage.onLoad）',
+    (/uni\.\$emit\('orderListRefresh'\)/.test(orderCode) && !/prevPage\.onLoad\(/.test(orderCode)) ? 1 : 0, 1)
+const loginUtilSrc = read('utils/login.js')
+const loginUtilCode = stripCodeComments(loginUtilSrc)
+assert('utils/login.js 静默登录后改用事件通知（不再重跑 onLoad/onShow）',
+    (/uni\.\$emit\('loginSuccess'\)/.test(loginUtilCode)
+        && !/onLoad\s*&&\s*onLoad\(/.test(loginUtilCode)
+        && !/onShow\s*&&\s*onShow\(/.test(loginUtilCode)) ? 1 : 0, 1)
+const appMixinSrc = read('mixins/app.js')
+assert('mixins/app.js 全局 mixin 监听 orderListRefresh 与 loginSuccess',
+    (/uni\.\$on\('orderListRefresh'/.test(appMixinSrc) && /uni\.\$on\('loginSuccess'/.test(appMixinSrc)) ? 1 : 0, 1)
+assert('mixins/app.js onUnload 注销两个监听（避免泄漏）',
+    (/uni\.\$off\('orderListRefresh'/.test(appMixinSrc) && /uni\.\$off\('loginSuccess'/.test(appMixinSrc)) ? 1 : 0, 1)
+
+// 全库扫描（剥注释后）：不得再有「无参手动重跑页面生命周期」的写法
+//   —— 无参重跑会让被重跑页面拿到 undefined 的 options（参数契约被破坏），且高频场景会重复初始化。
+// 有意保留（不在本批改动范围，原因已写在代码注释里，此处显式列出而非隐藏）：
+//   login.vue / bind_mobile.vue 在「登录成功 / 绑定成功」后重跑来源页 onLoad ——
+//   取的是来源页自身的 options（参数契约未破），且仅一次、低频；改成纯事件通知会让
+//   来源页（结算/购物车等依赖登录态取数的页面）不再刷新，故保留。
+const MANUAL_LIFECYCLE_ALLOW = ['pages/login/login.vue', 'pages/bind_mobile/bind_mobile.vue']
+const manualLifecycle = []
+const manualLifecycleAllowed = []
+;(function walkLifecycle(dir) {
+    for (const name of fs.readdirSync(dir)) {
+        const full = path.join(dir, name)
+        const st = fs.statSync(full)
+        if (st.isDirectory()) {
+            if (!['node_modules', 'unpackage', 'dist', '.git', 'js_sdk', 'plugin', 'uview-ui', 'uni_modules'].includes(name)) walkLifecycle(full)
+        } else if (/\.(vue|js)$/.test(name)) {
+            const relToUniapp = path.relative(UNIAPP, full).replace(/\\/g, '/')
+            stripCodeComments(fs.readFileSync(full, 'utf8')).split('\n').forEach((line, i) => {
+                // 只判「无参」重跑：onLoad() / onShow() / prevPage.onLoad() / page.onLoad()
+                if (/\bprevPage\.onLoad\(\)|\bpage\.onLoad\(\)|onLoad\s*&&\s*onLoad\(\s*\)|onShow\s*&&\s*onShow\(\s*\)/.test(line)) {
+                    const hit = `${relToUniapp}:${i + 1}  ${line.trim()}`
+                    ;(MANUAL_LIFECYCLE_ALLOW.includes(relToUniapp) ? manualLifecycleAllowed : manualLifecycle).push(hit)
+                }
+            })
+        }
+    }
+})(UNIAPP)
+assert('全库无「无参手动重跑页面生命周期」写法', manualLifecycle.length, 0)
+if (manualLifecycle.length) manualLifecycle.forEach(x => console.log('      ' + x))
+if (manualLifecycleAllowed.length) {
+    console.log(`      （有意保留 ${manualLifecycleAllowed.length} 处，已登记）：`)
+    manualLifecycleAllowed.forEach(x => console.log('        · ' + x))
+}
+
+// 2.8 全量枚举 new Promise（供人工复核：每个分支是否都 settle）——信息性输出
 console.log('\n[3] utils/ 与 mixins/ 中 new Promise 清单（供人工复核 settle 分支）')
 const promiseList = []
 for (const dir of ['utils', 'mixins']) {
