@@ -21,13 +21,13 @@ import Cache from '@/utils/cache'
 import { apiDecorateConfig } from '@/api/store'
 import { mapGetters } from 'vuex'
 
+// ⚠️ 「开屏广告只展示一次」是跨文件的隐式约定，改动任意一处都要一并考虑：
+//    1) App.vue 在 onLaunch / onLoad 中把缓存 OPENIMAGE_ENABLE 置为 true（一次冷启动只置一次）；
+//    2) 本组件 processAd() 展示完立即把它置为 false → 同一次启动内不会再弹出；
+//       具体展示策略由装修配置 show_config 决定（1 = 图片变化才展示；2 = 按 OPENIMAGE_NUMBER 次数）。
+//    另：本组件显示状态由内部 showOpen 自控，不需要外部 prop
+//    （原 value prop 从未被使用、调用方 pages/index/index.vue 也从未传入，已移除）。
 export default {
-    props: {
-        value: {
-            type: Boolean,
-            default: false
-        }
-    },
     data() {
         return {
             showOpen: false,

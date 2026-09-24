@@ -216,14 +216,11 @@
 import { apiregisterAward } from '@/api/store'
 import { apiupdateRegisterAward } from '@/api/user'
 import uImage from '../uview-ui/components/u-image/u-image.vue'
+// 本组件显示状态由内部 showOpen 自控（数据来源 registerAward 接口的 status），
+// 不需要外部 prop —— 原 value prop 从未被使用、调用方 pages/index/index.vue 也从未传入，已移除。
+// 关闭动作由用户点击关闭按钮触发 updateisReward()（同时上报后端，避免下次再弹）。
 export default {
     components: { uImage },
-    props: {
-        value: {
-            type: Boolean,
-            default: false
-        }
-    },
     data() {
         return {
             showOpen: false,
