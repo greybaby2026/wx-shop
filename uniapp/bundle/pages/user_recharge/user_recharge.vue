@@ -48,7 +48,11 @@
                     v-for="(item, index) in rechargeTemplateLists"
                     :key="index"
                 >
-                    <view class="xxl"> {{ item.money }}元 </view>
+                    <view class="xxl">
+                        {{ item.money }}元
+                        <!-- 达标(或已超越)的档位打「已享」标 -->
+                        <text v-if="isTierAchieved(item)" class="achieved-tag">已享</text>
+                    </view>
                     <view class="xs m-t-10" v-if="item.tips">
                         {{ item.tips }}
                     </view>
@@ -145,6 +149,15 @@ export default {
             apiRechargeTemplateLists().then((res) => {
                 this.rechargeTemplateLists = res.lists
             })
+        },
+
+        // 该档位是否「已享」：我的折扣率不差于该档折扣率（数值越小折扣越大），
+        // 含被超越的档位（如已享 9 折时，95 折档同样标记已享）；折扣率 0 / >=10 视为该档不享折扣
+        isTierAchieved(item) {
+            const mine = Number(this.rechargeDiscount || 0)
+            const tier = Number(item.discount || 0)
+            if (mine <= 0 || mine >= 10 || tier <= 0 || tier >= 10) return false
+            return mine <= tier
         },
 
         // 充值
@@ -282,6 +295,20 @@ export default {
 
     .recommend-item:nth-child(3n) {
         margin-right: 0;
+    }
+
+    /* 档位「已享」标 */
+    .achieved-tag {
+        display: inline-block;
+        margin-left: 8rpx;
+        padding: 0 8rpx;
+        font-size: 18rpx;
+        line-height: 26rpx;
+        color: #ffffff;
+        font-weight: 400;
+        border-radius: 6rpx;
+        background: rgba(242, 166, 38, 1);
+        vertical-align: middle;
     }
 
     /* 充值会员折扣提示 */

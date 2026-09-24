@@ -51,6 +51,7 @@
 import { apiSelffetchStore } from '@/api/store'
 import { apiUserBindStore, apiUserCentre } from '@/api/user'
 import MescrollMixin from '@/components/mescroll-uni/mescroll-mixins'
+import store from '@/store'
 
 export default {
     name: 'StoreBind',
@@ -162,6 +163,11 @@ export default {
         if (this.selectMode) {
             uni.setNavigationBarTitle({ title: '选择所属门店' })
         } else {
+            // 本页 meta.auth = false（选择模式需在未登录时访问），故绑定模式在此自行校验登录态，
+            // 未登录直接去登录页，避免展示一个点了会报「缺 token」的绑定按钮
+            if (!store.getters.token) {
+                return uni.redirectTo({ url: '/pages/login/login' })
+            }
             this.getBoundInfo()
         }
         try {

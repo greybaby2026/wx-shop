@@ -496,7 +496,10 @@
                         "mp-alipay": { "allowsBounceVertical": "NO" }
                     },
                     "meta": {
-                        "auth": true
+                        //auth 必须为 false：注册页（未登录）选择模式 ?mode=select 需要访问此页，
+                        //若为 true 会被 router.beforeEach 重定向到登录页，导致注册前无法选店。
+                        //页面内部对「绑定模式未登录」另有兜底（见 store_bind.vue onLoad）
+                        "auth": false
                     }
                 },
                 {
