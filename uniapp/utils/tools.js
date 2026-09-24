@@ -1,4 +1,4 @@
-import { baseURL } from '@/config/app.js'
+import { baseURL, version } from '@/config/app.js'
 import { ClientEnum } from '@/utils/enum'
 import store from '@/store'
 import { isObject } from '@vue/shared'
@@ -165,10 +165,16 @@ export function getRect(selector, all, context) {
             .boundingClientRect(function (rect) {
                 if (all && Array.isArray(rect) && rect.length) {
                     resolve(rect)
+                    return
                 }
                 if (!all && rect) {
                     resolve(rect)
+                    return
                 }
+                // 选择器无匹配（元素尚未渲染/已被移除）时必须 settle：
+                // 原实现在 rect 为 null 时既不 resolve 也不 reject →
+                // 调用方 await 永久挂起（分类页初始化中断、客服页滚动到底功能失效）
+                resolve(null)
             })
             .exec()
     })
@@ -284,24 +290,36 @@ export function uploadFile(path, options = {}) {
             name: name || 'file',
             header: {
                 token: store.getters.token,
-                version: '1.2.1.20210717',
+                // 版本号必须与普通请求同源（config/app.js）：
+                // 原先硬编码 '1.2.1.20210717'（2021-07-17），比实际版本落后 5 年，
+                // 若后端按 version 做兼容分支则上传会走错分支；调用点：客服发图、头像上传等
+                version,
                 ...header
             },
             fileType: 'image',
             cloudPath: '',
             success: (res) => {
                 console.log('uploadFile res ==> ', res)
-                let data = JSON.parse(res.data)
+                // res.data 不一定是 JSON（网关 502/异常时可能是 HTML 错误页）：
+                // 必须保护，否则抛 SyntaxError 且调用方拿不到失败原因
+                let data
+                try {
+                    data = JSON.parse(res.data)
+                } catch (e) {
+                    reject(e)
+                    return
+                }
 
                 if (data.code == 1) {
                     resolve(data.data)
                 } else {
-                    reject()
+                    // reject 必须带原因（原先无参 → 调用方无法提示具体失败原因）
+                    reject(data.msg || '上传失败')
                 }
             },
             fail: (err) => {
                 console.log(err)
-                reject()
+                reject(err || '上传失败')
             }
         })
     })

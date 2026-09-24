@@ -154,6 +154,11 @@ const OrderMixin = {
 					}
 				})
 				// #endif
+				// #ifndef MP-WEIXIN
+				// 非微信端不存在「微信原生确认收货」能力：必须让 Promise settle，
+				// 否则调用方 await 永久挂起（原实现整个 Promise 体被条件编译排除，Promise 永不 settle）
+				resolve('当前端不支持微信原生确认收货')
+				// #endif
 			})
 		},
 		//查询是否收货成功

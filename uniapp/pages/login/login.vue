@@ -295,9 +295,19 @@ export default {
 
         return;
       }
+      // 拒绝授权是高频正常操作：必须捕获失败并给出提示，
+      // （getUserProfile 原先失败时 Promise 永不 settle → 点击微信登录后界面毫无反应）
+      let profileRes;
+      try {
+        profileRes = await getUserProfile();
+      } catch (err) {
+        uni.hideLoading();
+        this.$toast({ title: "您已取消授权，无法获取微信资料" });
+        return;
+      }
       const {
         userInfo: { avatarUrl, nickName, gender },
-      } = await getUserProfile();
+      } = profileRes;
       uni.showLoading({
         title: "登录中...",
         mask: true,

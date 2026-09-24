@@ -44,8 +44,10 @@ export function getUserProfile() {
 			success: (res) => {
 				resolve(res);
 			},
+			// 拒绝授权是高频正常操作：必须 reject 让 Promise settle，
+			// 否则调用方 await 永久挂起 → 登录/绑定手机号流程卡住且无任何提示
 			fail(res) {
-				console.log(res)
+				reject(res)
 			}
 
 		})

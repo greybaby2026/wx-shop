@@ -90,6 +90,49 @@ assert('request.js 请求拦截器 error 回调已 return Promise.reject',
 assert('request.js closeShop 返回 Promise.reject',
     /closeShop\s*\(\s*\{\s*msg\s*\}\s*\)\s*\{[\s\S]*?return\s+Promise\.reject\(msg\)/.test(reqSrc) ? 1 : 0, 1)
 
+// 2.4 「Promise 必须 settle」——U16 各处的定点断言
+const read = (f) => fs.readFileSync(path.join(UNIAPP, f), 'utf8')
+const loginSrc = read('utils/login.js')
+const toolsSrc = read('utils/tools.js')
+const wx5Src = read('utils/wechath5.js')
+const orderSrc = read('mixins/order.js')
+const integralSrc = read('mixins/integral_order.js')
+
+assert('login.js getUserProfile 失败分支已 reject', /fail\s*\(res\)\s*\{\s*reject\(res\)/.test(loginSrc) ? 1 : 0, 1)
+assert('tools.js getRect 元素不存在时 settle（resolve(null)）',
+    /boundingClientRect\(function\s*\(rect\)\s*\{[\s\S]{0,1500}?resolve\(null\)/.test(toolsSrc) ? 1 : 0, 1)
+assert('wechath5.js getWxAddress 具备 cancel + fail 分支',
+    /openAddress\(\{[\s\S]{0,260}?cancel:[\s\S]{0,160}?fail:/.test(wx5Src) ? 1 : 0, 1)
+assert('wechath5.js reviceTransfer 版本过低分支已 reject（且不再用 alert）',
+    (/uni\.showToast\(\{[\s\S]{0,400}?reject\('微信版本过低'\)/.test(wx5Src) && !/\balert\(/.test(wx5Src)) ? 1 : 0, 1)
+assert('wechath5.js checkJsApi 已补 fail 分支',
+    /checkJsApi\(\{[\s\S]{0,200}?fail:\s*\(res\)\s*=>\s*reject/.test(wx5Src) ? 1 : 0, 1)
+assert('mixins/order.js comfirmReceive 非微信端 settle',
+    /comfirmReceive\(transaction_id\)\s*\{[\s\S]*?#ifndef MP-WEIXIN[\s\S]{0,200}?resolve\(/.test(orderSrc) ? 1 : 0, 1)
+assert('mixins/integral_order.js comfirmReceive 非微信端 settle',
+    /comfirmReceive\(transaction_id\)\s*\{[\s\S]*?#ifndef MP-WEIXIN[\s\S]{0,200}?resolve\(/.test(integralSrc) ? 1 : 0, 1)
+assert('integral_order.js 积分订单确认收货使用积分接口（P2-95）',
+    /apiConfirmIntegralOrder\(\{\s*\n?\s*id: orderID\s*\n?\s*\}\)[\s\S]{0,80}/.test(integralSrc)
+        && !/import\s*\{\s*apiOrderConfirm\s*\}/.test(integralSrc) ? 1 : 0, 1)
+
+// 2.5 全量枚举 new Promise（供人工复核：每个分支是否都 settle）——信息性输出
+console.log('\n[3] utils/ 与 mixins/ 中 new Promise 清单（供人工复核 settle 分支）')
+const promiseList = []
+for (const dir of ['utils', 'mixins']) {
+    const abs = path.join(UNIAPP, dir)
+    if (!fs.existsSync(abs)) continue
+    for (const name of fs.readdirSync(abs)) {
+        if (!name.endsWith('.js')) continue
+        const rel = `${dir}/${name}`
+        read(rel).split('\n').forEach((line, i) => {
+            if (/new\s+Promise\s*\(/.test(line) && !/^\s*(\/\/|\*)/.test(line)) {
+                promiseList.push(`${rel}:${i + 1}`)
+            }
+        })
+    }
+}
+console.log('     共 ' + promiseList.length + ' 处：' + promiseList.join('  '))
+
 // ============================================================
 console.log(`\n${'─'.repeat(60)}`)
 if (failed.length === 0) {

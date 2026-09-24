@@ -63,19 +63,29 @@
             }
         },
         mounted() {
-            console.log(store.getters.token,baseURL)
+            // 安全：原此处 console.log(store.getters.token, baseURL) 直接把登录 token 打到控制台
+            // （开发/调试/日志采集场景下等同凭证泄露），已删除
             this.action = baseURL + '/shopapi/upload/image';
             this.token = store.getters.token
         },
         methods: {
             // 上传，不管成不成功都返回数据｜提示
             change(event) {
+                // event.data 不一定是 JSON（上传失败时可能是 HTML 错误页）：
+                // 原先 3 处 JSON.parse 均无保护 → 抛 SyntaxError，用户看不到提示、图片列表也不更新
+                let res
+                try {
+                    res = JSON.parse(event.data)
+                } catch (e) {
+                    this.$toast({ title: '上传失败，请稍后重试' })
+                    return
+                }
                 this.$toast({
-                    title: JSON.parse(event.data).msg
+                    title: res.msg
                 })
-                
-                if(JSON.parse(event.data).code == 1) {
-                    this.fileList.push(JSON.parse(event.data).data.uri)
+
+                if (res.code == 1) {
+                    this.fileList.push(res.data.uri)
                     this.$emit('input', this.fileList)
                 }
             },

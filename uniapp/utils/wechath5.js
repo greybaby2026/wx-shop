@@ -14,18 +14,24 @@ class Wechath5 {
     }
     //微信sdk配置
     config() {
-        return new Promise((resolve) => {
-            apiJsConfig().then((res) => {
-                weixin.config({
-                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-                    appId: res.appId, // 必填，公众号的唯一标识
-                    timestamp: res.timestamp, // 必填，生成签名的时间戳
-                    nonceStr: res.nonceStr, // 必填，生成签名的随机串
-                    signature: res.signature, // 必填，签名
-                    jsApiList: res.jsApiList // 必填，需要使用的JS接口列表
+        return new Promise((resolve, reject) => {
+            apiJsConfig()
+                .then((res) => {
+                    weixin.config({
+                        debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                        appId: res.appId, // 必填，公众号的唯一标识
+                        timestamp: res.timestamp, // 必填，生成签名的时间戳
+                        nonceStr: res.nonceStr, // 必填，生成签名的随机串
+                        signature: res.signature, // 必填，签名
+                        jsApiList: res.jsApiList // 必填，需要使用的JS接口列表
+                    })
+                    resolve()
                 })
-                resolve()
-            })
+                .catch((err) => {
+                    // apiJsConfig 失败时必须 settle：否则 Promise 永不 resolve →
+                    // 下游 weixin.ready() 的回调永不执行 → 分享/支付静默失效且极难排查
+                    reject(err || '微信 JSSDK 配置失败')
+                })
         })
     }
 
@@ -112,11 +118,12 @@ class Wechath5 {
                     success: (res) => {
                         reslove()
                     },
+                    // reject 必须带上原因：否则调用方无法区分「用户取消」与「支付失败」，也无法提示具体原因
                     cancel: (res) => {
-                        reject()
+                        reject(res || '已取消支付')
                     },
                     fail: (res) => {
-                        reject()
+                        reject(res || '支付失败')
                     }
                 })
             })
@@ -129,7 +136,11 @@ class Wechath5 {
                 weixin.openAddress({
                     success: (res) => {
                         reslove(res)
-                    }
+                    },
+                    // 用户取消/拒绝授权是高频正常操作：必须 reject 让 Promise settle，
+                    // 否则调用方 await 永久挂起 → 点「获取微信地址」后按钮像坏了（无任何反馈）
+                    cancel: (res) => reject(res || '已取消获取微信地址'),
+                    fail: (res) => reject(res || '获取微信地址失败')
                 })
             })
         })
@@ -139,6 +150,8 @@ class Wechath5 {
             weixin.ready(() => {
                 weixin.checkJsApi({
                     jsApiList: ['requestMerchantTransfer'],
+                    // checkJsApi 失败（JSSDK 未就绪等）同样必须 settle，否则调用方永久挂起
+                    fail: (res) => reject(res || '微信 JSSDK 校验失败'),
                     success: function (res) {
                         if (res.checkResult['requestMerchantTransfer']) {
                             WeixinJSBridge.invoke(
@@ -157,7 +170,13 @@ class Wechath5 {
                                 }
                             )
                         } else {
-                            alert('你的微信版本过低，请更新至最新版本。')
+                            // 版本过低也必须 settle：alert 改为 uni.showToast 并 reject
+                            // （跨端体验一致，且避免调用方 await 永久挂起）
+                            uni.showToast({
+                                title: '你的微信版本过低，请更新至最新版本',
+                                icon: 'none'
+                            })
+                            reject('微信版本过低')
                         }
                     }
                 })
