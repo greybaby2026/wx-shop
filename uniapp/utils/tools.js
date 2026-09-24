@@ -443,13 +443,20 @@ export function getBaseLibraryVersion() {
  */
 export function compareWeChatVersion(targetVersion) {
     const currentVersion = getBaseLibraryVersion()
-    if (currentVersion === targetVersion) {
-        return 0 // 当前版本与目标版本相同
-    } else if (currentVersion > targetVersion) {
-        return 1 // 当前版本大于目标版本
-    } else {
-        return -1 // 当前版本小于目标版本
+    // 必须按「.」分段转数字逐段比较：
+    // 原实现直接对版本字符串做字典序比较，含两位数的版本段会判反 ——
+    //   当前 2.10.0 vs 目标 2.6.0 → 字典序 '1' > '6' 为假 → 误判为「小于」
+    //   （返回 -1，而事实是大于），导致主流用户（基础库 ≥ 2.10）被判为版本不足，
+    //   无法进入微信原生确认收货流程（微信确认收货功能对主流用户实际不可用）
+    const toSegments = (v) => String(v == null ? '' : v).split('.').map(n => parseInt(n, 10) || 0)
+    const a = toSegments(currentVersion)
+    const b = toSegments(targetVersion)
+    for (let i = 0; i < Math.max(a.length, b.length); i++) {
+        const x = a[i] || 0
+        const y = b[i] || 0
+        if (x !== y) return x > y ? 1 : -1
     }
+    return 0 // 各段相等（含长度不等但缺省段为 0 的情况，如 2.6 与 2.6.0）
 }
 
 // 路由跳转

@@ -7,7 +7,6 @@ import {
     getwechatSyncCheck,
     getwxReceiveDetail
 } from '@/api/integral_mall'
-import { apiOrderConfirm } from '@/api/order'
 import { compareWeChatVersion } from '@/utils/tools'
 import store from '@/store'
 
@@ -151,8 +150,9 @@ const OrderMixin = {
                             success: ({ confirm }) => {
                                 if (!confirm) return
                                 // uni.showLoading()
-                                // 取消订单
-                                apiOrderConfirm({
+                                // 确认收货：积分订单必须调用积分商城的确认收货接口
+                                // （原先误用普通订单的 apiOrderConfirm，与本文件其余 4 处 apiConfirmIntegralOrder 不一致）
+                                apiConfirmIntegralOrder({
                                     id: orderID
                                 })
                                     .then((data) => {
