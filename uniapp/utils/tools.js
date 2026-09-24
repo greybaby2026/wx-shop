@@ -265,9 +265,9 @@ export function menuJump(item) {
             break
 
         case 2:
-            // webview
+            // webview（webview 页在分包 bundle 下）
             uni.navigateTo({
-                url: '/pages/webview/webview?url=' + link
+                url: '/bundle/pages/webview/webview?url=' + link
             })
             break
 

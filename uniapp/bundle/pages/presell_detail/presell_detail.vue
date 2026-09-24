@@ -348,7 +348,7 @@ export default {
                 await this.initGoodsDetail()
             })
             this.$Router.push({
-                path: '/pages/address/address',
+                path: '/bundle/pages/address/address',
                 query: {
                     type: 1
                 }
@@ -424,7 +424,7 @@ export default {
         // 处理 立即购买
         handleBuy({ spec, number }) {
             this.$Router.push({
-                path: '/pages/goods_order/goods_order',
+                path: '/bundle/pages/goods_order/goods_order',
                 query: {
                     from: OrderTypeEnum['PRESELL'],
                     payload: {

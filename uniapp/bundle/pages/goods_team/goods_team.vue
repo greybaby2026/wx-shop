@@ -111,7 +111,8 @@ export default {
         const { code } = this.userInfo
 
         const share = {
-            path: `bundle/pages/goods_team/goods_team?invite_code=${code}`
+            // 小程序转发路径须以 / 开头（否则按当前页目录相对解析）
+            path: `/bundle/pages/goods_team/goods_team?invite_code=${code}`
         }
         return share
     },

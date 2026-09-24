@@ -29,9 +29,14 @@ const router = createRouter({
         ...ROUTES,
         {
             path: '*',
-            redirect: (to) => {
+            // 未匹配路径统一落到 404 页。
+            // 说明：原先 redirect 到 { name: '404' } 永远不生效 —— uni-read-pages 生成的
+            // route.name 取自 pages.json 各页面的 name 字段，而全库无任何页面声明 name，
+            // 因此未匹配路径既进不了 404 页也回不去首页，表现为「导航失败/白屏」。
+            // 改为按「路径」重定向，不再依赖 name。
+            redirect: () => {
                 return {
-                    name: '404'
+                    path: '/pages/404/404'
                 }
             }
         }

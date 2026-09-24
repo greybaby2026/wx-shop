@@ -87,7 +87,7 @@
                     class="btn-2"
                     @click="
                       goPage(
-                        'pages/goods_detail/goods_detail',
+                        '/pages/goods_detail/goods_detail',
                         item.type_value,
                         item.id
                       )
@@ -167,25 +167,27 @@ export default {
       });
     },
     handleLook(type, id) {
+      // 小程序跳转路径必须以 / 开头，否则会按「当前页目录」相对解析成
+      // bundle/pages/luck_draw_code/bundle/pages/... 这类不存在的路径而失败
       switch (type) {
         case 1:
           uni.navigateTo({
-            url: "bundle/pages/sign_detail/sign_detail",
+            url: "/bundle/pages/sign_detail/sign_detail",
           });
           break;
         case 2:
           uni.navigateTo({
-            url: "bundle/pages/coupon/coupon",
+            url: "/bundle/pages/coupon/coupon",
           });
           break;
         case 3:
           uni.navigateTo({
-            url: "bundle/pages/user_wallet/user_wallet",
+            url: "/bundle/pages/user_wallet/user_wallet",
           });
           break;
         case 4:
           uni.navigateTo({
-            url: `pages/order_detail/order_detail?order_id=${id}`,
+            url: `/bundle/pages/order_detail/order_detail?order_id=${id}`,
           });
           break;
         default:

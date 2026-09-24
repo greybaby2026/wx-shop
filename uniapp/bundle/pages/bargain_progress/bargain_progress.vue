@@ -464,7 +464,8 @@
 			// #ifdef MP-WEIXIN
 			onShareAppMessage() {
 				return {
-					path: 'bundle/pages/bargain_progress/bargain_progress?initiate_id=' +
+					// 小程序转发路径须以 / 开头
+					path: '/bundle/pages/bargain_progress/bargain_progress?initiate_id=' +
 						this.initiateId +
 						'&isShare=2' +
 						'&invite_code=' +
@@ -511,7 +512,7 @@
 			// 去订单详情
 			goToOrder() {
 				this.$Router.push({
-					path: '/pages/order_detail/order_detail',
+					path: '/bundle/pages/order_detail/order_detail',
 					query: {
 						order_id: this.bargainData.order_id
 					}
@@ -520,7 +521,7 @@
 			// 去结算
 			goToConfirm(type) {
 				this.$Router.replace({
-					path: '/pages/goods_order/goods_order',
+					path: '/bundle/pages/goods_order/goods_order',
 					query: {
 						from: OrderTypeEnum['BARGAIN'],
 						payload: {

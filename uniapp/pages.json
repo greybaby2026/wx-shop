@@ -114,6 +114,16 @@
             "meta": {
                 "auth": false
             }
+        },
+        {
+            // 404 页：router.js 的 catch-all 会把未匹配路径重定向到这里（原来指向不存在的 name:'404'）
+            "path": "pages/404/404",
+            "style": {
+                "navigationBarTitleText": "页面不存在"
+            },
+            "meta": {
+                "auth": false
+            }
         }
     ],
     "subPackages": [

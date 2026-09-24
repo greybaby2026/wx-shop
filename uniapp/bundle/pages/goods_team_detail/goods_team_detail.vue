@@ -400,7 +400,7 @@ export default {
                 await this.initGoodsDetail()
             })
             this.$Router.push({
-                path: '/pages/address/address',
+                path: '/bundle/pages/address/address',
                 query: {
                     type: 1
                 }
@@ -471,7 +471,7 @@ export default {
             if (!this.isLogin) return this.$Router.push('/pages/login/login')
 
             this.$Router.push({
-                path: '/pages/goods_order/goods_order',
+                path: '/bundle/pages/goods_order/goods_order',
                 query: {
                     from: OrderTypeEnum['TEAM'],
                     address_id: this.addressId,
@@ -493,7 +493,7 @@ export default {
         handleJoin({ spec, number }) {
             if (!this.isLogin) return this.$Router.push('/pages/login/login')
             this.$Router.push({
-                path: '/pages/goods_order/goods_order',
+                path: '/bundle/pages/goods_order/goods_order',
                 query: {
                     address_id: this.addressId,
                     from: OrderTypeEnum['TEAM'],
@@ -613,7 +613,8 @@ export default {
         const { name, image } = this.goodsInfo
         return {
             title: name,
-            path: `bundle/pages/goods_team_detail/goods_team_detail?id=${this.team_id}&invite_code=${this.userInfo.code}`,
+            // 小程序转发路径须以 / 开头
+            path: `/bundle/pages/goods_team_detail/goods_team_detail?id=${this.team_id}&invite_code=${this.userInfo.code}`,
             imageUrl: image
         }
     },
