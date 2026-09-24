@@ -295,6 +295,20 @@ class PaymentLogic extends BaseLogic
                 ->order('pw.is_default desc,dp.sort asc,id asc')
                 ->select()
                 ->toArray();
+
+            // 充值会员折扣订单：支付方式锁定为「余额支付」
+            // 说明：折扣仅在余额支付时生效，下单时已按折扣价确定订单金额，
+            //      故此处剔除其它支付方式，避免用户改选其它方式仍按折扣价支付（穿透折扣规则）
+            $lockBalancePay = ($params['from'] == 'order'
+                && floatval($order['recharge_discount_amount'] ?? 0) > 0);
+            if ($lockBalancePay) {
+                foreach ($pay_way as $k => $tmp) {
+                    if (intval($tmp['pay_way']) !== PayEnum::BALANCE_PAY) {
+                        unset($pay_way[$k]);
+                    }
+                }
+            }
+
             foreach ($pay_way as $k=>&$item) {
 
                 if ($item['pay_way'] == PayEnum::WECHAT_PAY) {
@@ -308,6 +322,9 @@ class PaymentLogic extends BaseLogic
                 if ($item['pay_way'] == PayEnum::BALANCE_PAY) {
                     $user_money = User::where(['id' => $userId])->value('user_money');
                     $item['extra'] = '可用余额:'.$user_money;
+                    if ($lockBalancePay) {
+                        $item['extra'] .= '（本单已享充值会员折扣，需使用余额支付）';
+                    }
                 }
                 // 充值时去除余额支付
                 if ($params['from'] == 'recharge' && $item['pay_way'] == PayEnum::BALANCE_PAY) {
@@ -324,6 +341,8 @@ class PaymentLogic extends BaseLogic
                 'order_amount' => $order['order_amount'],
                 'deduct_amount' => $order['deduct_amount'] ?? 0,
                 'cancel_time' => $cancelTime,
+                // 充值会员折扣额（>0 表示本单已享折扣且支付方式被锁定为余额支付）
+                'recharge_discount_amount' => $order['recharge_discount_amount'] ?? 0,
             ];
         } catch (\Exception $e) {
             self::setError($e->getMessage());

@@ -12,6 +12,11 @@
             </view>
 
             <view class="recharge-content">
+                <!-- 充值会员折扣：已达标的用户展示当前折扣 -->
+                <view class="member-discount-tip" v-if="rechargeDiscount > 0">
+                    您已享充值会员 <text class="bold">{{ rechargeDiscount }} 折</text>，下单使用余额支付即享折扣
+                </view>
+
                 <view class="normal md m-b-10"> 充值金额 </view>
 
                 <view class="input flex">
@@ -86,6 +91,8 @@ export default {
     },
 
     onShow() {
+        // 刷新用户信息（含充值会员折扣），确保「已享 X 折」提示与绑定状态最新
+        this.$store.dispatch('getUser').catch(() => {})
         this.getWalletData()
         this.getRechargeTemplateLists()
         this.getDeductInfo()
@@ -106,6 +113,13 @@ export default {
 
     onUnload() {
         // uni.$off('duringPayment')
+    },
+
+    computed: {
+        // 当前享有的充值会员折扣率（0 = 无折扣）
+        rechargeDiscount() {
+            return Number(this.$store.getters.userInfo.recharge_discount || 0)
+        }
     },
 
     methods: {
@@ -135,6 +149,12 @@ export default {
 
         // 充值
         recharge(id = '') {
+            // 未绑定门店拦截（后台开关开启时生效）：引导进入「选择门店」绑定页
+            const userInfo = this.$store.getters.userInfo || {}
+            if (Number(userInfo.force_bind_store || 0) === 1 && !userInfo.bind_store_id) {
+                this.$toast({ title: '请先绑定门店后再充值' })
+                return this.$Router.push('/bundle/pages/store_bind/store_bind')
+            }
             if (id !== '') {
                 this.rechargeData.template_id = id
             }
@@ -262,6 +282,17 @@ export default {
 
     .recommend-item:nth-child(3n) {
         margin-right: 0;
+    }
+
+    /* 充值会员折扣提示 */
+    .member-discount-tip {
+        margin-bottom: 24rpx;
+        padding: 16rpx 20rpx;
+        border-radius: 12rpx;
+        background: rgba(242, 166, 38, 0.12);
+        color: #f2a626;
+        font-size: 24rpx;
+        line-height: 34rpx;
     }
 
     .record {

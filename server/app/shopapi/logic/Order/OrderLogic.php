@@ -34,6 +34,7 @@ use app\common\enum\TeamEnum;
 use app\common\enum\YesNoEnum;
 use app\common\logic\CommonPresellLogic;
 use app\common\logic\DiscountLogic;
+use app\common\logic\RechargeMemberDiscountLogic;
 use app\common\model\AddressLibrary;
 use app\common\model\AfterSale;
 use app\common\model\AfterSaleGoods;
@@ -114,7 +115,17 @@ class OrderLogic extends BaseLogic
         'discount_amount'       => 0,//优惠金额
         'member_amount'         => 0,//会员折扣价
         'total_goods_original_price'  => 0,//订单商品原价总价
+        'recharge_discount_amount'    => 0,//充值会员折扣额
     ];
+
+    /**
+     * 充值会员折扣率（本次结算生效的折扣，10 = 不打折，0 = 不享折扣）
+     *
+     * 说明：折扣通过「降低商品售价」生效（与已停用的会员等级折扣同机制），
+     * 因此必须在取商品价格之前确定，见 resolveRechargeDiscountRate()
+     * @var float
+     */
+    protected static $rechargeDiscountRate = 0.0;
     
     /**
      * 失效商品列表
@@ -137,6 +148,41 @@ class OrderLogic extends BaseLogic
         return self::$user;
     }
 
+    /**
+     * @notes 解析本次结算生效的充值会员折扣率
+     *
+     * 生效条件（需全部满足）：
+     *   ① 折扣总开关开启 ② 用户单笔充值已达标 ③ 用户已绑定门店 ④ 本单使用「余额支付」
+     * 另：仅「普通订单」参与（秒杀/拼团/砍价/预售/抽奖/积分订单不参与）
+     *
+     * ⚠️ 折扣通过「降低商品售价」生效，因此必须在 getOrderGoodsData() 之前调用
+     *
+     * @param array $user   下单用户
+     * @param array $params 结算参数（需含 order_type / pay_way）
+     * @return float 折扣率（10 = 不打折，0 = 不享折扣）
+     */
+    public static function resolveRechargeDiscountRate(array $user, array $params): float
+    {
+        // 仅普通订单参与折扣
+        if (intval($params['order_type'] ?? 0) !== OrderEnum::NORMAL_ORDER) {
+            return 0.0;
+        }
+        // 必须使用余额支付（支付方式在结算页选定，随下单参数传入）
+        if (intval($params['pay_way'] ?? 0) !== PayEnum::BALANCE_PAY) {
+            return 0.0;
+        }
+        $check = RechargeMemberDiscountLogic::checkUsable($user);
+        return $check['usable'] ? floatval($check['discount']) : 0.0;
+    }
+
+    /**
+     * @notes 本单是否享用了充值会员折扣（用于建单前的余额校验等）
+     */
+    public static function hasRechargeDiscount(array $params): bool
+    {
+        return floatval($params['recharge_discount_amount'] ?? 0) > 0;
+    }
+
 
     /**
      * @notes 订单结算详情
@@ -153,6 +199,9 @@ class OrderLogic extends BaseLogic
 
             //设置用户信息
             $user = self::setOrderUser($params['user_id']);
+
+            //充值会员折扣：必须在取商品价格之前确定（折扣通过降低售价生效）
+            self::$rechargeDiscountRate = self::resolveRechargeDiscountRate($user, $params);
 
             //设置用户地址
             $userAddress = UserAddress::getOneAddress($params['user_id'], $params['address_id'] ?? 0);
@@ -215,9 +264,10 @@ class OrderLogic extends BaseLogic
 
                 'user_id'               => $user['id'],
                 'user_money'            => $user['user_money'],
-                'six_discount_available'          => ConfigService::get('recharge', 'six_percent_discount', 0) && intval($user['six_discount'] ?? 0) === 1 && floatval($user['user_money'] ?? 0) > 0,
-                'six_discount_amount'             => bcadd(0, bcmul(self::$orderPrice['order_amount'], '0.6', 2), 2),
-                'six_discount_save'               => bcadd(0, bcmul(self::$orderPrice['order_amount'], '0.4', 2), 2),
+                //充值会员折扣（折扣额已通过「降低商品售价」体现在 order_amount 中，此处为展示与记账字段）
+                'recharge_discount_available'     => self::$rechargeDiscountRate > 0 ? 1 : 0,
+                'recharge_discount_rate'          => self::$rechargeDiscountRate,
+                'recharge_discount_amount'        => bcadd(0, (string) self::$orderPrice['recharge_discount_amount'], 2),
                 'user_remark'           => $params['user_remark'] ?? '',
                 'address'               => $userAddress,
 
@@ -327,21 +377,16 @@ class OrderLogic extends BaseLogic
             $result['express_price']                = bcadd($result['express_price'], 0, 2);
             $result['total_goods_original_price']   = bcadd($result['total_goods_original_price'], 0, 2);
             
-            // 充值抵扣计算
-            $deductInfo = DeductService::check();
-            if ($deductInfo['active']) {
-                $user = User::find($params['user_id']);
-                $calc = DeductService::calculate(
-                    $result['order_amount'],
-                    $user['activity_money'] ?? 0,
-                    $deductInfo['ratio']
-                );
-                $result['deduct_amount'] = $calc['deduct_amount'];
-                $result['pay_amount'] = $calc['pay_amount'];
-                $result['activity_ratio'] = $deductInfo['ratio'];
-            } else {
-                $result['deduct_amount'] = 0;
-                $result['pay_amount'] = $result['order_amount'];
+            // 活动余额抵扣：已整体关闭（2026-09-24 业务决策，改用「充值会员折扣」）
+            // 保留字段以兼容前端读取；历史 activity_money 余额不再自动抵扣，由后台人工处理
+            $result['deduct_amount'] = 0;
+            $result['pay_amount'] = $result['order_amount'];
+
+            // 充值会员折扣：余额支付可用性（前端据此提示「余额不足，无法使用余额支付」）
+            // 说明：折扣仅在「余额支付」时生效，故需让前端提前知道余额是否足够，避免下单后才失败
+            if (self::$rechargeDiscountRate > 0) {
+                $result['is_balance_enough'] =
+                    (floatval($user['user_money'] ?? 0) >= floatval($result['order_amount'])) ? 1 : 0;
             }
 
             return $result;
@@ -435,6 +480,20 @@ class OrderLogic extends BaseLogic
         // 商品检测
         if (empty($params['goods'])) {
             throw new \Exception('提交的商品已不能购买，请重新选择商品');
+        }
+
+        // 未绑定门店拦截（新老用户统一：下单前必须绑定门店）
+        // 说明：由配置开关控制（默认关闭）——「选择门店绑定」页随客户端发版上线后才能开启，
+        //      否则老版本客户端无绑定页会导致存量用户无法下单
+        if (RechargeMemberDiscountLogic::isForceBindStore() && intval(self::$user['bind_store_id'] ?? 0) <= 0) {
+            throw new \Exception('请先绑定门店后再下单');
+        }
+
+        // 充值会员折扣订单：使用余额支付享折扣，余额必须足额（整单余额支付，无组合支付）
+        // 结算预览已通过 is_balance_enough 提前告知，此处为下单时的最终校验（防中途余额变动）
+        if (self::hasRechargeDiscount($params)
+            && floatval(self::$user['user_money'] ?? 0) < floatval($params['order_amount'])) {
+            throw new \Exception('余额不足，无法使用余额支付享折扣');
         }
         //配送方式为快递配送时,检测地址
         if (empty($params['address']) && $params['delivery_type'] == DeliveryEnum::EXPRESS_DELIVERY && $params['is_address'] == 1) {
@@ -728,8 +787,12 @@ class OrderLogic extends BaseLogic
             'goods_price'       => $params['total_goods_price'],
             'order_amount'      => $params['order_amount'],
             'express_price'     => $params['express_price'],
-            'discount_amount'   => $params['discount_amount'] + ($params['six_discount_amount'] ?? 0),
+            //优惠金额：仅优惠券（充值会员折扣已通过降低商品售价体现在 order_amount 中，不重复计入）
+            'discount_amount'   => $params['discount_amount'],
+            //充值会员折扣额：member_amount 为历史字段（后台订单列表/结算等既有展示读取它），
+            //recharge_discount_amount 为本功能专用字段，两者同值双写，便于对账与后续拆分
             'member_amount'     => $params['member_amount'],
+            'recharge_discount_amount' => $params['recharge_discount_amount'] ?? 0.00,
             'deduct_amount'     => $params['deduct_amount'] ?? 0.00,
             'user_remark'       => $params['user_remark'],
             'address'       => [
@@ -843,7 +906,10 @@ class OrderLogic extends BaseLogic
     {
         $goods = $params['goods'];
         $goodsIds = array_column($goodsData, 'goods_id');
-        $levelGoodsItem = DiscountLogic::getGoodsDiscount(self::$user['id'], $goodsIds);
+        //会员等级折扣已停用（2026-09-24 业务决策：只保留「充值会员折扣」），
+        //原等级折扣价查询不再执行，避免无谓查询；如需恢复等级折扣，取消下面注释并
+        //在下方恢复 $levelGoodsItem 取价逻辑。
+        //$levelGoodsItem = DiscountLogic::getGoodsDiscount(self::$user['id'], $goodsIds);
         $goodsLists = [];
         foreach ($goods as $k => $item) {
             //删除没找到商品信息的商品
@@ -894,10 +960,18 @@ class OrderLogic extends BaseLogic
                 continue;
             }
             
-            $goodsInfo['member_price'] = 0;
-            if(in_array(self::$OrderType,[OrderEnum::NORMAL_ORDER,OrderEnum::VIRTUAL_ORDER])){
-                //会员折扣
-                $goodsInfo['member_price'] = $levelGoodsItem[$goodsInfo['goods_id']][$goodsInfo['item_id']]['discount_price'] ?? '';
+            //充值会员折扣价（原「会员等级折扣」已停用，改由充值折扣承担）
+            //折扣价 = 原售价 × 折扣率 ÷ 10；未达标 / 未绑定门店 / 非余额支付时折扣率为 0 → 不打折
+            //⚠️ 不打折时必须保持「空字符串」而非 0：getGoodsSellPrice() 的判断是
+            //   `member_price >= 0 && member_price <= sell_price`，若传 0 会被判为有效会员价，
+            //   导致售价被置为 0（PHP8 下 '' >= 0 为 false，故原实现用 '' 走回退分支；不可改成 0）
+            $goodsInfo['member_price'] = '';
+            if (self::$rechargeDiscountRate > 0) {
+                $rechargePrice = round(floatval($goodsInfo['sell_price']) * self::$rechargeDiscountRate / 10, 2);
+                //折扣价须有效且低于原售价，否则视为不打折（防配置异常导致涨价或负价）
+                if ($rechargePrice > 0 && $rechargePrice < floatval($goodsInfo['sell_price'])) {
+                    $goodsInfo['member_price'] = $rechargePrice;
+                }
             }
             // 获取不同订单类型的规格单价
             $goodsInfo['sell_price'] = self::getSellPrice($params, $goodsInfo);
@@ -909,10 +983,18 @@ class OrderLogic extends BaseLogic
 
             self::$totalNum += $item['goods_num'];
             self::$orderPrice['total_goods_price'] += $goodsInfo['sub_price'];
-            //普通商品，计算折扣金额
-            if(in_array(self::$OrderType,[OrderEnum::NORMAL_ORDER,OrderEnum::VIRTUAL_ORDER])){
-                $memberAmount = round(($goodsInfo['original_price'] - $goodsInfo['sell_price']) * $item['goods_num'],2);
-                self::$orderPrice['member_amount'] += $memberAmount;
+            //充值会员折扣额（普通订单）
+            //说明：本折扣通过「降低售价」生效，故折扣额 = (原售价 − 折扣后售价) × 数量。
+            //     同时写入 recharge_discount_amount（本功能专用、便于对账）与 member_amount
+            //     （历史字段，后台订单列表/结算等既有展示均读取它，双写可避免大范围改动；
+            //      若日后恢复「会员等级折扣」，需把两者拆开统计）。
+            if (floatval($goodsInfo['member_price']) > 0) {
+                $rechargeDiscount = round(
+                    (floatval($goodsInfo['original_price']) - floatval($goodsInfo['sell_price'])) * $item['goods_num'],
+                    2
+                );
+                self::$orderPrice['member_amount'] += $rechargeDiscount;
+                self::$orderPrice['recharge_discount_amount'] += $rechargeDiscount;
             }
 
             //订单商品原价总价

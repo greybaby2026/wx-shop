@@ -13,6 +13,25 @@
                     <el-input placeholder="" v-model="list.set.min_amount"></el-input>
                     <span class="desc">最低充值金额要求，不填或填0表示不限制最低充值金额</span>
                 </el-form-item>
+
+                <!-- 充值会员折扣（充值金额 → 永久购物折扣） -->
+                <el-form-item label="充值会员折扣">
+                    <el-radio v-model="list.set.open_member_discount" :label="0">关闭</el-radio>
+                    <el-radio v-model="list.set.open_member_discount" :label="1">开启</el-radio>
+                    <span class="desc">
+                        开启后，用户「单笔充值」达到下方任一充值规则的金额，即<b>永久</b>享受该规则配置的折扣。
+                        折扣需同时满足：已绑定门店、且使用<b>余额支付</b>
+                    </span>
+                </el-form-item>
+
+                <el-form-item label="强制绑定门店">
+                    <el-radio v-model="list.set.force_bind_store" :label="0">关闭</el-radio>
+                    <el-radio v-model="list.set.force_bind_store" :label="1">开启</el-radio>
+                    <span class="desc" style="color: #E6A23C">
+                        开启后，未绑定门店的用户无法下单与充值。
+                        ⚠️ 必须待小程序「选择门店绑定」页发布上线后再开启，否则老版本客户端用户将无法下单
+                    </span>
+                </el-form-item>
             </el-form>
         </div>
 
@@ -29,6 +48,11 @@
                             <el-form-item  class="m-t-10" label="充值奖励">
                                 <el-input class="m-r-10" v-model="list.rule[index].award[0].give_money"></el-input>
                                 元
+                            </el-form-item>
+                            <el-form-item class="m-t-10" label="永久折扣">
+                                <el-input class="m-r-10" v-model="list.rule[index].discount"></el-input>
+                                折
+                                <span class="desc">如 9.5 = 95 折；填 0 或 10 表示该档不享折扣</span>
                             </el-form-item>
                         </el-form>
 
@@ -112,7 +136,11 @@ export default class RechargeRuleEdit extends Vue {
     list: any = {
         set: {
             open: 1,
-            min_amount: 100
+            min_amount: 100,
+            //充值会员折扣：总开关（0关/1开）
+            open_member_discount: 0,
+            //是否强制绑定门店后才能下单/充值（0关/1开）
+            force_bind_store: 0
         },
         rule: [
             {
@@ -121,7 +149,9 @@ export default class RechargeRuleEdit extends Vue {
                     {
                         give_money: 5
                     }
-                ]
+                ],
+                //该档对应的永久折扣率（10=不打折，9.5=95折，0=该档不享折扣）
+                discount: 0
             }
         ],
         distribution_set: {
@@ -146,7 +176,9 @@ export default class RechargeRuleEdit extends Vue {
                 {
                     give_money: 0
                 }
-            ]
+            ],
+            //该档对应的永久折扣率（10=不打折，9.5=95折，0=该档不享折扣）
+            discount: 0
         })
     }
 

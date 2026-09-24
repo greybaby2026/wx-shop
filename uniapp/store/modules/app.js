@@ -7,6 +7,9 @@ import { router } from '@/router'
 import { getClient, toast } from '@/utils/tools'
 import { apiserviceConfig, apishareConfig } from '@/api/app'
 
+// 强制绑定门店引导的时间节流（避免同一时间重复跳转「选择门店」页）
+let lastBindStoreRedirect = 0
+
 const state = {
     config: Cache.get(CONFIG) || {
         app_pop_agreement: 1
@@ -106,6 +109,20 @@ const actions = {
             apiUserCentre()
                 .then((res) => {
                     commit('setUserInfo', res)
+                    // 强制绑定门店（后台开关开启时）：登录后若未绑定门店，统一引导进入「选择门店」页
+                    // 说明：开关默认关闭，需等「选择门店」页随客户端发版上线后再开启
+                    if (
+                        Number(res.force_bind_store || 0) === 1 &&
+                        !res.bind_store_id &&
+                        Date.now() - lastBindStoreRedirect > 3000
+                    ) {
+                        lastBindStoreRedirect = Date.now()
+                        const pages = getCurrentPages()
+                        const current = pages.length ? pages[pages.length - 1].route : ''
+                        if (current !== 'bundle/pages/store_bind/store_bind') {
+                            uni.navigateTo({ url: '/bundle/pages/store_bind/store_bind' })
+                        }
+                    }
                     resolve(res)
                 })
                 .catch(() => {

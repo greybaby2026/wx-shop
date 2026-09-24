@@ -39,11 +39,15 @@ class RechargeTemplateLists extends BaseShopDataLists
      */
     public function lists(): array
     {
-        $lists = RechargeTemplate::field('id,money,award')->select()->toArray();
+        //discount = 该档对应的「充值会员永久折扣率」（10=不打折，9.5=95折，0=该档不享折扣）
+        $lists = RechargeTemplate::field('id,money,award,discount')->select()->toArray();
         $result = [];
         foreach($lists as $item) {
+            $item['discount'] = floatval($item['discount'] ?? 0);
+            //折扣率是否有效（0 与 >=10 均视为不享折扣）
+            $item['has_discount'] = ($item['discount'] > 0 && $item['discount'] < 10) ? 1 : 0;
             $item['tips'] = $this->getTips($item);
-            
+
             $result[] = $item;
         }
 
@@ -72,11 +76,20 @@ class RechargeTemplateLists extends BaseShopDataLists
      */
     public function getTips($item)
     {
-        if(empty($item['award']) || !is_array($item['award'])) {
-            return '';
+        $tips = '';
+        if (!empty($item['award']) && is_array($item['award'])) {
+            foreach($item['award'] as $subItem) {
+                if (isset($subItem['give_money']) && $subItem['give_money'] > 0) {
+                    $tips = '充' . $item['money'] . '送' . clear_zero($subItem['give_money']) . '元';
+                }
+                break;
+            }
         }
-        foreach($item['award'] as $subItem) {
-            return isset($subItem['give_money']) && $subItem['give_money'] > 0 ? '充' . $item['money'] . '送' . clear_zero($subItem['give_money']) . '元' : '';
+        //追加「充值会员折扣」文案（如：充1000送100元 · 永久95折）
+        $discount = floatval($item['discount'] ?? 0);
+        if ($discount > 0 && $discount < 10) {
+            $tips .= ($tips ? ' · ' : '') . '永久' . clear_zero($discount) . '折';
         }
+        return $tips;
     }
 }

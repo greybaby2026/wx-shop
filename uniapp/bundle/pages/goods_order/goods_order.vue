@@ -253,6 +253,44 @@
 			</view> -->
     </view>
 
+    <!-- 支付方式：充值会员折扣仅在「余额支付」时生效 -->
+    <view class="contain clearing pay-way" v-if="isNormalOrder">
+      <view class="cell clearing-item" @tap="changePayWay(1)">
+        <view class="flex-1">
+          <view class="cell-label">
+            余额支付
+            <text class="xs muted m-l-10">可用 ¥{{ userMoney }}</text>
+          </view>
+          <view
+            class="xs m-t-10"
+            :style="{ color: themeColor }"
+            v-if="rechargeDiscountRate > 0 && rechargeDiscountRate < 10"
+          >
+            享充值会员 {{ rechargeDiscountRate }} 折
+          </view>
+          <view class="xs warn-tip m-t-10" v-if="payWayHint">{{ payWayHint }}</view>
+        </view>
+        <u-icon
+          :name="orderFrom.pay_way === 1 ? 'checkmark-circle-fill' : 'circle'"
+          :color="orderFrom.pay_way === 1 ? themeColor : '#c0c4cc'"
+          size="40"
+        />
+      </view>
+      <view class="cell clearing-item" @tap="changePayWay(0)">
+        <view class="flex-1">
+          <view class="cell-label">其他支付方式</view>
+          <view class="xs muted m-t-10" v-if="canUseRechargeDiscount">
+            微信 / 支付宝等，不享充值会员折扣
+          </view>
+        </view>
+        <u-icon
+          :name="orderFrom.pay_way === 0 ? 'checkmark-circle-fill' : 'circle'"
+          :color="orderFrom.pay_way === 0 ? themeColor : '#c0c4cc'"
+          size="40"
+        />
+      </view>
+    </view>
+
     <!-- 订单清算 -->
     <view class="contain clearing">
       <view class="cell clearing-item">
@@ -295,11 +333,16 @@
           />
         </view>
       </view>
-      <view class="cell clearing-item" v-if="orderInfo.member_amount > 0">
-        <view class="cell-label">会员折扣</view>
+      <view class="cell clearing-item" v-if="rechargeDiscountAmount > 0">
+        <view class="cell-label">
+          充值会员折扣
+          <text class="xs muted" v-if="rechargeDiscountRate > 0">
+            （{{ rechargeDiscountRate }} 折）
+          </text>
+        </view>
         <view class="cell-content">
           <price
-            :content="orderInfo.member_amount"
+            :content="rechargeDiscountAmount"
             :color="themeColor"
             prefix="-￥"
           />
@@ -650,6 +693,9 @@ export default {
         selffetch_shop_id: "", // 自提门店ID 【门店自提】
         contact: "", // 提货人 【门店自提】
         mobile: "", // 联系电话 【门店自提】
+        // 支付方式: 1-余额支付（可享充值会员折扣）; 0-其他支付方式（不享折扣）
+        // 说明：充值会员折扣仅在余额支付时生效，故需在下单前确定并随单提交
+        pay_way: 1,
       },
 
       /** S 优惠券 **/
@@ -686,6 +732,49 @@ export default {
   },
 
   computed: {
+    /** S 充值会员折扣 / 支付方式 **/
+    // 是否普通订单（充值会员折扣仅对普通订单生效）
+    isNormalOrder() {
+      return Number(this.orderInfo.order_type) === 0;
+    },
+    // 可用余额
+    userMoney() {
+      return Number(this.$store.getters.userInfo.user_money || 0).toFixed(2);
+    },
+    // 本次结算生效的充值会员折扣率（10 = 不打折）
+    rechargeDiscountRate() {
+      return Number(this.orderInfo.recharge_discount_rate || 0);
+    },
+    // 本单充值会员折扣额
+    rechargeDiscountAmount() {
+      return Number(this.orderInfo.recharge_discount_amount || 0);
+    },
+    // 本单是否已享折扣
+    canUseRechargeDiscount() {
+      return Number(this.orderInfo.recharge_discount_available || 0) === 1;
+    },
+    // 是否已绑定门店
+    isBindStore() {
+      return !!this.$store.getters.userInfo.bind_store_id;
+    },
+    // 是否必须先绑定门店（后台开关控制；开启时未绑店不可下单）
+    needBindStore() {
+      const info = this.$store.getters.userInfo || {};
+      return Number(info.force_bind_store || 0) === 1 && !info.bind_store_id;
+    },
+    // 余额支付行下方的提示文案（未绑店 / 未达标 / 余额不足）
+    payWayHint() {
+      if (Number(this.orderFrom.pay_way) !== 1) return '';
+      if (this.canUseRechargeDiscount) {
+        return Number(this.orderInfo.is_balance_enough || 0) === 1
+          ? ''
+          : '余额不足，无法使用余额支付享折扣（可先充值）';
+      }
+      if (!this.isBindStore) return '绑定门店后可享充值会员折扣';
+      return '单笔充值达标后可享充值会员折扣';
+    },
+    /** E 充值会员折扣 / 支付方式 **/
+
     // 过滤订单表单冗余参数
     orderFormParams() {
       const from = {
@@ -935,6 +1024,15 @@ export default {
       }
     },
 
+    // 更改支付方式（充值会员折扣仅在余额支付时生效，金额会随之变化，故需重新结算）
+    changePayWay(val) {
+      if (Number(this.orderFrom.pay_way) === Number(val)) return;
+      this.orderFrom.pay_way = Number(val);
+      this.initOrderData().catch((error) => {
+        console.log(error);
+      });
+    },
+
     // 点击地址选择
     onAddressSelect() {
       // 监听全局selectaddress事件
@@ -995,6 +1093,11 @@ export default {
       // 可购买商品为0时直接返回
       if (this.goodsLength == 0) {
         return;
+      }
+      // 未绑定门店拦截（后台开关开启时生效）：引导进入「选择门店」绑定页
+      if (this.needBindStore) {
+        this.$toast({ title: '请先绑定门店后再下单' });
+        return this.$Router.push('/bundle/pages/store_bind/store_bind');
       }
       if (
         this.orderFrom.delivery_type == 4 &&
@@ -1324,6 +1427,25 @@ export default {
 
   &-item {
     height: 70rpx;
+  }
+}
+
+// 支付方式（充值会员折扣仅在余额支付时生效）
+.pay-way {
+  margin-bottom: 20rpx;
+
+  .clearing-item {
+    height: auto;
+    min-height: 110rpx;
+    padding: 16rpx 0;
+
+    &:nth-child(n + 2) {
+      border-top: $-dashed-border;
+    }
+  }
+
+  .warn-tip {
+    color: #f2a626;
   }
 }
 

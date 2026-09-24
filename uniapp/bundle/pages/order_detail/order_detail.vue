@@ -385,11 +385,11 @@
                         />
                     </view>
                 </view>
-                <view class="cell order-bill__item" v-if="orderInfo.member_amount * 1">
-                    <view class="cell-label">会员折扣</view>
+                <view class="cell order-bill__item" v-if="rechargeDiscountAmount > 0">
+                    <view class="cell-label">充值会员折扣</view>
                     <view class="cell-content">
                         <price
-                            :content="orderInfo.member_amount"
+                            :content="rechargeDiscountAmount"
                             :color="themeColor"
                             prefix="-￥"
                         />
@@ -590,6 +590,10 @@ export default {
 
     computed: {
         OrderTypeEnum: () => OrderTypeEnum,
+        // 充值会员折扣额（>0 表示本单享用了充值会员折扣）
+        rechargeDiscountAmount() {
+            return Number(this.orderInfo.recharge_discount_amount || 0)
+        },
         orderAction() {
             return this.orderStatus[this.orderInfo.order_status] || {}
         },

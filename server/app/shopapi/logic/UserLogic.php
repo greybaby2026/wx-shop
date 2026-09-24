@@ -68,7 +68,7 @@ class UserLogic extends BaseLogic
      */
     public function centre(array $userInfo): array
     {
-        $user = User::with('user_level')->field('id,sn,sex,nickname,avatar,user_money,user_integral,mobile,level,create_time,code,is_new_user,is_register_award,bind_store_id')
+        $user = User::with('user_level')->field('id,sn,sex,nickname,avatar,user_money,user_integral,mobile,level,create_time,code,is_new_user,is_register_award,bind_store_id,recharge_discount')
             ->find($userInfo['user_id']);
         $user->level_rank = $user->rank ?? '';
         $user->level_name = $user->name ?? '';
@@ -79,6 +79,11 @@ class UserLogic extends BaseLogic
             ? (\app\common\model\SelffetchShop::where('id', $bindStoreId)->value('name') ?: '')
             : '';
         $user->is_bind_store = $bindStoreId > 0 ? 1 : 0;
+        //充值会员折扣（供「我的」页展示；仅余额支付下单时生效）
+        $user->recharge_discount = floatval($user->recharge_discount ?? 0);
+        $user->has_recharge_discount = ($user->recharge_discount > 0 && $user->recharge_discount < 10) ? 1 : 0;
+        //是否要求「绑定门店」后才能下单/充值（前端据此拦截并引导进入选店绑定页）
+        $user->force_bind_store = \app\common\logic\RechargeMemberDiscountLogic::isForceBindStore() ? 1 : 0;
         //待支付
         $user->wait_pay = Order::where(['user_id' => $userInfo['user_id'], 'order_status' => OrderEnum::STATUS_WAIT_PAY, 'pay_status' => PayEnum::UNPAID])->count();
         //待发货
@@ -473,13 +478,17 @@ class UserLogic extends BaseLogic
      */
     public static function info($userId)
     {
-        $user = User::field('sn,avatar,nickname,sex,mobile,create_time,bind_store_id')->findOrEmpty($userId)->toArray();
+        $user = User::field('sn,avatar,nickname,sex,mobile,create_time,bind_store_id,recharge_discount')->findOrEmpty($userId)->toArray();
         //所属门店(扫门店码绑定,首绑终身)
         $bindStoreId = intval($user['bind_store_id'] ?? 0);
         $user['bind_store_name'] = $bindStoreId > 0
             ? (\app\common\model\SelffetchShop::where('id', $bindStoreId)->value('name') ?: '')
             : '';
         $user['is_bind_store'] = $bindStoreId > 0 ? 1 : 0;
+        //充值会员折扣（仅余额支付下单时生效）
+        $user['recharge_discount'] = floatval($user['recharge_discount'] ?? 0);
+        $user['has_recharge_discount'] = ($user['recharge_discount'] > 0 && $user['recharge_discount'] < 10) ? 1 : 0;
+        $user['force_bind_store'] = \app\common\logic\RechargeMemberDiscountLogic::isForceBindStore() ? 1 : 0;
         $user['has_password'] = empty($user['password']) ? '未设置' : '已设置';
         $user['version'] = request()->header('version');
         return $user;

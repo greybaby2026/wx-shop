@@ -30,6 +30,10 @@
                         <view class="xs m-t-10 store-bind store-bind--none" v-else>
                             暂未加入门店，扫门店码加入
                         </view>
+                        <!-- 充值会员折扣（下单使用余额支付享折扣） -->
+                        <view class="xs m-t-10 store-bind" v-if="rechargeDiscount > 0">
+                            充值会员：{{ rechargeDiscount }} 折
+                        </view>
                         <view
                             class="flex user-id m-t-10"
                             v-if="userInfo.sn && content.show_user_sn"
@@ -143,6 +147,10 @@ export default {
             return (type) => {
                 return this.content.assets.includes(type)
             }
+        },
+        // 充值会员折扣率（0 = 无折扣）；来自 user/centre 的 recharge_discount
+        rechargeDiscount() {
+            return Number(this.userInfo.recharge_discount || 0)
         },
         infoStyle() {
             const { background_image, background_type } = this.content

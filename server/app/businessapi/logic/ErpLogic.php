@@ -36,7 +36,7 @@ class ErpLogic extends BaseLogic
 
     public function userInfo($params): array
     {
-        $query = User::field('id,sn,nickname,avatar,user_money,activity_money,six_discount,mobile');
+        $query = User::field('id,sn,nickname,avatar,user_money,activity_money,six_discount,recharge_discount,mobile');
         if (!empty($params['user_sn'])) { $query->where('sn', $params['user_sn']); }
         elseif (!empty($params['mobile'])) { $query->where('mobile', $params['mobile']); }
         else { self::$error = '请输入手机号或用户编号'; return []; }
@@ -50,7 +50,10 @@ class ErpLogic extends BaseLogic
             'user_money' => round((float)($user->user_money ?? 0), 2),
             'deduct_ratio' => $deductInfo['active'] ? $deductInfo['ratio'] : 0,
             'deduct_active' => $deductInfo['active'],
+            //历史字段（旧「充值6折」半成品，已废弃，恒为 0；保留以兼容 ERP 既有契约）
             'six_discount' => (int)($user->six_discount ?? 0),
+            //充值会员折扣率（10=不打折，0=无折扣；仅余额支付下单时生效）
+            'recharge_discount' => floatval($user->recharge_discount ?? 0),
         ];
     }
 

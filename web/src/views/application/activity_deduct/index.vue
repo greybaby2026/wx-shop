@@ -1,16 +1,27 @@
 <template>
   <div class="ls-add-admin">
+    <!-- 功能已整体关闭的提示（2026-09-24 起改用「充值会员折扣」） -->
+    <el-alert
+      v-if="form.disabled === 1"
+      class="m-t-10"
+      title="活动余额抵扣已整体关闭"
+      :description="form.disabled_tip"
+      type="warning"
+      :closable="false"
+      show-icon
+    />
+
     <div class="ls-card ls-coupon-edit__form m-t-10">
       <div class="nr weight-500 m-b-20">活动配置</div>
       <el-form ref="form" :model="form" label-width="120px" size="small">
         <el-form-item label="活动开关">
-          <el-radio v-model="form.switch" :label="1">开启</el-radio>
-          <el-radio v-model="form.switch" :label="0">关闭</el-radio>
+          <el-radio v-model="form.switch" :label="1" :disabled="form.disabled === 1">开启</el-radio>
+          <el-radio v-model="form.switch" :label="0" :disabled="form.disabled === 1">关闭</el-radio>
           <span class="desc">开启后用户下单时余额自动抵扣订单金额</span>
         </el-form-item>
         <el-form-item label="充值到活动余额">
-          <el-radio v-model="form.recharge_to_activity" :label="1">开启</el-radio>
-          <el-radio v-model="form.recharge_to_activity" :label="0">关闭</el-radio>
+          <el-radio v-model="form.recharge_to_activity" :label="1" :disabled="form.disabled === 1">开启</el-radio>
+          <el-radio v-model="form.recharge_to_activity" :label="0" :disabled="form.disabled === 1">关闭</el-radio>
           <span class="desc">开启后活动期间的充值进入活动余额，仅用于比例抵扣</span>
         </el-form-item>
         <el-form-item label="活动名称">
@@ -128,7 +139,7 @@
     </div>
 
     <div class="ls-fixed-footer">
-      <el-button type="primary" @click="onSave" :loading="saving">保存</el-button>
+      <el-button type="primary" @click="onSave" :loading="saving" :disabled="form.disabled === 1">保存</el-button>
       <el-button @click="onCancel">取消</el-button>
     </div>
   </div>
@@ -142,7 +153,7 @@ export default {
       saving: false,
       themePresets: [],
       uploadAction: window.location.origin + '/adminapi/upload/image',
-      form: { switch:0, ratio:30, activity_name:'', current_theme:'', start_time:'', end_time:'', recharge_to_activity:0, theme_config:{ primary_color:'#1a3a5c', accent_color:'#c9a96e', banner_image:'', slogan:'', badge_text:'', badge_icon:'', deco_element:'none', button_style:'rounded', animation:'none' } }
+      form: { switch:0, ratio:30, activity_name:'', current_theme:'', start_time:'', end_time:'', recharge_to_activity:0, disabled:0, disabled_tip:'', theme_config:{ primary_color:'#1a3a5c', accent_color:'#c9a96e', banner_image:'', slogan:'', badge_text:'', badge_icon:'', deco_element:'none', button_style:'rounded', animation:'none' } }
     }
   },
   created() { this.getConfig() },
@@ -157,6 +168,9 @@ export default {
           this.form.start_time = res.start_time || ''
           this.form.end_time = res.end_time || ''
           this.form.recharge_to_activity = res.recharge_to_activity ?? 0
+          //功能已整体关闭（2026-09-24 起改用「充值会员折扣」）
+          this.form.disabled = res.disabled ?? 0
+          this.form.disabled_tip = res.disabled_tip || ''
           this.form.theme_config = res.theme_config || this.form.theme_config
           this.themePresets = res.theme_presets || []
         }

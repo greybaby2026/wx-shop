@@ -201,14 +201,20 @@ class DeductActivityLogic
     public static function getConfig(): array
     {
         $config = [
-            'switch'        => ConfigService::get('activity_deduct', 'switch', 0),
+            //⚠️ 2026-09-24 起「活动余额抵扣」已整体关闭（改用充值会员折扣）：
+            //   服务端 DeductService::check() 与 rechargeToActivity() 均已硬关闭，
+            //   因此这里的开关值对外不再生效；为免误解，统一按 0 返回。
+            'switch'        => 0,
             'ratio'         => (int) ConfigService::get('activity_deduct', 'ratio', 40),
-            'recharge_to_activity' => (int) ConfigService::get('activity_deduct', 'recharge_to_activity', 0),
+            'recharge_to_activity' => 0,
             'activity_name' => ConfigService::get('activity_deduct', 'activity_name', ''),
             'current_theme' => ConfigService::get('activity_deduct', 'current_theme', ''),
             'start_time'    => ConfigService::get('activity_deduct', 'start_time', ''),
             'end_time'      => ConfigService::get('activity_deduct', 'end_time', ''),
             'theme_config'  => ConfigService::get('activity_deduct', 'theme_config', []),
+            //前端据此展示「已关闭」提示并禁用保存
+            'disabled'      => 1,
+            'disabled_tip'  => '活动余额抵扣已整体关闭（2026-09-24 起改用「充值会员折扣」，充值一律进入可用余额）。历史活动余额保留在用户账户中，不再自动抵扣，如需处理请由后台人工操作。',
         ];
         $config['theme_presets'] = self::getThemePresets();
         return $config;
@@ -216,9 +222,11 @@ class DeductActivityLogic
 
     public static function setConfig(array $params): void
     {
-        ConfigService::set('activity_deduct', 'switch',        $params['switch'] ?? 0);
+        //⚠️ 开关与「充值进活动余额」强制置 0，防止误开导致
+        //   「活动抵扣」与「充值会员折扣」重复优惠（服务端已硬关闭，此处双保险）
+        ConfigService::set('activity_deduct', 'switch', 0);
         ConfigService::set('activity_deduct', 'ratio',         $params['ratio'] ?? 40);
-        ConfigService::set('activity_deduct', 'recharge_to_activity', $params['recharge_to_activity'] ?? 0);
+        ConfigService::set('activity_deduct', 'recharge_to_activity', 0);
         ConfigService::set('activity_deduct', 'activity_name', $params['activity_name'] ?? '');
         ConfigService::set('activity_deduct', 'current_theme', $params['current_theme'] ?? '');
         ConfigService::set('activity_deduct', 'start_time',    $params['start_time'] ?? '');

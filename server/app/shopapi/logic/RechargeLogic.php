@@ -18,9 +18,11 @@ namespace app\shopapi\logic;
 
 use app\common\enum\PayEnum;
 use app\common\logic\BaseLogic;
+use app\common\logic\RechargeMemberDiscountLogic;
 use app\common\model\Config;
 use app\common\model\RechargeOrder;
 use app\common\model\RechargeTemplate;
+use app\common\model\User;
 use app\common\service\ConfigService;
 use think\response\Json;
 
@@ -61,6 +63,14 @@ class RechargeLogic extends BaseLogic
         $open = ConfigService::get('recharge', 'open');
         if(!$open) {
             throw new \think\Exception('充值功能已关闭');
+        }
+        // 未绑定门店拦截（与下单口径一致）
+        // 说明：由配置开关控制（默认关闭）——「选择门店绑定」页随客户端发版上线后才能开启
+        if (RechargeMemberDiscountLogic::isForceBindStore()) {
+            $bindStoreId = intval(User::where('id', $params['user_id'] ?? 0)->value('bind_store_id') ?: 0);
+            if ($bindStoreId <= 0) {
+                throw new \think\Exception('请先绑定门店后再充值');
+            }
         }
         if(!isset($params['pay_way'])) {
             throw new \think\Exception('请选择支付方式');

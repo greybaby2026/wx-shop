@@ -43,6 +43,12 @@
                         <text class="deduct-info-value deduct-info-value--total">¥{{ amount }}</text>
                     </view>
                 </view>
+                <!-- 充值会员折扣提示：折扣订单支付方式已锁定为余额支付 -->
+                <view v-if="recharge_discount_amount > 0" class="recharge-discount-tip u-skeleton-fillet">
+                    <text>
+                        本单已享充值会员折扣 -¥{{ recharge_discount_amount }}，需使用余额支付
+                    </text>
+                </view>
                 <view class="payway-container u-skeleton-fillet">
                     <!-- Payway -->
                     <u-radio-group v-model="payway" style="width: 100%">
@@ -161,6 +167,7 @@ export default {
             order_id: '', // 订单ID
             order_amount: 0, // 订单原始金额
             deduct_amount: 0, // 活动余额抵扣金额
+            recharge_discount_amount: 0, // 充值会员折扣额
             amount: 0, // 实际支付金额（order_amount - deduct_amount）
             timeout: 0, // 倒计时间戳
             payway: '', // 支付方式
@@ -197,6 +204,8 @@ export default {
                         this.order_amount = data.order_amount
                         this.deduct_amount = data.deduct_amount || 0
                         this.amount = Math.max(0, this.order_amount - this.deduct_amount)
+                        // 充值会员折扣额（>0 表示本单已享折扣，支付方式已被服务端锁定为余额支付）
+                        this.recharge_discount_amount = Number(data.recharge_discount_amount || 0)
                         this.paywayList = data.lists
                         this.payway = this.paywayList[0]?.pay_way
                         // 倒计时
@@ -548,5 +557,16 @@ export default {
             color: white;
         }
     }
+}
+
+/* 充值会员折扣提示 */
+.recharge-discount-tip {
+    margin: 0 20rpx 20rpx;
+    padding: 16rpx 20rpx;
+    border-radius: 12rpx;
+    background: rgba(242, 166, 38, 0.12);
+    color: #f2a626;
+    font-size: 24rpx;
+    line-height: 34rpx;
 }
 </style>

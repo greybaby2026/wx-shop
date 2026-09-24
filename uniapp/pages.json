@@ -486,6 +486,20 @@
                     }
                 },
                 {
+                    "path": "pages/store_bind/store_bind",
+                    "style": {
+                        "navigationBarTitleText": "选择门店",
+                        "disableScroll": true,
+                        "app-plus": {
+                            "bounce": "none" // mescroll-uni需取消iOS回弹和安卓顶部底部的半月形阴影
+                        },
+                        "mp-alipay": { "allowsBounceVertical": "NO" }
+                    },
+                    "meta": {
+                        "auth": true
+                    }
+                },
+                {
                     "path": "pages/order_logistics/order_logistics",
                     "style": {
                         "navigationBarTitleText": "物流信息"

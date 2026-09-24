@@ -355,15 +355,11 @@ class PayNotifyLogic extends BaseLogic
         $user = User::findOrEmpty($order->user_id);
         $user->total_recharge_amount = $user->total_recharge_amount + $order->order_amount;
 
-        $toActivity = \app\shopapi\logic\activity\DeductService::rechargeToActivity();
-
-        if ($toActivity) {
-            $user->activity_money = $user->activity_money + $order->order_amount;
-            AccountLogLogic::add($order->user_id, AccountLogEnum::BNW_INC_RECHARGE, AccountLogEnum::INC, $order->order_amount, $order->sn, '\u6d3b\u52a8\u5145\u503c');
-        } else {
-            $user->user_money = $user->user_money + $order->order_amount;
-            AccountLogLogic::add($order->user_id, AccountLogEnum::BNW_INC_RECHARGE, AccountLogEnum::INC, $order->order_amount, $order->sn, '\u7528\u6237\u5145\u503c');
-        }
+        // 充值一律进入可用余额 user_money。
+        // 2026-09-24 起：活动余额抵扣整体关闭（业务决策），充值不再分流到 activity_money，
+        // 历史 activity_money 余额保留不动，由后台人工处理。
+        $user->user_money = $user->user_money + $order->order_amount;
+        AccountLogLogic::add($order->user_id, AccountLogEnum::BNW_INC_RECHARGE, AccountLogEnum::INC, $order->order_amount, $order->sn, '用户充值');
         $user->save();
 
         $order->transaction_id = $extra['transaction_id'];
@@ -373,29 +369,29 @@ class PayNotifyLogic extends BaseLogic
 
         foreach($order->award as $item) {
             if(isset($item['give_money']) && $item['give_money'] > 0) {
-                self::awardMoney($order, $item['give_money'], $toActivity);
+                self::awardMoney($order, $item['give_money']);
             }
         }
+
+        // 充值会员折扣：单笔充值达标即授予（只升不降、幂等；开关关闭时内部直接返回）
+        // 注意：达标金额取「实充金额」order_amount，赠送金额不计入
+        RechargeMemberDiscountLogic::grantOnRecharge(intval($order->user_id), $order->order_amount);
 
         RechargeCommissionLogic::settle($order);
     }
 
     /**
-     * @notes 充值送余额
-     * @param $userId
+     * @notes 充值送余额（赠送金额同样进入可用余额 user_money）
+     * @param $order
      * @param $giveMoney
      * @author Tab
      * @date 2021/8/11 14:35
      */
-    public static function awardMoney($order, $giveMoney, $toActivity = false)
+    public static function awardMoney($order, $giveMoney)
     {
         // 充值送余额
         $user = User::findOrEmpty($order->user_id);
-        if ($toActivity) {
-            $user->activity_money = $user->activity_money + $giveMoney;
-        } else {
-            $user->user_money = $user->user_money + $giveMoney;
-        }
+        $user->user_money = $user->user_money + $giveMoney;
         $user->save();
         // 记录账户流水
         AccountLogLogic::add($order->user_id, AccountLogEnum::BNW_INC_RECHARGE_GIVE, AccountLogEnum::INC, $giveMoney, $order->sn, '充值赠送');

@@ -21,6 +21,7 @@ namespace app\adminapi\logic\recharge;
 
 use app\common\enum\PayEnum;
 use app\common\logic\BaseLogic;
+use app\common\logic\RechargeMemberDiscountLogic;
 use app\common\model\RechargeOrder;
 use app\common\model\RechargeTemplate;
 use app\common\service\ConfigService;
@@ -64,7 +65,9 @@ class RechargeLogic extends BaseLogic
         $set = [
             'open' => ConfigService::get('recharge', 'open'),
             'min_amount' => ConfigService::get('recharge', 'min_amount'),
-            'six_percent_discount' => ConfigService::get('recharge', 'six_percent_discount', 0)
+            //充值会员折扣（充值金额 → 永久购物折扣）：总开关 / 是否强制绑定门店
+            'open_member_discount' => RechargeMemberDiscountLogic::checkOpen() ? 1 : 0,
+            'force_bind_store'     => RechargeMemberDiscountLogic::isForceBindStore() ? 1 : 0,
         ];
         return $set;
     }
@@ -90,7 +93,12 @@ class RechargeLogic extends BaseLogic
      */
     public static function getRule()
     {
-        $lists = RechargeTemplate::field('id,money,award')->select()->toArray();
+        //discount = 该档对应的「充值会员永久折扣率」（10=不打折，9.5=95折，0=该档不享折扣）
+        $lists = RechargeTemplate::field('id,money,award,discount')->select()->toArray();
+        foreach ($lists as &$item) {
+            $item['discount'] = floatval($item['discount'] ?? 0);
+        }
+        unset($item);
         return $lists;
     }
 
@@ -130,10 +138,26 @@ class RechargeLogic extends BaseLogic
         }
         if(isset($params['min_amount'])) {
             ConfigService::set('recharge', 'min_amount', $params['min_amount']);
-        if(isset($params['six_percent_discount'])) {
-            ConfigService::set('recharge', 'six_percent_discount', $params['six_percent_discount']);
         }
+        //充值会员折扣：总开关
+        if (isset($params['open_member_discount'])) {
+            ConfigService::set(
+                RechargeMemberDiscountLogic::CFG_TYPE,
+                RechargeMemberDiscountLogic::CFG_OPEN,
+                intval($params['open_member_discount']) === 1 ? 1 : 0
+            );
         }
+        //是否强制「绑定门店」后才能下单/充值（默认关闭，客户端绑定页上线后再开启）
+        if (isset($params['force_bind_store'])) {
+            ConfigService::set(
+                RechargeMemberDiscountLogic::CFG_TYPE,
+                'force_bind_store',
+                intval($params['force_bind_store']) === 1 ? 1 : 0
+            );
+        }
+        //历史遗留开关（旧「充值6折」半成品）已废弃：强制置 0，避免与新机制混淆。
+        //注：原实现因大括号缩进错位，该开关只有在同时提交 min_amount 时才会被保存（已一并修正）。
+        ConfigService::set('recharge', 'six_percent_discount', 0);
     }
 
     public static function updateDistributionSet($params)
@@ -212,6 +236,13 @@ class RechargeLogic extends BaseLogic
                 throw new \think\Exception('规则' . ($key + 1) . '充值奖励不能为负数');
             }
         }
+        //充值会员折扣率校验：0 = 该档不享折扣；>0 且 <=10（10 = 不打折）
+        $discount = isset($item['discount']) && $item['discount'] !== '' ? floatval($item['discount']) : 0;
+        if ($discount < 0 || $discount > 10) {
+            throw new \think\Exception('规则' . ($key + 1) . '的折扣率需在 0 ~ 10 之间（10=不打折，9.5=95折）');
+        }
+        $item['discount'] = $discount;
+
         $item['award'] = json_encode($item['award'], JSON_UNESCAPED_UNICODE);
         return $item;
     }
