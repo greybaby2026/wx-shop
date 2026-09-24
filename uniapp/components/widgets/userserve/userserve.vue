@@ -38,7 +38,6 @@ import { navigateTo } from '@/utils/tools'
 
 export default {
     mixins: [ServiceMixin],
-    ...mapGetters(['isLogin', 'ServiceConfig']),
 
     props: {
         content: {
@@ -47,6 +46,12 @@ export default {
         styles: {
             type: [Object, Array]
         }
+    },
+    computed: {
+        // 登录态 / 客服配置：必须放在 computed。
+        // 原先以 `...mapGetters(...)` 展开在组件选项根层级 → 既不生成响应式 computed，
+        // 又把 isLogin/ServiceConfig 当成组件选项处理，模板中取不到值
+        ...mapGetters(['isLogin', 'ServiceConfig'])
     },
     data() {
         return {}

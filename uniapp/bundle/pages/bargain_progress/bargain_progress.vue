@@ -460,30 +460,6 @@
 				this.showSharePop = true
 			},
 
-			// 监听分享
-			// #ifdef MP-WEIXIN
-			onShareAppMessage() {
-				return {
-					// 小程序转发路径须以 / 开头
-					path: '/bundle/pages/bargain_progress/bargain_progress?initiate_id=' +
-						this.initiateId +
-						'&isShare=2' +
-						'&invite_code=' +
-						this.userInfo.code,
-					title: '我正在参与砍价，还差一步',
-					imageUrl: this.bargainData.goods_image
-				}
-			},
-			//分享朋友圈
-			onShareTimeline() {
-				return {
-					title: '我正在参与砍价，还差一步',
-					query: `initiate_id=${this.initiateId}&isShare=2&invite_code=${this.userInfo.code}`, // 分享参数，注意这里使用query而不是path
-			     	imageUrl: this.bargainData.image
-				}
-			},
-			// #endif
-
 			// 分享详情内容
 			bargainShareDetail() {
 				return new Promise((reslove, reject) => {
@@ -559,6 +535,31 @@
 				})
 			}
 		},
+
+		// 分享钩子必须位于「页面级」层级：原先写在 methods 内 → 小程序不会调用，
+		// 分享会落到全局 mixins 的默认分享（path 固定为首页）→ 好友点开进首页、无法帮忙砍价
+		// #ifdef MP-WEIXIN
+		onShareAppMessage() {
+			return {
+				// 小程序转发路径须以 / 开头
+				path: '/bundle/pages/bargain_progress/bargain_progress?initiate_id=' +
+					this.initiateId +
+					'&isShare=2' +
+					'&invite_code=' +
+					this.userInfo.code,
+				title: '我正在参与砍价，还差一步',
+				imageUrl: this.bargainData.goods_image
+			}
+		},
+		// 分享朋友圈
+		onShareTimeline() {
+			return {
+				title: '我正在参与砍价，还差一步',
+				query: `initiate_id=${this.initiateId}&isShare=2&invite_code=${this.userInfo.code}`, // 分享参数，注意这里使用query而不是path
+				imageUrl: this.bargainData.image
+			}
+		},
+		// #endif
 
 		onLoad() {
 			// 获取当前时间

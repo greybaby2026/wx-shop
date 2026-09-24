@@ -373,22 +373,25 @@ export default {
       });
     },
 
-    onShareAppMessage() {
-      return {
-        title: this.activity.name,
-        path: `/bundle/pages/luck_draw/luck_draw?id=${this.id}&invite_code=${this.$Route.query.name}`,
-        imageUrl: this.activity.share_image,
-      };
-    },
+  },
 
-    //分享朋友圈
-    onShareTimeline() {
-      return {
-        title: this.activity.name,
-        path: `/bundle/pages/luck_draw/luck_draw?id=${this.id}&invite_code=${this.$Route.query.name}`,
-        imageUrl: this.activity.share_image,
-      };
-    },
+  // 分享钩子必须位于「页面级」层级：原先写在 methods 内 → 小程序不会调用，
+  // 抽奖页分享会落到全局 mixins 的默认分享（path 固定为首页），邀请链路失效
+  onShareAppMessage() {
+    return {
+      title: this.activity.name,
+      path: `/bundle/pages/luck_draw/luck_draw?id=${this.id}&invite_code=${this.$Route.query.name}`,
+      imageUrl: this.activity.share_image,
+    };
+  },
+
+  //分享朋友圈
+  onShareTimeline() {
+    return {
+      title: this.activity.name,
+      path: `/bundle/pages/luck_draw/luck_draw?id=${this.id}&invite_code=${this.$Route.query.name}`,
+      imageUrl: this.activity.share_image,
+    };
   },
 };
 </script>

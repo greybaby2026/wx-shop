@@ -210,11 +210,6 @@ export default {
                 this.splitSetData()
             }, 30)
         },
-        onPageScroll(e) {
-            const top = uni.upx2px(100)
-            const { scrollTop } = e
-            this.percent = scrollTop / top > 1 ? 1 : scrollTop / top
-        },
         clearIntervalFunc() {
             this.offTip = false
         },
@@ -268,6 +263,11 @@ export default {
     onPageScroll(e) {
         const { scrollTop } = e
         this.scrollTop = scrollTop
+        // 自定义导航栏渐变：percent 驱动标题颜色与背景透明度（见模板 :11 / :12）。
+        // 该计算原先被误写在 methods 内的同名 onPageScroll 里 —— 框架只调用页面级的钩子，
+        // 导致 percent 恒为 0、首页导航栏滚动渐变完全失效。此处与 scrollTop 合并执行。
+        const top = uni.upx2px(100)
+        this.percent = scrollTop / top > 1 ? 1 : scrollTop / top
     },
     onLoad() {
         uni.hideTabBar()

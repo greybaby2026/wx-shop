@@ -332,6 +332,12 @@ export default {
     },
 
     computed: {
+        // 登录态：原误放在 methods 内 —— Vue2 初始化顺序为 initMethods → initComputed，
+        // mapGetters 展开到 methods 会先在 vm 上创建 isLogin「方法」，随后同名 computed 被跳过，
+        // 于是 this.isLogin 变成函数对象（恒真）→ 未登录也渲染订单区，
+        // 且「未登录不发请求」的判断（if (!this.isLogin) return）永不生效
+        ...mapGetters(['isLogin']),
+
         // 当前Tab项
         currentTab() {
             return this.tabsList[this.tabsIndex] || {}
@@ -350,7 +356,6 @@ export default {
             if (endTimestamp - startTimestamp <= 0) this.showCountDown = false
             return endTimestamp - startTimestamp
         },
-        ...mapGetters(['isLogin']),
         orderstatusTitle(orderItem) {
             switch (orderItem.order_status) {
                 case 0:

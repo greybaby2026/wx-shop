@@ -116,9 +116,12 @@ export default {
         query: { pass },
       });
     },
-    onLoad() {
-      this.getPolicyAgreement();
-    },
+  },
+
+  // onLoad 属页面生命周期，必须位于页面级层级：
+  // 原先写在 methods 内 → 框架不会调用 → getPolicyAgreement() 从不执行，注销页协议文案无法加载
+  onLoad() {
+    this.getPolicyAgreement();
   },
 };
 </script>
