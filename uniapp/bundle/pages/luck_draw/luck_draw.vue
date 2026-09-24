@@ -201,7 +201,7 @@
           >
             <image
               class="no-reward-box-goods-img"
-              src="https://php-b2cplus.yixiangonline.com/uploads/images/20250730/202507300023548c8475901.png"
+              src="/bundle/static/images/luck_draw/no_reward.png"
             ></image>
             <view class="no-reward-box-title"> 差一点就中奖了 </view>
           </view>
@@ -551,7 +551,7 @@ page {
     .result-container {
       width: 720rpx;
       height: 800rpx;
-      background: url(https://php-b2cplus.yixiangonline.com/uploads/images/20250729/20250729233300ab0a67341.png)
+      background: url(/bundle/static/images/luck_draw/result_bg.png)
         no-repeat;
       background-size: 100% auto;
       border-radius: 20rpx;

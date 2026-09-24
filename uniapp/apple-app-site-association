@@ -3,7 +3,7 @@
         "apps": [],  
         "details": [  
             {  
-                "appID": "8656MXP6VT.com.gzyx.likeshop-plus",  
+                "appID": "REPLACE_WITH_APPLE_TEAM_ID.com.jiangjunshijia.app",  
                 "paths": [ "/ulink/*"]  
             }  
         ]  
