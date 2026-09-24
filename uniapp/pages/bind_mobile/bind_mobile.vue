@@ -67,7 +67,7 @@ import {
   apiBindMobileCaptcha,
   apiBindMobile,
 } from "@/api/user";
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import { getCode } from "@/utils/login";
 // currentPage：bindSuccess() 里用于取「上一页」的 onLoad/options 以刷新其状态，
 // 原先漏了这行导入 → 绑定手机号成功后返回回调抛 ReferenceError，上一页不刷新
@@ -85,7 +85,7 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["logout"]),
+    ...mapActions(["logout"]),
     codeChange(tip) {
       this.codeTips = tip;
     },

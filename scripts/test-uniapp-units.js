@@ -115,7 +115,50 @@ assert('integral_order.js 积分订单确认收货使用积分接口（P2-95）'
     /apiConfirmIntegralOrder\(\{\s*\n?\s*id: orderID\s*\n?\s*\}\)[\s\S]{0,80}/.test(integralSrc)
         && !/import\s*\{\s*apiOrderConfirm\s*\}/.test(integralSrc) ? 1 : 0, 1)
 
-// 2.5 全量枚举 new Promise（供人工复核：每个分支是否都 settle）——信息性输出
+// 2.5 U14 登出清理全局状态 + 缓存键集中
+const appStoreSrc = read('store/modules/app.js')
+assert('app.js 存在 logout action 且复位购物车角标',
+    /logout\(\{\s*commit\s*\}\)\s*\{[\s\S]{0,500}?commit\('setCartNum',\s*0/.test(appStoreSrc) ? 1 : 0, 1)
+assert('app.js logout action 复位未读消息',
+    /logout\(\{\s*commit\s*\}\)\s*\{[\s\S]{0,700}?commit\('SET_UNREAD_COUNT',\s*0/.test(appStoreSrc) ? 1 : 0, 1)
+assert('cache.js 提供 removeByPrefix / clear',
+    (/removeByPrefix\s*\(/.test(read('utils/cache.js')) && /clear\s*\(\s*\)/.test(read('utils/cache.js'))) ? 1 : 0, 1)
+assert('cachekey.js 已集中 OPENIMAGE* 与 ACTIVITY_DEDUCT_INFO',
+    (['OPENIMAGE_ENABLE', 'OPENIMAGE:', 'OPENIMAGE_NUMBER', 'ACTIVITY_DEDUCT_INFO'].every(k => read('config/cachekey.js').includes(k))) ? 1 : 0, 1)
+assert('activity_deduct.js 从缓存恢复（补上读取侧，消除白写）',
+    /deductInfo:\s*Cache\.get\(ACTIVITY_DEDUCT_INFO\)/.test(read('store/modules/activity_deduct.js')) ? 1 : 0, 1)
+
+// 全库扫描：logout 是否仍被当作 mutation 直调（除 app.js 内部自调）；OPENIMAGE 字面量是否清零
+const logoutBypass = []
+const openImageLiteral = []
+;(function walkAll(dir) {
+    for (const name of fs.readdirSync(dir)) {
+        const full = path.join(dir, name)
+        const st = fs.statSync(full)
+        if (st.isDirectory()) {
+            if (!['node_modules', 'unpackage', 'dist', '.git', 'js_sdk', 'plugin', 'uview-ui', 'uni_modules'].includes(name)) walkAll(full)
+        } else if (/\.(vue|js)$/.test(name)) {
+            const relToUniapp = path.relative(UNIAPP, full).replace(/\\/g, '/')
+            const src = fs.readFileSync(full, 'utf8')
+            src.split('\n').forEach((line, i) => {
+                if (/^\s*(\/\/|\*|\/\*)/.test(line)) return
+                if (/(?:store\.)?commit\(\s*['"]logout['"]\s*\)|mapMutations\(\s*\[\s*['"]logout['"]/.test(line)
+                    && relToUniapp !== 'store/modules/app.js') {
+                    logoutBypass.push(`${relToUniapp}:${i + 1}`)
+                }
+                if (/'OPENIMAGE/.test(line) && relToUniapp !== 'config/cachekey.js') {
+                    openImageLiteral.push(`${relToUniapp}:${i + 1}  ${line.trim()}`)
+                }
+            })
+        }
+    }
+})(UNIAPP)
+assert('无残留「logout 当 mutation 直调」（除 app.js 内部）', logoutBypass.length, 0)
+if (logoutBypass.length) logoutBypass.forEach(x => console.log('      ' + x))
+assert('OPENIMAGE* 字面量已清零（除 cachekey 定义）', openImageLiteral.length, 0)
+if (openImageLiteral.length) openImageLiteral.forEach(x => console.log('      ' + x))
+
+// 2.6 全量枚举 new Promise（供人工复核：每个分支是否都 settle）——信息性输出
 console.log('\n[3] utils/ 与 mixins/ 中 new Promise 清单（供人工复核 settle 分支）')
 const promiseList = []
 for (const dir of ['utils', 'mixins']) {

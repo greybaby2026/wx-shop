@@ -195,7 +195,7 @@ export default {
     },
     methods: {
         ...mapActions(['getUser']),
-        ...mapMutations(['logout']),
+        ...mapActions(['logout']),
 
         // 获取用户信息
         getUserInfoFun() {

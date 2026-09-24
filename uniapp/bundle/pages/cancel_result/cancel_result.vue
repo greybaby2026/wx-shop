@@ -100,7 +100,8 @@ export default {
         const { pass } = this.$Route.query
         this.passType = pass
 
-        if (pass == 1) return store.commit('logout')
+        // 走 logout action（会一并复位购物车角标/未读数等派生态状态）
+        if (pass == 1) return store.dispatch('logout')
         const { data } = await apiuserDeletecheck()
         this.handleReason(data)
     }

@@ -20,6 +20,8 @@
 import Cache from '@/utils/cache'
 import { apiDecorateConfig } from '@/api/store'
 import { mapGetters } from 'vuex'
+// 缓存键统一取自 config/cachekey.js（原先为字面量，与 App.vue 各写一份，键名写错会静默失效）
+import { OPENIMAGE_ENABLE, OPENIMAGE, OPENIMAGE_NUMBER } from '@/config/cachekey'
 
 // ⚠️ 「开屏广告只展示一次」是跨文件的隐式约定，改动任意一处都要一并考虑：
 //    1) App.vue 在 onLaunch / onLoad 中把缓存 OPENIMAGE_ENABLE 置为 true（一次冷启动只置一次）；
@@ -62,32 +64,32 @@ export default {
             if (!Number(this.content.enable)) {
                 return
             }
-            if (!Cache.get('OPENIMAGE_ENABLE')) {
+            if (!Cache.get(OPENIMAGE_ENABLE)) {
                 return
             }
             switch (this.content.show_config) {
                 case '1':
-                    if (Cache.get('OPENIMAGE') !== this.content.image) {
+                    if (Cache.get(OPENIMAGE) !== this.content.image) {
                         this.showOpen = true
                     }
-                    Cache.set('OPENIMAGE', this.content.image)
+                    Cache.set(OPENIMAGE, this.content.image)
                     break
                 case '2':
-                    const number = Cache.get('OPENIMAGE_NUMBER')
-                    if (!Cache.get('OPENIMAGE_NUMBER')) {
+                    const number = Cache.get(OPENIMAGE_NUMBER)
+                    if (!Cache.get(OPENIMAGE_NUMBER)) {
                         this.showOpen = true
                         Cache.set(
-                            'OPENIMAGE_NUMBER',
+                            OPENIMAGE_NUMBER,
                             this.content.show_config_number,
                             1000 * 60 * 60 * 24
                         )
-                    } else if (Cache.get('OPENIMAGE_NUMBER') > 1) {
+                    } else if (Cache.get(OPENIMAGE_NUMBER) > 1) {
                         this.showOpen = true
-                        Cache.set('OPENIMAGE_NUMBER', number - 1, 1000 * 60 * 60 * 24)
+                        Cache.set(OPENIMAGE_NUMBER, number - 1, 1000 * 60 * 60 * 24)
                     }
                     break
             }
-            Cache.set('OPENIMAGE_ENABLE', false)
+            Cache.set(OPENIMAGE_ENABLE, false)
         }
     }
 }

@@ -2,14 +2,14 @@
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { apiDistributionCode, apiUserBindStore } from '@/api/user'
 import { strToParams } from '@/utils/tools'
-import { INVITE_CODE, PENDING_STORE_ID } from '@/config/cachekey'
+import { INVITE_CODE, PENDING_STORE_ID, OPENIMAGE_ENABLE } from '@/config/cachekey'
 import Cache from '@/utils/cache'
 export default {
     async onLaunch(options) {
         // ⚠️ 开屏广告「只展示一次」隐式约定（与 components/open-advertisement 联动，勿单独删除任一侧）：
         //    此处把 OPENIMAGE_ENABLE 置为 true 表示「本次冷启动允许展示」，组件展示后会置为 false，
         //    从而保证同一次启动内只弹一次。判断 show_config=2 的次数则记在 OPENIMAGE_NUMBER。
-        Cache.set('OPENIMAGE_ENABLE', true)
+        Cache.set(OPENIMAGE_ENABLE, true)
 
         // 获取公共配置 + 主题配置（并行，无数据依赖）
         await Promise.all([
@@ -78,7 +78,7 @@ export default {
     onLoad: function () {
         uni.hideTabBar()
         // 同上：每次冷启动重置一次，使开屏广告在本轮启动内可再展示一次
-        Cache.set('OPENIMAGE_ENABLE', true)
+        Cache.set(OPENIMAGE_ENABLE, true)
     },
     onUnload() {},
     onShow: function (options) {
@@ -108,7 +108,7 @@ export default {
             'getsetshareConfig',
             'getDeductInfo'
         ]),
-        ...mapMutations(['logout']),
+        ...mapActions(['logout']),
         async bindCode(options) {
             if (!options.query) return
             const sceneParams = strToParams(decodeURIComponent(options.query.scene || ''))

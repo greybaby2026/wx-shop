@@ -40,7 +40,8 @@ const events = {
             toLogin()
         }
         // #endif
-        store.commit('logout')
+        // 用 dispatch 走 logout action：除清 token 外还会复位购物车角标/未读数等派生态状态
+        store.dispatch('logout')
         return Promise.reject(msg)
     },
     closeShop({ msg }) {

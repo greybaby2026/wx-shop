@@ -1,6 +1,6 @@
 import { apiConfig } from '@/api/app'
 import { apiUserCentre, apiDistributionCode , apiUserBindStore } from '@/api/user'
-import { CONFIG, USER_INFO, TOKEN, INVITE_CODE , PENDING_STORE_ID } from '@/config/cachekey'
+import { CONFIG, USER_INFO, TOKEN, INVITE_CODE , PENDING_STORE_ID, ACTIVITY_DEDUCT_INFO } from '@/config/cachekey'
 import wechath5 from '@/utils/wechath5'
 import Cache from '@/utils/cache'
 import { router } from '@/router'
@@ -74,6 +74,25 @@ const mutations = {
 }
 
 const actions = {
+    /**
+     * 登出（含 token 过期被强制登出）：
+     * 除清理 token / 用户信息外，**必须一并复位「派生态」全局状态** ——
+     * 否则 tabbar 的购物车角标与未读消息红点会保留上一账号的数字，换号登录后还会短暂显示他人数据。
+     * 注意：只清用户态数据，公共配置（CONFIG / THEME_CONFIG）不清理，避免影响其它功能。
+     */
+    logout({ commit }) {
+        // 1) 本模块：token / userInfo / TOKEN 缓存
+        commit('logout')
+        // 2) 购物车角标（cart.js 的 getCartNum 在未登录时直接 return，不会把 cartNum 归零）
+        commit('setCartNum', 0, { root: true })
+        // 3) 未读消息与通知弹窗状态
+        commit('SET_UNREAD_LIST', [], { root: true })
+        commit('SET_UNREAD_COUNT', 0, { root: true })
+        commit('SET_SHOW_POPUP', false, { root: true })
+        commit('SET_CURRENT_NOTICE', null, { root: true })
+        // 4) 用户态的抵扣活动展示缓存（下次冷启动由接口重新拉取）
+        Cache.remove(ACTIVITY_DEDUCT_INFO)
+    },
     getsetshareConfig({ state, commit }) {
         return apishareConfig()
             .then((res) => {
